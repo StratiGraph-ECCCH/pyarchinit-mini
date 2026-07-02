@@ -503,6 +503,26 @@ def _storage_checkbox_state(existing_creds):
     }
 
 
+def build_media_stack(db_manager, storage_service):
+    """Build (MediaHandler, MediaService) honoring the configured storage
+    backend.
+
+    Reads the persisted storage config via ``storage_service.get()`` and
+    wires a fully-configured ``StorageManager`` (credentials included) into
+    the handler via ``storage_service.build_manager()``. When no media_root
+    is configured, MediaHandler falls back to its local default — preserving
+    current local behavior for installs that never touch /settings/storage.
+    """
+    cfg = storage_service.get()
+    handler = MediaHandler(
+        media_root=cfg.get("media_root") or None,
+        thumb_path=cfg.get("thumb_path") or None,
+        thumb_resize=cfg.get("thumb_resize") or None,
+        storage_manager=storage_service.build_manager(),
+    )
+    return handler, MediaService(db_manager, handler)
+
+
 def create_app():
     # Declare global variables for database and services
     # This allows switch_database() to access and modify them
@@ -659,9 +679,8 @@ def create_app():
     tma_service = TMAService(db_manager)
     # matrix_visualizer and graphviz_visualizer are declared at module level
     pdf_generator = PDFGenerator()
-    media_handler = MediaHandler()
-    media_service = MediaService(db_manager, media_handler)
     storage_service = StorageConfigService(db_manager)
+    media_handler, media_service = build_media_stack(db_manager, storage_service)
 
     def _media_gallery(entity_key, id_entity):
         """Template-ready media descriptors (url/thumb_url resolved) for an entity."""
@@ -4164,6 +4183,17 @@ def create_app():
             db_conn = DatabaseConnection.from_url(new_db_url)
             db_manager = DatabaseManager(db_conn)
 
+            # Create any tables missing on the new DB (e.g. storage_config on
+            # a DB provisioned before that feature existed). Mirrors the
+            # create_tables() call create_app() makes on first boot;
+            # create_all() only adds missing tables, so this is a no-op on
+            # already-complete schemas. Failures are logged but do not abort
+            # the switch, same policy as the migrations below.
+            try:
+                db_conn.create_tables()
+            except Exception as tbl_err:
+                print(f"[DATABASE SWITCH] create_tables warning on {connection_name}: {tbl_err}")
+
             # Auto-apply schema migrations on the new DB so missing columns
             # (e.g. node_uuid added in 2.8.x) get created without a manual
             # `pyarchinit-mini-migrate-vocab` step. Failures are logged but
@@ -4177,7 +4207,8 @@ def create_app():
             # Reinitialize ALL services with new database manager
             global site_service, us_service, inventario_service, thesaurus_service
             global user_service, analytics_service, relationship_sync_service, datazione_service
-            global matrix_generator, export_import_service, csv_excel_service
+            global matrix_generator, export_import_service, csv_excel_service, media_service
+            nonlocal storage_service, media_handler
 
             site_service = SiteService(db_manager)
             us_service = USService(db_manager)
@@ -4192,6 +4223,20 @@ def create_app():
             from pyarchinit_mini.services.export_import_service import ExportImportService
             csv_excel_service = ExportImportService(db_manager)
 
+            # Reattach storage_service to the new db_manager (storage config/
+            # creds live in the switched-to DB, not the old one) and rebuild
+            # the media stack so uploads honor that DB's configured backend.
+            # Best-effort: a DB that can't be queried for storage_config
+            # (e.g. missing permissions) must not abort the whole switch —
+            # fall back to a bare local MediaHandler for that DB instead.
+            storage_service = StorageConfigService(db_manager)
+            try:
+                media_handler, media_service = build_media_stack(db_manager, storage_service)
+            except Exception as media_err:
+                print(f"[DATABASE SWITCH] Media stack rebuild warning on {connection_name}: {media_err}")
+                media_handler = MediaHandler()
+                media_service = MediaService(db_manager, media_handler)
+
             # Update app stored services (ALL of them to ensure switch works)
             app.db_manager = db_manager
             app.user_service = user_service
@@ -4204,6 +4249,7 @@ def create_app():
             app.datazione_service = datazione_service
             app.matrix_generator = matrix_generator
             app.export_import_service = export_import_service
+            app.storage_service = storage_service
             app.media_service = media_service
 
             # Log the switch for debugging
@@ -5925,6 +5971,8 @@ def create_app():
     @app.route("/settings/storage", methods=["GET", "POST"])
     @admin_required
     def settings_storage():
+        nonlocal media_handler
+        global media_service
         cfg = storage_service.get()
         existing_creds = cfg.get("credentials") or {}
 
@@ -5948,6 +5996,13 @@ def create_app():
 
             try:
                 storage_service.save(media_root, thumb_path, thumb_resize, credentials_out)
+                # Rebuild the media stack immediately so the new backend
+                # takes effect without a server restart. media_handler and
+                # media_service are shared closures used by every route
+                # nested in create_app(), so rebinding them here (plus
+                # updating app.media_service) propagates everywhere.
+                media_handler, media_service = build_media_stack(db_manager, storage_service)
+                app.media_service = media_service
                 flash("Storage settings saved.", "success")
             except RuntimeError:
                 flash("Set PYARCHINIT_SECRET_KEY to store credentials.", "error")
