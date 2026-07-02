@@ -816,6 +816,21 @@ class DatabaseMigrations:
             except Exception as e:
                 logger.warning(f"Spec 1 node_uuid/vocab migration failed: {e}")
 
+            # Media plugin-schema migration — converts pre-existing OLD
+            # media_table/media_thumb_table (mini's old inline schema) to the
+            # classic-plugin schema. create_all() never ALTERs existing
+            # tables, so without this, upgraded DBs keep the old columns and
+            # every media query raises UndefinedColumn. Idempotent: no-ops
+            # once media_table is already in the new schema.
+            try:
+                from .m_2026_07_media_plugin_schema import migrate as _migrate_media_schema
+                media_result = _migrate_media_schema(self.connection.engine)
+                if media_result.get("status") == "migrated":
+                    total_migrations += 1
+                logger.info(f"Media plugin-schema migration: {media_result}")
+            except Exception as e:
+                logger.warning(f"Media plugin-schema migration failed: {e}")
+
             logger.info(f"All migrations completed. Total migrations applied: {total_migrations}")
             return total_migrations
 

@@ -3,6 +3,7 @@ Media service - Business logic for media file management
 """
 
 from typing import List, Dict, Any, Optional
+from urllib.parse import quote
 from sqlalchemy import asc, desc, or_, func
 from sqlalchemy.exc import IntegrityError
 from ..database.manager import DatabaseManager
@@ -119,7 +120,7 @@ class MediaService:
         if filepath.lower().startswith(("http://", "https://")):
             return filepath
         # local absolute path or unibo/other backend -> serve through mini's route
-        return "/media/serve?p=" + filepath
+        return "/media/serve?p=" + quote(filepath)
 
     def thumb_url(self, id_media):
         with self.db_manager.connection.get_session() as s:

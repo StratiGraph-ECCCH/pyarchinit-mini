@@ -62,3 +62,6 @@ def test_delete_media_cascades(svc, tmp_path):
     with svc.db_manager.connection.get_session() as s:
         assert s.query(MediaToEntity).count() == 0
         assert s.query(MediaThumb).count() == 0
+
+def test_public_url_encodes_spaces(svc):
+    assert "%20" in svc.public_url("/media/a b.jpg")

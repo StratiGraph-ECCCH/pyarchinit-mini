@@ -16,6 +16,13 @@ def _count(conn, table):
 def migrate(engine) -> dict:
     insp = inspect(engine)
     present = set(insp.get_table_names())
+    if "media_table" in present:
+        cols = {c["name"] for c in insp.get_columns("media_table")}
+        if "filepath" in cols and "media_path" not in cols:
+            # Already the new plugin schema — nothing to do. Guards against
+            # re-running on every startup (would otherwise drop+recreate the
+            # empty-but-already-migrated tables every time).
+            return {"status": "already_migrated", "reason": "media_table already in plugin schema"}
     with engine.begin() as conn:
         for t in ("media_table", "media_thumb_table", "media_to_entity_table"):
             if t in present and _count(conn, t) > 0:
