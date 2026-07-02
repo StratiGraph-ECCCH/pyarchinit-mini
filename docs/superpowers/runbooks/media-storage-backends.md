@@ -114,28 +114,28 @@ Once `PYARCHINIT_SECRET_KEY` is set, go to **Admin Settings** → **Storage** (`
 
 ## Optional Dependencies
 
-Optional storage backends are disabled if their SDK is not installed. Install them to enable:
+Optional storage backends are disabled if their SDK is not installed. Enable a backend by installing its extra:
 
 ```bash
 # S3 and R2
-pip install boto3
+pip install pyarchinit-mini[storage-s3]
 
 # WebDAV
-pip install webdavclient3
+pip install pyarchinit-mini[storage-webdav]
 
 # Dropbox
-pip install dropbox
+pip install pyarchinit-mini[storage-dropbox]
 
-# Google Drive (install all four for full support)
-pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
+# Google Drive
+pip install pyarchinit-mini[storage-gdrive]
 
 # Cloudinary
-pip install cloudinary
+pip install pyarchinit-mini[storage-cloudinary]
 ```
 
-Or use optional extras:
+Or install all storage backends at once:
 ```bash
-pip install pyarchinit-mini[s3,webdav,dropbox,gdrive,cloudinary]
+pip install pyarchinit-mini[storage-all]
 ```
 
 **Missing SDKs gracefully disable backends** — the application will continue to work with available backends.

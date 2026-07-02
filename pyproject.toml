@@ -119,6 +119,13 @@ auth = []
 mcp = []
 # All optional features (everything now in core, kept for backward compatibility)
 all = []
+# Storage backends (optional - install as needed)
+storage-s3 = ["boto3>=1.26.0"]
+storage-webdav = ["webdavclient3>=3.14.0"]
+storage-dropbox = ["dropbox>=11.36.0"]
+storage-cloudinary = ["cloudinary>=1.33.0"]
+storage-gdrive = ["google-auth>=2.20.0", "google-auth-oauthlib>=1.0.0", "google-auth-httplib2>=0.2.0", "google-api-python-client>=2.80.0"]
+storage-all = ["boto3>=1.26.0", "webdavclient3>=3.14.0", "dropbox>=11.36.0", "cloudinary>=1.33.0", "google-auth>=2.20.0", "google-auth-oauthlib>=1.0.0", "google-auth-httplib2>=0.2.0", "google-api-python-client>=2.80.0"]
 # Development dependencies
 dev = [
     "pytest>=7.0.0",
