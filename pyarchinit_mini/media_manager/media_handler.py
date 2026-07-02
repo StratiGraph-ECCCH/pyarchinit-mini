@@ -2,6 +2,7 @@
 Media file handling and storage
 """
 
+import io
 import os
 import shutil
 import mimetypes
@@ -10,38 +11,76 @@ from typing import Dict, List, Any, Optional, Tuple
 from PIL import Image
 import hashlib
 
+from pyarchinit_mini.media_manager.path_resolver import is_remote_url
+
 class MediaHandler:
     """
     Handles media file operations, storage, and organization
     """
-    
-    def __init__(self, media_root: str = None, thumb_path: str = None, thumb_resize: str = None):
+
+    def __init__(self, media_root: str = None, thumb_path: str = None, thumb_resize: str = None,
+                storage_manager=None):
+        self.storage_manager = storage_manager
         home = os.environ.get("PYARCHINIT_HOME")
         default_media = (os.path.join(home, "pyarchinit_Media_folder") if home
                          else str(Path.home() / ".pyarchinit_mini" / "media"))
-        self.media_root = Path(media_root or os.environ.get("PYARCHINIT_MEDIA_ROOT") or default_media)
-        self.thumb_path = Path(thumb_path or os.environ.get("PYARCHINIT_THUMB_PATH")
-                               or (self.media_root / "thumb"))
-        self.thumb_resize = Path(thumb_resize or os.environ.get("PYARCHINIT_THUMB_RESIZE")
-                                 or (self.media_root / "thumb_resize"))
-        for p in (self.media_root, self.thumb_path, self.thumb_resize):
-            p.mkdir(parents=True, exist_ok=True)
+        media_root_val = media_root or os.environ.get("PYARCHINIT_MEDIA_ROOT") or default_media
+        thumb_path_val = thumb_path or os.environ.get("PYARCHINIT_THUMB_PATH")
+        thumb_resize_val = thumb_resize or os.environ.get("PYARCHINIT_THUMB_RESIZE")
+
+        # Remote (scheme-prefixed) roots must stay plain strings — Path()
+        # collapses "s3://bucket" into "s3:/bucket", destroying the scheme.
+        self.media_root = (media_root_val.rstrip("/") if self._is_remote(media_root_val)
+                           else Path(media_root_val))
+
+        if thumb_path_val is None:
+            thumb_path_val = (f"{self.media_root}/thumb" if self._is_remote(self.media_root)
+                              else (self.media_root / "thumb"))
+        self.thumb_path = (thumb_path_val.rstrip("/") if self._is_remote(thumb_path_val)
+                           else Path(thumb_path_val))
+
+        if thumb_resize_val is None:
+            thumb_resize_val = (f"{self.media_root}/thumb_resize" if self._is_remote(self.media_root)
+                                else (self.media_root / "thumb_resize"))
+        self.thumb_resize = (thumb_resize_val.rstrip("/") if self._is_remote(thumb_resize_val)
+                             else Path(thumb_resize_val))
+
+        for root in (self.media_root, self.thumb_path, self.thumb_resize):
+            if not self._is_remote(root):
+                Path(root).mkdir(parents=True, exist_ok=True)
 
         # Legacy media layout — retained so the desktop GUI media manager
         # (deferred for schema alignment) keeps working via the old methods.
-        self.base_media_path = self.media_root
-        self.images_path = self.base_media_path / "images"
-        self.documents_path = self.base_media_path / "documents"
-        self.videos_path = self.base_media_path / "videos"
-        self.models_path = self.base_media_path / "3d_models"
-        self.thumbnails_path = self.base_media_path / "thumbnails"
-        self.logs_path = self.base_media_path / "logs"
-        self.backup_path = self.base_media_path / "backup"
-        self.export_path = self.base_media_path / "export"
-        for p in (self.base_media_path, self.images_path, self.documents_path,
-                  self.videos_path, self.models_path, self.thumbnails_path,
-                  self.logs_path, self.backup_path, self.export_path):
-            p.mkdir(parents=True, exist_ok=True)
+        # Local-only; not meaningful when media_root is a remote backend.
+        if self._is_remote(self.media_root):
+            self.base_media_path = None
+            self.images_path = None
+            self.documents_path = None
+            self.videos_path = None
+            self.models_path = None
+            self.thumbnails_path = None
+            self.logs_path = None
+            self.backup_path = None
+            self.export_path = None
+        else:
+            self.base_media_path = self.media_root
+            self.images_path = self.base_media_path / "images"
+            self.documents_path = self.base_media_path / "documents"
+            self.videos_path = self.base_media_path / "videos"
+            self.models_path = self.base_media_path / "3d_models"
+            self.thumbnails_path = self.base_media_path / "thumbnails"
+            self.logs_path = self.base_media_path / "logs"
+            self.backup_path = self.base_media_path / "backup"
+            self.export_path = self.base_media_path / "export"
+            for p in (self.base_media_path, self.images_path, self.documents_path,
+                      self.videos_path, self.models_path, self.thumbnails_path,
+                      self.logs_path, self.backup_path, self.export_path):
+                p.mkdir(parents=True, exist_ok=True)
+
+    @staticmethod
+    def _is_remote(root: Any) -> bool:
+        """True when `root` is a scheme-prefixed (remote) storage path."""
+        return bool(root) and is_remote_url(str(root))
 
     @property
     def thumb_base(self) -> str:
@@ -55,8 +94,13 @@ class MediaHandler:
         filename = src.name
         filetype = src.suffix.lower().lstrip(".")
         info = self._analyze_file(src)
-        dest_path = self.media_root / filename
-        shutil.copy2(src, dest_path)
+        if self._is_remote(self.media_root):
+            dest_path = f"{str(self.media_root).rstrip('/')}/{filename}"
+            with open(src, "rb") as f:
+                self.storage_manager.write(dest_path, f.read())
+        else:
+            dest_path = self.media_root / filename
+            shutil.copy2(src, dest_path)
         return {
             "filename": filename,
             "filetype": filetype,
@@ -71,22 +115,38 @@ class MediaHandler:
                not (mimetypes.guess_type(filename)[0] or "").startswith("image/"):
                 return None
             thumb_filename = f"thumb_{id_media}_{filename}"
-            thumb_full = self.thumb_path / thumb_filename
-            resize_full = self.thumb_resize / thumb_filename
             with Image.open(source_file) as im:
                 small = im.copy(); small.thumbnail((200, 200), Image.Resampling.LANCZOS)
-                small.save(thumb_full)
+                thumb_full = self._write_thumb(small, self.thumb_path, thumb_filename)
             with Image.open(source_file) as im:
                 big = im.copy(); big.thumbnail((600, 600), Image.Resampling.LANCZOS)
-                big.save(resize_full)
+                resize_full = self._write_thumb(big, self.thumb_resize, thumb_filename)
             return {
                 "media_thumb_filename": thumb_filename,
-                "thumb_path": str(thumb_full),
-                "resize_path": str(resize_full),
+                "thumb_path": thumb_full,
+                "resize_path": resize_full,
             }
         except Exception as e:
             print(f"Error generating thumbnail: {e}")
             return None
+
+    def _write_thumb(self, image: Image.Image, root: Any, filename: str) -> str:
+        """Save `image` as `<root>/<filename>` and return the resulting path.
+
+        Local roots keep the original on-disk behaviour (saved via PIL using the
+        target extension). Remote (scheme-prefixed) roots are rendered to an
+        in-memory JPEG buffer and written through `self.storage_manager`.
+        """
+        if self._is_remote(root):
+            target = f"{str(root).rstrip('/')}/{filename}"
+            buf = io.BytesIO()
+            to_save = image.convert("RGB") if image.mode not in ("RGB", "L") else image
+            to_save.save(buf, format="JPEG")
+            self.storage_manager.write(target, buf.getvalue())
+            return target
+        full = Path(root) / filename
+        image.save(full)
+        return str(full)
 
     def store_file(self, file_path: str, entity_type: str, entity_id: int,
                    description: str = "", tags: str = "", author: str = "") -> Dict[str, Any]:
