@@ -20,6 +20,7 @@ Covers:
      catches it, flashes, and does NOT 500.
 """
 import os
+import re
 
 import pytest
 from cryptography.fernet import Fernet
@@ -38,6 +39,7 @@ from pyarchinit_mini.web_interface.auth_routes import (
 )
 from pyarchinit_mini.web_interface.app import (
     STORAGE_BACKEND_DEFS, STORAGE_TESTABLE_BACKENDS, _storage_merge_backend_fields,
+    _storage_checkbox_state,
 )
 
 _HERE = os.path.dirname(__file__)
@@ -156,6 +158,7 @@ def flask_app(db_manager, user_service, storage_service):
             thumb_resize=cfg.get("thumb_resize") or "",
             backends=STORAGE_BACKEND_DEFS,
             configured=configured,
+            checkbox_state=_storage_checkbox_state(existing_creds),
         )
 
     # ---- /settings/storage/test/<backend> (mirrors app.py post-Task-10) ----
@@ -370,3 +373,70 @@ def test_missing_secret_key_flashes_error_instead_of_500(admin_client, monkeypat
     with admin_client.session_transaction() as sess:
         flashes = sess.get("_flashes", [])
     assert any("PYARCHINIT_SECRET_KEY" in msg for _cat, msg in flashes)
+
+
+def test_settings_storage_test_endpoint_is_not_csrf_exempt():
+    """FIX 1 (SSRF/CSRF): settings_storage_test must never be wired up via
+    csrf.exempt(...). That endpoint drives an outbound network probe to a
+    server URL taken from the POST body; if it stayed CSRF-exempt, a
+    cross-site auto-submitting form could ride a logged-in admin's session
+    cookie and force the server to connect to an attacker-chosen host
+    (blind SSRF).
+
+    Choice of check, documented: this file's fixtures deliberately avoid
+    calling the real create_app() (see the module docstring above — it
+    wires up a live DB, a backup-scheduler thread, etc., which is why every
+    other test here hand-copies route bodies instead). Flask-WTF's
+    CSRFProtect.exempt() only records an exemption into
+    `csrf._exempt_views` once an app is actually built and the route
+    registered, so that introspection path isn't reliably available
+    without paying the create_app() cost. The reliable, cheap equivalent is
+    to assert directly against app.py's source that the exempting call is
+    gone — this is a precise regression guard against re-introducing
+    `csrf.exempt(settings_storage_test)`.
+    """
+    import inspect
+
+    from pyarchinit_mini.web_interface import app as app_module
+
+    source = inspect.getsource(app_module.create_app)
+    assert not re.search(r"csrf\.exempt\(\s*settings_storage_test\s*\)", source), (
+        "settings_storage_test must require a valid CSRF token like every "
+        "other state-changing route in this app -- it triggers an outbound "
+        "connection probe and exempting it from CSRF enables blind SSRF "
+        "via a cross-site form riding an admin's session cookie."
+    )
+
+
+def test_verify_ssl_checkbox_reflects_stored_state_on_resave(admin_client, storage_service):
+    """FIX 2 (silent TLS-verify disable): the verify_ssl / auto_tagging
+    checkboxes must reflect their stored state on GET. Without this,
+    _storage_merge_backend_fields (which has no "blank means unchanged"
+    state for checkboxes, unlike text fields) always takes the *submitted*
+    value -- so an admin who resaves the page without re-ticking a box that
+    was rendered unchecked (because GET never reflected the true state)
+    silently flips e.g. TLS verification off.
+    """
+    admin_client.post(
+        "/settings/storage",
+        data={
+            "media_root": "webdav://server.example.com/archive",
+            "thumb_path": "", "thumb_resize": "",
+            "webdav_username": "alice",
+            "webdav_password": "correct-horse-battery-staple",
+            "webdav_verify_ssl": "1",
+        },
+        follow_redirects=False,
+    )
+    saved = storage_service.get()
+    assert saved["credentials"]["webdav"]["verify_ssl"] == "true"
+
+    resp = admin_client.get("/settings/storage")
+    assert resp.status_code == 200
+    body = resp.data.decode("utf-8")
+
+    # The webdav_verify_ssl checkbox must render `checked` so a resave
+    # (e.g. only changing media_root) doesn't silently flip verify_ssl off.
+    match = re.search(r'<input[^>]*id="webdav_verify_ssl"[^>]*>', body)
+    assert match is not None, "webdav_verify_ssl checkbox not found in rendered HTML"
+    assert "checked" in match.group(0)

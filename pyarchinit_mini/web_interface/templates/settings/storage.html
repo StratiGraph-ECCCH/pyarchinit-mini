@@ -51,7 +51,8 @@
             <label class="form-label" for="{{ input_name }}">{{ field.replace('_', ' ') | title }}</label>
             {% if field in defn.checkboxes %}
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="{{ input_name }}" name="{{ input_name }}" value="1">
+              <input class="form-check-input" type="checkbox" id="{{ input_name }}" name="{{ input_name }}" value="1"
+                     {% if checkbox_state.get(backend_key, {}).get(field) %}checked{% endif %}>
               <label class="form-check-label" for="{{ input_name }}">{{ _('Enabled') }}</label>
             </div>
             {% else %}

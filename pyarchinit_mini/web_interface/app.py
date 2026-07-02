@@ -482,6 +482,27 @@ def _storage_merge_backend_fields(request_form, existing_creds, prefix, fields, 
     return merged
 
 
+def _storage_checkbox_state(existing_creds):
+    """Build ``{backend: {checkbox_field: bool}}`` reflecting the currently
+    saved on/off state of each backend's boolean fields (``verify_ssl``,
+    ``auto_tagging``, ...).
+
+    These fields are NOT secrets, so it's safe to reflect their stored state
+    back into the GET-rendered form. Without this, the checkboxes always
+    render unchecked and ``_storage_merge_backend_fields`` (above) always
+    takes the submitted value for checkboxes (no "leave unchanged" blank
+    state) — so an admin who resaves the page without re-ticking a box
+    silently flips it off (e.g. disabling TLS verification).
+    """
+    return {
+        backend_key: {
+            field: (existing_creds.get(backend_key, {}) or {}).get(field) == "true"
+            for field in defn["checkboxes"]
+        }
+        for backend_key, defn in STORAGE_BACKEND_DEFS.items()
+    }
+
+
 def create_app():
     # Declare global variables for database and services
     # This allows switch_database() to access and modify them
@@ -5940,6 +5961,7 @@ def create_app():
             thumb_resize=cfg.get("thumb_resize") or "",
             backends=STORAGE_BACKEND_DEFS,
             configured=configured,
+            checkbox_state=_storage_checkbox_state(existing_creds),
         )
 
     @app.route("/settings/storage/test/<backend>", methods=["POST"])
@@ -5987,9 +6009,13 @@ def create_app():
         except Exception as e:
             return jsonify({"ok": False, "message": str(e)})
 
-    # JSON endpoint used by an in-page fetch() call - exempt from CSRF like
-    # the other JSON API routes in this app (see csrf.exempt(...) above).
-    csrf.exempt(settings_storage_test)
+    # NOTE: settings_storage_test is intentionally NOT csrf.exempt(...).
+    # It drives an outbound network probe to an admin-controlled host, so a
+    # CSRF-exempt version would let a cross-site auto-submitting form ride a
+    # logged-in admin's session cookie and force the server to connect to
+    # attacker-chosen hosts (blind SSRF). The in-page fetch() in
+    # storage.html sends the CSRF token via the X-CSRFToken header, which
+    # Flask-WTF accepts for JSON/AJAX-style POSTs.
 
     # ===== Admin: Backups =====
     @app.route("/admin/backups", methods=["GET"])
