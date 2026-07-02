@@ -14,6 +14,7 @@ from ..media_manager.path_resolver import resolve_media_path, is_remote_url, clo
 from ..utils.validators import validate_data
 from ..utils.exceptions import ValidationError, RecordNotFoundError
 import os
+import time
 from pathlib import Path
 
 class MediaService:
@@ -31,11 +32,21 @@ class MediaService:
         with self.db_manager.connection.get_session() as s:
             return s.get(Media, media_id)
 
+    # id allocation = max(id)+1, matching the classic pyarchinit plugin
+    # (DB_MANAGER.max_num_id + 1). Neither tool draws media ids from the Postgres
+    # sequence via nextval, so there is nothing to setval — the only shared-DB
+    # hazard is two writers computing the same max+1 concurrently, which surfaces
+    # as a PK IntegrityError on the loser. We retry (recomputing max+1 on a fresh
+    # session each attempt) so those collisions self-heal. This is backend-agnostic:
+    # works on Postgres (festos, shared with the plugin) and on SQLite (local).
+    _MAX_INSERT_ATTEMPTS = 6
+
     def add_media(self, file_path, entity_key, id_entity, descrizione="", tags=""):
         entity_type, table_name, _ = resolve_entity(entity_key)
         stored = self.media_handler.store_original(file_path)
         dest_path, filename = stored["dest_path"], stored["filename"]
-        for attempt in range(2):
+        last = self._MAX_INSERT_ATTEMPTS - 1
+        for attempt in range(self._MAX_INSERT_ATTEMPTS):
             try:
                 with self.db_manager.connection.get_session() as s:
                     media = s.query(Media).filter(Media.filepath == dest_path).first()
@@ -73,8 +84,10 @@ class MediaService:
                     s.expunge(media)
                     return media
             except IntegrityError:
-                if attempt == 1:
+                if attempt == last:
                     raise
+                # brief backoff before recomputing max+1 and retrying
+                time.sleep(0.02 * (attempt + 1))
                 continue
 
     def get_media_for_entity(self, entity_key, id_entity):

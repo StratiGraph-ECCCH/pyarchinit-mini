@@ -65,3 +65,24 @@ def test_delete_media_cascades(svc, tmp_path):
 
 def test_public_url_encodes_spaces(svc):
     assert "%20" in svc.public_url("/media/a b.jpg")
+
+def test_add_media_retries_on_pk_collision(svc, tmp_path, monkeypatch):
+    # First media occupies id_media == 1.
+    first = svc.add_media(_png(tmp_path, "a.png"), "us", 1)
+    assert first.id_media == 1
+    real_next = svc._next_id
+    calls = {"n": 0}
+    def flaky_next(session, model, id_col):
+        # Force the Media PK on the FIRST attempt to collide with the existing id 1,
+        # simulating a concurrent writer (plugin or mini) taking the same max+1.
+        if model is Media and calls["n"] == 0:
+            calls["n"] += 1
+            return 1
+        return real_next(session, model, id_col)
+    monkeypatch.setattr(svc, "_next_id", flaky_next)
+    # A different file (distinct filepath) => a genuinely new media row.
+    second = svc.add_media(_png(tmp_path, "b.png"), "us", 2)
+    assert calls["n"] == 1            # collided exactly once
+    assert second.id_media == 2       # retry recomputed a fresh max+1
+    with svc.db_manager.connection.get_session() as s:
+        assert s.query(Media).count() == 2
