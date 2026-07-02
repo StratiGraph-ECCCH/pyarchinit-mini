@@ -4,8 +4,10 @@ Flask Web Interface for PyArchInit-Mini
 """
 
 import os
+import io
+import mimetypes
 from pathlib import Path
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_file, abort
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_file, abort, current_app
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
 from flask_login import login_required, current_user
@@ -3063,22 +3065,43 @@ def create_app():
     @app.route('/media/serve')
     @login_required
     def media_serve():
-        """Serve/redirect a media file stored under the plugin schema (absolute path or URI)."""
-        from pyarchinit_mini.media_manager.path_resolver import is_remote_url, cloudinary_to_url
+        """Serve/redirect/proxy a media file stored under the plugin schema
+        (absolute path or URI) based on serve_decision()'s routing matrix."""
+        from pyarchinit_mini.web_interface.media_serve import serve_decision
         p = request.args.get('p', '')
         if not p:
             abort(404)
-        low = p.lower()
-        if low.startswith('cloudinary://'):
-            return redirect(cloudinary_to_url(p))
-        if low.startswith(('http://', 'https://')):
-            return redirect(p)
-        if is_remote_url(p):  # unibo:// / storage-backend → follow-up plan
-            abort(501)
-        # Local absolute path: restrict to the configured media/thumb roots.
+        kind, value = serve_decision(p)
+
+        if kind == 'redirect':
+            return redirect(value)
+
+        if kind == 'proxy':
+            # StorageManager is normally configured via current_app.storage_service
+            # (wired up in the /settings/storage feature). That may not exist yet
+            # (e.g. this route mounted without the storage settings blueprint), so
+            # fall back to a bare, credentials-less manager built straight from the
+            # persisted StorageConfig.
+            svc = getattr(current_app, 'storage_service', None)
+            if svc is not None:
+                mgr = svc.build_manager()
+            else:
+                from pyarchinit_mini.services.storage_config_service import StorageConfigService
+                mgr = StorageConfigService(current_app.db_manager).build_manager()
+            data = mgr.read(p)
+            if data is None:
+                abort(404)
+            mimetype = mimetypes.guess_type(p)[0] or 'application/octet-stream'
+            return send_file(io.BytesIO(data), mimetype=mimetype)
+
+        if kind == 'forbidden':
+            abort(403)
+
+        # kind == 'file': local absolute path, restrict to the configured
+        # media/thumb roots (existing CWE-22 guard).
         roots = [str(media_handler.media_root), str(media_handler.thumb_path),
                  str(media_handler.thumb_resize)]
-        real = os.path.realpath(p)
+        real = os.path.realpath(value)
         def _under(root):
             rr = os.path.realpath(root)
             return real == rr or real.startswith(rr + os.sep)
