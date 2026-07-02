@@ -28,3 +28,10 @@ def test_crud(svc):
 
 def test_get_thesaurus_values_unknown_field_empty(svc):
     assert svc.get_thesaurus_values("nope")==[]
+
+def test_search_matches_text_fields(svc):
+    svc.create_tomba({"sito": "Volterra", "rito": "inumazione", "sigla_struttura": "TB"})
+    svc.create_tomba({"sito": "Cerveteri", "rito": "cremazione"})
+    assert len(svc.list_tomba(search="inum")) == 1
+    assert svc.count_tomba(search="inum") == 1
+    assert svc.list_tomba(search="zzz") == []

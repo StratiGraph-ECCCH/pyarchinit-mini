@@ -29,9 +29,9 @@ class TombaService:
                     pat = f"%{search}%"
                     q = q.filter(or_(
                         Tomba.sito.ilike(pat),
-                        Tomba.nr_scheda_taf.ilike(pat),
                         Tomba.rito.ilike(pat),
                         Tomba.sigla_struttura.ilike(pat),
+                        Tomba.nr_individuo.ilike(pat),
                     ))
                 q = q.order_by(Tomba.id_tomba.desc())
                 offset = (page - 1) * size
@@ -51,9 +51,9 @@ class TombaService:
                     pat = f"%{search}%"
                     q = q.filter(or_(
                         Tomba.sito.ilike(pat),
-                        Tomba.nr_scheda_taf.ilike(pat),
                         Tomba.rito.ilike(pat),
                         Tomba.sigla_struttura.ilike(pat),
+                        Tomba.nr_individuo.ilike(pat),
                     ))
                 return q.count()
         except Exception:
