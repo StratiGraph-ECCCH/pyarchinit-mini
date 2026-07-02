@@ -142,6 +142,9 @@ dmypy.json
 # Media files
 media/
 !media/.gitkeep
+# Keep the media test suite (the media/ rule above would otherwise swallow tests/media/)
+!tests/media/
+!tests/media/**
 
 # PDF files
 *.pdf
