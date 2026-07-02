@@ -12,6 +12,7 @@ from .pottery_service import PotteryService  # noqa: F401
 from .app_setting_service import AppSettingService  # noqa: F401
 from .backup_service import BackupService  # noqa: F401
 from .tomba_service import TombaService  # noqa: F401
+from .struttura_service import StrutturaService  # noqa: F401
 
 __all__ = [
     "SiteService",
@@ -23,4 +24,5 @@ __all__ = [
     "PotteryService",
     "AppSettingService",
     "TombaService",
+    "StrutturaService",
 ]
