@@ -37,8 +37,8 @@ class PyArchInitSyncTool(BaseTool):
                     },
                     "data_types": {
                         "type": "array",
-                        "items": {"type": "string", "enum": ["sites", "us", "inventario", "thesaurus", "tomba"]},
-                        "description": "Types of data to sync: sites, us, inventario, thesaurus, tomba",
+                        "items": {"type": "string", "enum": ["sites", "us", "inventario", "thesaurus", "tomba", "struttura"]},
+                        "description": "Types of data to sync: sites, us, inventario, thesaurus, tomba, struttura",
                         "default": ["sites", "us"]
                     },
                     "site_filter": {
@@ -132,6 +132,19 @@ class PyArchInitSyncTool(BaseTool):
                 else:
                     results['errors'].append("Tomba import: not yet supported by ImportExportService")
 
+            # Import struttura (structures)
+            if 'struttura' in data_types:
+                logger.info("Importing struttura...")
+                if hasattr(service, 'import_struttura'):
+                    struttura_result = service.import_struttura(sito_filter=site_filter, auto_backup=auto_backup)
+                    results['imported']['struttura'] = struttura_result.get('struttura_imported', 0)
+                    if not results['backup_path'] and struttura_result.get('backup_path'):
+                        results['backup_path'] = struttura_result['backup_path']
+                    if not struttura_result.get('success', True):
+                        results['errors'].append(f"Struttura import: {struttura_result.get('message', 'failed')}")
+                else:
+                    results['errors'].append("Struttura import: not yet supported by ImportExportService")
+
             # Import thesaurus
             if 'thesaurus' in data_types:
                 logger.info("Importing thesaurus...")
@@ -183,6 +196,17 @@ class PyArchInitSyncTool(BaseTool):
                         results['errors'].append(f"Tomba export: {tomba_result.get('message', 'failed')}")
                 else:
                     results['errors'].append("Tomba export: not yet supported by ImportExportService")
+
+            # Export struttura (structures)
+            if 'struttura' in data_types:
+                logger.info("Exporting struttura...")
+                if hasattr(service, 'export_struttura'):
+                    struttura_result = service.export_struttura(target_db_connection=target_db_url, sito_filter=site_filter)
+                    results['exported']['struttura'] = struttura_result.get('struttura_exported', 0)
+                    if not struttura_result.get('success', True):
+                        results['errors'].append(f"Struttura export: {struttura_result.get('message', 'failed')}")
+                else:
+                    results['errors'].append("Struttura export: not yet supported by ImportExportService")
 
             if results['errors']:
                 results['success'] = len(results['errors']) < len(data_types)

@@ -828,6 +828,10 @@ def create_app():
                 total_tomba = tomba_service.count_tomba()
             except Exception:
                 total_tomba = 0
+            try:
+                total_struttura = struttura_service.count_struttura()
+            except Exception:
+                total_struttura = 0
 
             stats = {
                 'total_sites': total_sites,
@@ -836,6 +840,7 @@ def create_app():
                 'total_media': total_media,
                 'total_pottery': total_pottery,
                 'total_tomba': total_tomba,
+                'total_struttura': total_struttura,
                 'recent_sites': sites
             }
 

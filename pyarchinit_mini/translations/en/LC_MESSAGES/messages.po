@@ -4383,9 +4383,10 @@ msgid "Attività"
 msgstr "Activity"
 
 #: pyarchinit_mini/web_interface/templates/harris_creator/editor.html:184
-#, fuzzy
+#: pyarchinit_mini/web_interface/templates/base.html:175
+#: pyarchinit_mini/web_interface/templates/dashboard.html:79
 msgid "Strutture"
-msgstr "Valid Structure"
+msgstr "Structures"
 
 #: pyarchinit_mini/web_interface/templates/harris_creator/editor.html:191
 #, fuzzy
