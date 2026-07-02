@@ -27,20 +27,46 @@ SCREEN_NAME="pmini"
 # interactive debugger (RCE risk). No quotes around the DSN so it stays safe
 # inside the `bash -c '...'` wrapper below.
 ADARTE_DB="${ADARTE_DB:?set ADARTE_DB (see .adarte_secrets.sh / .example)}"
-SCREEN_CMD="source ${VENV}/bin/activate && export DATABASE_URL=${ADARTE_DB} && export PYARCHINIT_WEB_DEBUG=false && pyarchinit-mini-web"
+# Include the storage-backend encryption key if configured (put it in
+# .adarte_secrets.sh: export PYARCHINIT_SECRET_KEY='...'). Without it the
+# /settings/storage UI is read-only; media behaviour stays local either way.
+KEY_EXPORT=""
+[ -n "${PYARCHINIT_SECRET_KEY:-}" ] && KEY_EXPORT="export PYARCHINIT_SECRET_KEY=${PYARCHINIT_SECRET_KEY} && "
+SCREEN_CMD="source ${VENV}/bin/activate && export DATABASE_URL=${ADARTE_DB} && export PYARCHINIT_WEB_DEBUG=false && ${KEY_EXPORT}pyarchinit-mini-web"
 
+# Reuse ONE SSH connection for all steps (ControlMaster) so we authenticate
+# once. Repeated per-step logins were intermittently rejected
+# (ssh_askpass/publickey) right after the long pip-install connection;
+# multiplexing avoids that. NumberOfPasswordPrompts=1 prevents retry-storms.
+SSH_CTL="/tmp/adarte-deploy-ctl-%h-%p"
 SSH_OPTS=(
   -o ConnectTimeout=10
   -o StrictHostKeyChecking=no
   -o PreferredAuthentications=password
   -o PubkeyAuthentication=no
+  -o NumberOfPasswordPrompts=1
   -o ServerAliveInterval=5
   -o ServerAliveCountMax=3
+  -o ControlMaster=auto
+  -o "ControlPath=${SSH_CTL}"
+  -o ControlPersist=120
 )
 
 remote() {
-  sshpass -p "${PASS}" ssh "${SSH_OPTS[@]}" "${HOST}" "$@"
+  local i
+  for i in 1 2 3; do
+    if sshpass -p "${PASS}" ssh "${SSH_OPTS[@]}" "${HOST}" "$@"; then
+      return 0
+    fi
+    printf '\033[1;33m! ssh attempt %s/3 failed; retrying in 2s\033[0m\n' "$i" >&2
+    sleep 2
+  done
+  return 1
 }
+
+# Close the shared master connection on exit (ControlPersist also times out).
+_close_master() { sshpass -p "${PASS}" ssh "${SSH_OPTS[@]}" -O exit "${HOST}" 2>/dev/null || true; }
+trap _close_master EXIT
 
 step() { printf "\n\033[1;34m=== %s ===\033[0m\n" "$*"; }
 ok()   { printf "\033[1;32m✔\033[0m %s\n" "$*"; }
