@@ -184,7 +184,7 @@ class DatabaseMigrations:
                 'periodizzazione_table', 'media_table', 'media_thumb_table',
                 'documentation_table',
                 'pyarchinit_thesaurus_sigle', 'thesaurus_field', 'thesaurus_category',
-                'users',
+                'users', 'tomba_table',
             ]
 
             concurrency_columns = [
