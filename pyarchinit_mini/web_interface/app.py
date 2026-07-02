@@ -677,6 +677,8 @@ def create_app():
     search_service = UniversalSearchService(db_manager)
     from pyarchinit_mini.services.tma_service import TMAService
     tma_service = TMAService(db_manager)
+    from pyarchinit_mini.services.tomba_service import TombaService
+    tomba_service = TombaService(db_manager)
     # matrix_visualizer and graphviz_visualizer are declared at module level
     pdf_generator = PDFGenerator()
     storage_service = StorageConfigService(db_manager)
@@ -709,6 +711,7 @@ def create_app():
     app.export_import_service = export_import_service
     app.media_service = media_service
     app.storage_service = storage_service
+    app.tomba_service = tomba_service
 
     # Initialize Flask-Login
     init_login_manager(app, user_service)
@@ -4985,6 +4988,103 @@ def create_app():
         except Exception as e:
             flash(f'Errore: {e}', 'error')
             return redirect(url_for('tma_list'))
+
+    # ===== Tomba - Sepolture =====
+    @app.route('/tomba')
+    @login_required
+    def tomba_list():
+        page = request.args.get('page', 1, type=int)
+        per_page = 50
+        search = request.args.get('search', '').strip()
+        sito_filter = request.args.get('sito', '').strip()
+        try:
+            tomba_list_data = tomba_service.list_tomba(page=page, size=per_page,
+                                                        search=search, sito=sito_filter)
+            total = tomba_service.count_tomba(search=search, sito=sito_filter)
+            sites = tomba_service.get_distinct_sites()
+            import math
+            total_pages = max(math.ceil(total / per_page), 1)
+            return render_template('tomba/list.html', tomba_list=tomba_list_data,
+                                   total=total, page=page, total_pages=total_pages,
+                                   search=search, sito_filter=sito_filter, sites=sites)
+        except Exception as e:
+            flash(f'Errore Tomba: {str(e)}', 'error')
+            return redirect(url_for('index'))
+
+    @app.route('/tomba/new', methods=['GET', 'POST'])
+    @login_required
+    @write_permission_required
+    def tomba_create():
+        if request.method == 'POST':
+            data = {k: v for k, v in request.form.items()}
+            tomba_id = tomba_service.create_tomba(data)
+            if tomba_id:
+                flash('Tomba creata', 'success')
+                return redirect(url_for('tomba_edit', tomba_id=tomba_id))
+            flash('Errore creazione Tomba', 'error')
+        return render_template('tomba/form.html', tomba={}, media=[])
+
+    @app.route('/tomba/<int:tomba_id>', methods=['GET', 'POST'])
+    @login_required
+    def tomba_edit(tomba_id):
+        tomba = tomba_service.get_tomba(tomba_id)
+        if not tomba:
+            flash('Tomba non trovata', 'error')
+            return redirect(url_for('tomba_list'))
+        if request.method == 'POST':
+            data = {k: v for k, v in request.form.items()}
+            if tomba_service.update_tomba(tomba_id, data):
+                flash('Tomba aggiornata', 'success')
+            else:
+                flash('Errore aggiornamento', 'error')
+            return redirect(url_for('tomba_edit', tomba_id=tomba_id))
+        # Load attached media
+        media_items = []
+        try:
+            media_items = _media_gallery('tomba', tomba_id)
+        except Exception:
+            pass
+        return render_template('tomba/form.html', tomba=tomba, media=media_items)
+
+    @app.route('/tomba/<int:tomba_id>/delete', methods=['POST'])
+    @login_required
+    @write_permission_required
+    def tomba_delete(tomba_id):
+        if tomba_service.delete_tomba(tomba_id):
+            flash('Tomba eliminata', 'success')
+        else:
+            flash('Errore eliminazione', 'error')
+        return redirect(url_for('tomba_list'))
+
+    @app.route('/tomba/<int:tomba_id>/media/upload', methods=['POST'])
+    @login_required
+    @write_permission_required
+    def tomba_media_upload(tomba_id):
+        try:
+            f = request.files.get('file')
+            if not f or not f.filename:
+                flash('Nessun file', 'error')
+                return redirect(url_for('tomba_edit', tomba_id=tomba_id))
+            from werkzeug.utils import secure_filename
+            filename = secure_filename(f.filename)
+            tmp_path = os.path.join(tempfile.gettempdir(), filename)
+            f.save(tmp_path)
+            media_service.add_media(tmp_path, 'tomba', tomba_id)
+            flash('Media caricato', 'success')
+            os.unlink(tmp_path)
+        except Exception as e:
+            flash(f'Errore upload: {e}', 'error')
+        return redirect(url_for('tomba_edit', tomba_id=tomba_id))
+
+    @app.route('/api/tomba/thesaurus/<field>')
+    @login_required
+    def tomba_thesaurus(field):
+        """Return thesaurus values for a Tomba field"""
+        try:
+            values = tomba_service.get_thesaurus_values(field)
+            return jsonify(values)
+        except Exception as e:
+            return jsonify({'error': str(e), 'values': []}), 500
 
     # ===== AI Assistant =====
     @app.route('/ai')

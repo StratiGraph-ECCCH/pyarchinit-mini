@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Tomba') }} {{ tomba.id_tomba if tomba and tomba.id_tomba else _('New') }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-monument"></i>
+        {% if tomba and tomba.id_tomba %}{{ _('Edit Tomba') }} #{{ tomba.id_tomba }}{% else %}{{ _('New Tomba') }}{% endif %}
+    </h2>
+    <a href="{{ url_for('tomba_list') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> {{ _('Back') }}
+    </a>
+</div>
+
+<form method="POST">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-basic">{{ _('Identification') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-rito">{{ _('Rito e Sepoltura') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-corredo">{{ _('Corredo') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-crono">{{ _('Chronology') }}</a></li>
+        {% if tomba and tomba.id_tomba %}
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-media">{{ _('Media') }} ({{ media|length }})</a></li>
+        {% endif %}
+    </ul>
+    <div class="tab-content border border-top-0 p-3">
+        <!-- Identification -->
+        <div class="tab-pane fade show active" id="tab-basic">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Site') }} *</label>
+                    <input type="text" name="sito" class="form-control" value="{{ tomba.sito or '' }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Area') }}</label>
+                    <input type="text" name="area" class="form-control" value="{{ tomba.area or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Nr. Scheda TAF') }}</label>
+                    <input type="text" name="nr_scheda_taf" class="form-control" value="{{ tomba.nr_scheda_taf or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Sigla Struttura') }}</label>
+                    <input type="text" name="sigla_struttura" class="form-control" value="{{ tomba.sigla_struttura or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Nr. Struttura') }}</label>
+                    <input type="text" name="nr_struttura" class="form-control" value="{{ tomba.nr_struttura or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Nr. Individuo') }}</label>
+                    <input type="text" name="nr_individuo" class="form-control" value="{{ tomba.nr_individuo or '' }}">
+                </div>
+            </div>
+        </div>
+        <!-- Rito e Sepoltura -->
+        <div class="tab-pane fade" id="tab-rito">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Rito') }}</label>
+                    <input type="text" name="rito" class="form-control" value="{{ tomba.rito or '' }}" list="thes-rito">
+                    <datalist id="thes-rito"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Tipo Sepoltura') }}</label>
+                    <input type="text" name="tipo_sepoltura" class="form-control" value="{{ tomba.tipo_sepoltura or '' }}" list="thes-tipo_sepoltura">
+                    <datalist id="thes-tipo_sepoltura"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Tipo Deposizione') }}</label>
+                    <input type="text" name="tipo_deposizione" class="form-control" value="{{ tomba.tipo_deposizione or '' }}" list="thes-tipo_deposizione">
+                    <datalist id="thes-tipo_deposizione"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Copertura Tipo') }}</label>
+                    <input type="text" name="copertura_tipo" class="form-control" value="{{ tomba.copertura_tipo or '' }}" list="thes-copertura_tipo">
+                    <datalist id="thes-copertura_tipo"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Tipo Contenitore Resti') }}</label>
+                    <input type="text" name="tipo_contenitore_resti" class="form-control" value="{{ tomba.tipo_contenitore_resti or '' }}" list="thes-tipo_contenitore_resti">
+                    <datalist id="thes-tipo_contenitore_resti"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Stato di Conservazione') }}</label>
+                    <input type="text" name="stato_di_conservazione" class="form-control" value="{{ tomba.stato_di_conservazione or '' }}" list="thes-stato_di_conservazione">
+                    <datalist id="thes-stato_di_conservazione"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Segnacoli') }}</label>
+                    <input type="text" name="segnacoli" class="form-control" value="{{ tomba.segnacoli or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Canale Libatorio (Sì/No)') }}</label>
+                    <input type="text" name="canale_libatorio_si_no" class="form-control" value="{{ tomba.canale_libatorio_si_no or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Oggetti Rinvenuti Esterno') }}</label>
+                    <input type="text" name="oggetti_rinvenuti_esterno" class="form-control" value="{{ tomba.oggetti_rinvenuti_esterno or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Descrizione TAF') }}</label>
+                    <textarea name="descrizione_taf" class="form-control" rows="3">{{ tomba.descrizione_taf or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Interpretazione TAF') }}</label>
+                    <textarea name="interpretazione_taf" class="form-control" rows="3">{{ tomba.interpretazione_taf or '' }}</textarea>
+                </div>
+            </div>
+        </div>
+        <!-- Corredo -->
+        <div class="tab-pane fade" id="tab-corredo">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Corredo Presenza') }}</label>
+                    <input type="text" name="corredo_presenza" class="form-control" value="{{ tomba.corredo_presenza or '' }}" list="thes-corredo_presenza">
+                    <datalist id="thes-corredo_presenza"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Corredo Tipo') }}</label>
+                    <input type="text" name="corredo_tipo" class="form-control" value="{{ tomba.corredo_tipo or '' }}">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">{{ _('Corredo Descrizione') }}</label>
+                    <textarea name="corredo_descrizione" class="form-control" rows="3">{{ tomba.corredo_descrizione or '' }}</textarea>
+                </div>
+            </div>
+        </div>
+        <!-- Chronology -->
+        <div class="tab-pane fade" id="tab-crono">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Periodo Iniziale') }}</label>
+                    <input type="text" name="periodo_iniziale" class="form-control" value="{{ tomba.periodo_iniziale or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Fase Iniziale') }}</label>
+                    <input type="text" name="fase_iniziale" class="form-control" value="{{ tomba.fase_iniziale or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Periodo Finale') }}</label>
+                    <input type="text" name="periodo_finale" class="form-control" value="{{ tomba.periodo_finale or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Fase Finale') }}</label>
+                    <input type="text" name="fase_finale" class="form-control" value="{{ tomba.fase_finale or '' }}">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">{{ _('Datazione Estesa') }}</label>
+                    <input type="text" name="datazione_estesa" class="form-control" value="{{ tomba.datazione_estesa or '' }}">
+                </div>
+            </div>
+        </div>
+
+        {% if tomba and tomba.id_tomba %}
+        <!-- Media -->
+        <div class="tab-pane fade" id="tab-media">
+            <h5>{{ _('Tomba Media') }}</h5>
+            {% if media %}
+            <div class="row g-2">
+                {% for m in media %}
+                <div class="col-md-3">
+                    <div class="card">
+                        {% if m.media_type == 'image' %}
+                        <img src="{{ m.url }}" class="card-img-top" style="max-height:150px;object-fit:cover;">
+                        {% else %}
+                        <div class="card-body text-center"><i class="fas fa-file fa-3x text-muted"></i></div>
+                        {% endif %}
+                        <div class="card-body p-2">
+                            <small>{{ m.media_name }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">{{ _('No media attached yet.') }}</p>
+            {% endif %}
+
+            <h6 class="mt-3">{{ _('Upload media') }}</h6>
+            <form method="POST" action="{{ url_for('tomba_media_upload', tomba_id=tomba.id_tomba) }}" enctype="multipart/form-data" class="row g-2">
+                <div class="col-md-8"><input type="file" name="file" class="form-control" required></div>
+                <div class="col-md-4"><button type="submit" class="btn btn-primary w-100">{{ _('Upload') }}</button></div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> {{ _('Save') }}
+        </button>
+    </div>
+</form>
+
+<script>
+// Populate datalist elements with thesaurus values from PyArchInit
+const TOMBA_THES_FIELDS = ['rito','tipo_sepoltura','tipo_deposizione','copertura_tipo','tipo_contenitore_resti','stato_di_conservazione','corredo_presenza'];
+TOMBA_THES_FIELDS.forEach(function(field) {
+    fetch('/api/tomba/thesaurus/' + field)
+        .then(function(r) { return r.json(); })
+        .then(function(values) {
+            if (!Array.isArray(values)) return;
+            const dl = document.getElementById('thes-' + field);
+            if (!dl) return;
+            dl.innerHTML = '';
+            values.forEach(function(v) {
+                const opt = document.createElement('option');
+                opt.value = v.value || '';
+                if (v.code) opt.label = v.code;
+                dl.appendChild(opt);
+            });
+        })
+        .catch(function() { /* silent */ });
+});
+</script>
+{% endblock %}
