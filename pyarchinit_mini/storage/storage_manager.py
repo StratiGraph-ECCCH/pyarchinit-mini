@@ -33,6 +33,8 @@ except ImportError:
     # simply won't be registered by default until it exists.
     LocalBackend = None
 
+from .credentials import CredentialsManager
+
 
 class StorageManager:
     """
@@ -64,9 +66,10 @@ class StorageManager:
         Initialize the storage manager.
 
         Args:
-            credentials_manager: Optional credentials manager for remote backends
+            credentials_manager: Optional credentials manager for remote backends.
+                Defaults to a new CredentialsManager() when not provided.
         """
-        self.credentials_manager = credentials_manager
+        self.credentials_manager = credentials_manager or CredentialsManager()
         self._backend_cache: Dict[str, StorageBackend] = {}
 
         # Register default backends
