@@ -59,4 +59,18 @@ psutil>=5.9.0
 passlib[bcrypt]>=1.7.0
 bcrypt>=3.2.0,<4.0.0
 python-jose[cryptography]>=3.3.0
+
+# Cryptography: REQUIRED by storage/crypto.py for Fernet key operations
 cryptography>=41.0.0
+
+# Optional storage backends
+# Install these to enable specific backends; missing deps gracefully disable that backend.
+# Run: pip install pyarchinit-mini[s3] (or [webdav], [dropbox], [cloudinary], [gdrive], [unibo])
+boto3>=1.26.0               # Amazon S3 and Cloudflare R2
+webdavclient3>=3.14.0       # WebDAV
+dropbox>=11.36.0            # Dropbox
+cloudinary>=1.33.0          # Cloudinary
+google-auth>=2.20.0         # Google authentication
+google-auth-oauthlib>=1.0.0 # Google OAuth
+google-auth-httplib2>=0.2.0 # Google HTTP transport
+google-api-python-client>=2.80.0  # Google Drive API
