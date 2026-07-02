@@ -15,6 +15,7 @@ from .user import User, UserRole
 from .pottery import Pottery
 from .app_setting import AppSetting
 from .ai_chat import AIConversation, AIMessage
+from .storage_config import StorageConfig
 
 __all__ = [
     "BaseModel",
@@ -40,4 +41,5 @@ __all__ = [
     "AppSetting",
     "AIConversation",
     "AIMessage",
+    "StorageConfig",
 ]
