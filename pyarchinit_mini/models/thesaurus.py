@@ -291,4 +291,27 @@ THESAURUS_MAPPINGS = {
         ],
         'wheel_made': ['Yes', 'No', 'Indeterminate'],
     },
+    'tomba_table': {
+        'rito': [
+            'Inumazione', 'Cremazione', 'Incinerazione'
+        ],
+        'tipo_sepoltura': [
+            'Fossa terragna', 'Cassa', 'Sarcofago', 'Enchytrismos', 'A cappuccina'
+        ],
+        'tipo_deposizione': [
+            'Primaria', 'Secondaria', 'Supina', 'Prona', 'Rannicchiata'
+        ],
+        'copertura_tipo': [
+            'Tegole', 'Lastre', 'Laterizi', 'Assente'
+        ],
+        'tipo_contenitore_resti': [
+            'Anfora', 'Olla', 'Cassa lignea', 'Assente'
+        ],
+        'stato_di_conservazione': [
+            'Ottimo', 'Buono', 'Discreto', 'Cattivo', 'Frammentario'
+        ],
+        'corredo_presenza': [
+            'Sì', 'No', 'Parziale'
+        ]
+    },
 }
