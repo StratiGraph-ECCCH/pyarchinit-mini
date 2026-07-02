@@ -825,7 +825,7 @@ class DatabaseMigrations:
             try:
                 from .m_2026_07_media_plugin_schema import migrate as _migrate_media_schema
                 media_result = _migrate_media_schema(self.connection.engine)
-                if media_result.get("status") == "migrated":
+                if media_result.get("status") in ("migrated", "data_migrated"):
                     total_migrations += 1
                 logger.info(f"Media plugin-schema migration: {media_result}")
             except Exception as e:
