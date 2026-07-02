@@ -29,7 +29,7 @@ class MediaHandler:
 
         # Legacy media layout — retained so the desktop GUI media manager
         # (deferred for schema alignment) keeps working via the old methods.
-        self.base_media_path = Path.home() / ".pyarchinit_mini" / "media"
+        self.base_media_path = self.media_root
         self.images_path = self.base_media_path / "images"
         self.documents_path = self.base_media_path / "documents"
         self.videos_path = self.base_media_path / "videos"
