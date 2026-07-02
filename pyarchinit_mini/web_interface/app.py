@@ -5026,6 +5026,7 @@ def create_app():
 
     @app.route('/tomba/<int:tomba_id>', methods=['GET', 'POST'])
     @login_required
+    @write_permission_required
     def tomba_edit(tomba_id):
         tomba = tomba_service.get_tomba(tomba_id)
         if not tomba:

@@ -16,18 +16,27 @@ Covers the behaviors requested for Task 5:
   1. Authenticated GET /tomba -> 200
   2. POST /tomba/new with {sito, rito} -> redirect (302) and the record is
      retrievable via tomba_service
-  3. GET /tomba/<id> -> 200, shows the rito
+  3. GET /tomba/<id> -> 200, shows the rito (write-permission user)
   4. GET /api/tomba/thesaurus/rito -> 200 JSON list
   5. POST /tomba/<id>/delete -> record gone
+
+Security fix (see task-5-report.md follow-up): tomba_edit (GET/POST
+/tomba/<id>) is now gated with @write_permission_required on the whole
+view — the same convention app.py already uses for edit_us and
+edit_inventario — so a VIEWER (no write permission) is redirected away
+for both the GET (edit form) and the POST (mutation) branch:
+  6. GET  /tomba/<id> as a VIEWER -> redirect, form not shown
+  7. POST /tomba/<id> as a VIEWER -> redirect, record left unmutated
 
 Not covered (documented, not asserted): media upload end-to-end (already
 covered generically for the 'tomba' entity_map key by
 tests/media/test_web_media_routes.py's upload/list/serve/delete flow for
 'us'; a tomba-specific repeat would just re-exercise the same MediaHandler
-code path with a different entity_type string) and unauthenticated/
-non-write-permission 403 behavior (write_permission_required's exact
-rejection semantics are already unit/integration-tested elsewhere, e.g.
-tests/media/test_web_media_routes.py and auth_routes tests).
+code path with a different entity_type string) and non-write-permission
+behavior on tomba_create/tomba_delete/tomba_media_upload specifically
+(write_permission_required's rejection semantics are already exercised
+above for tomba_edit and elsewhere, e.g. tests/media/test_web_media_routes.py
+and tests/storage/test_settings_storage_route.py).
 """
 import os
 import tempfile
@@ -185,6 +194,7 @@ def flask_app(db_manager, media_service, tomba_service, user_service):
     # ---- /tomba/<id> (mirrors app.py's tomba_edit) ----
     @app.route('/tomba/<int:tomba_id>', methods=['GET', 'POST'])
     @login_required
+    @write_permission_required
     def tomba_edit(tomba_id):
         tomba = tomba_service.get_tomba(tomba_id)
         if not tomba:
@@ -271,6 +281,24 @@ def logged_in_client(client, write_user):
     return client
 
 
+@pytest.fixture
+def viewer_user(user_service):
+    """A VIEWER-role user (read-only, no write/create permission)."""
+    user = user_service.create_user(
+        username="viewer1", email="viewer1@example.com", password="secret123",
+        full_name="Viewer One", role=UserRole.VIEWER,
+    )
+    return user  # dict — see UserService.create_user / _user_to_dict
+
+
+@pytest.fixture
+def viewer_client(client, viewer_user):
+    """Test client with a real flask-login session for a no-write-permission user."""
+    r = client.get(f"/_test/login/{viewer_user['id']}")
+    assert r.status_code == 200
+    return client
+
+
 # --------------------------------------------------------------------------
 # Tests
 # --------------------------------------------------------------------------
@@ -299,6 +327,30 @@ def test_edit_page_shows_rito(logged_in_client, tomba_service):
     r = logged_in_client.get(f"/tomba/{tid}")
     assert r.status_code == 200
     assert b"Cremazione" in r.data
+
+
+def test_edit_post_by_viewer_is_denied_and_does_not_mutate(viewer_client, tomba_service):
+    """A VIEWER (no write permission) must not be able to mutate a tomba via
+    POST /tomba/<id> — write_permission_required should redirect the request
+    away before tomba_service.update_tomba() is ever called."""
+    tid = tomba_service.create_tomba({"sito": "Volterra", "rito": "Cremazione"})
+    r = viewer_client.post(
+        f"/tomba/{tid}",
+        data={"sito": "Volterra", "rito": "Inumazione"},
+        follow_redirects=False,
+    )
+    assert r.status_code in (302, 303)
+    # The record must be unchanged - the write attempt was blocked, not applied.
+    assert tomba_service.get_tomba(tid)["rito"] == "Cremazione"
+
+
+def test_edit_get_by_viewer_is_denied(viewer_client, tomba_service):
+    """GET /tomba/<id> is gated the same way as edit_us/edit_inventario in
+    app.py: @write_permission_required sits on the whole view, so a VIEWER
+    is redirected away even for read access to the edit form."""
+    tid = tomba_service.create_tomba({"sito": "Volterra", "rito": "Cremazione"})
+    r = viewer_client.get(f"/tomba/{tid}", follow_redirects=False)
+    assert r.status_code in (302, 303)
 
 
 def test_thesaurus_api_returns_200_json_list(logged_in_client):
