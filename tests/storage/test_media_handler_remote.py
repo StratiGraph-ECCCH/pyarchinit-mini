@@ -55,3 +55,22 @@ def test_make_thumbnails_local_unchanged(tmp_path):
     import os
     assert os.path.isfile(t["thumb_path"]) and os.path.isfile(t["resize_path"])
     assert "://" not in t["thumb_path"] and "://" not in t["resize_path"]
+
+
+def test_store_original_raises_on_failed_remote_write(tmp_path):
+    import pytest
+    class FailManager:
+        def write(self, path, data):
+            return False
+    h = MediaHandler(media_root="s3://b/m", thumb_path="s3://b/t", thumb_resize="s3://b/r",
+                     storage_manager=FailManager())
+    with pytest.raises(IOError):
+        h.store_original(_png(tmp_path))
+
+
+def test_store_original_raises_when_remote_but_no_manager(tmp_path):
+    import pytest
+    h = MediaHandler(media_root="s3://b/m", thumb_path="s3://b/t", thumb_resize="s3://b/r",
+                     storage_manager=None)
+    with pytest.raises(RuntimeError):
+        h.store_original(_png(tmp_path))

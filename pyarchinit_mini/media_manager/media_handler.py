@@ -96,8 +96,12 @@ class MediaHandler:
         info = self._analyze_file(src)
         if self._is_remote(self.media_root):
             dest_path = f"{str(self.media_root).rstrip('/')}/{filename}"
+            if self.storage_manager is None:
+                raise RuntimeError(f"remote root configured but no storage_manager: {dest_path}")
             with open(src, "rb") as f:
-                self.storage_manager.write(dest_path, f.read())
+                data = f.read()
+            if not self.storage_manager.write(dest_path, data):
+                raise IOError(f"storage backend write failed: {dest_path}")
         else:
             dest_path = self.media_root / filename
             shutil.copy2(src, dest_path)
@@ -139,10 +143,13 @@ class MediaHandler:
         """
         if self._is_remote(root):
             target = f"{str(root).rstrip('/')}/{filename}"
+            if self.storage_manager is None:
+                raise RuntimeError(f"remote root configured but no storage_manager: {target}")
             buf = io.BytesIO()
             to_save = image.convert("RGB") if image.mode not in ("RGB", "L") else image
             to_save.save(buf, format="JPEG")
-            self.storage_manager.write(target, buf.getvalue())
+            if not self.storage_manager.write(target, buf.getvalue()):
+                raise IOError(f"storage backend write failed: {target}")
             return target
         full = Path(root) / filename
         image.save(full)
