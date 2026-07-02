@@ -142,25 +142,25 @@
           <div class="col-md-3 mb-3">
             <div class="card h-100">
               <div class="card-body text-center">
-                {% if media.media_type == 'image' and media.media_path %}
-                  <a href="/media/{{ media.media_filename if media.media_filename and '/' in media.media_filename else media.media_path }}"
+                {% if media.media_type == 'image' and media.url %}
+                  <a href="{{ media.url }}"
                      class="glightbox" data-gallery="pottery-gallery"
                      data-title="{{ media.media_name }}"
                      data-description="{{ media.description if media.description else '' }}">
-                    <img src="/media/{{ media.media_path }}"
+                    <img src="{{ media.thumb_url or media.url }}"
                          alt="{{ media.media_name }}"
                          class="img-fluid mb-2"
                          style="max-height: 150px; object-fit: cover; cursor: pointer;"
                          onerror="this.parentElement.innerHTML='<i class=\'fas fa-image fa-3x text-muted mb-2\'></i>'">
                   </a>
                 {% elif media.media_type == 'document' %}
-                  <a href="/media/{{ media.media_filename if media.media_filename and '/' in media.media_filename else media.media_path }}"
+                  <a href="{{ media.url }}"
                      class="glightbox" data-type="iframe" data-gallery="pottery-docs"
                      data-title="{{ media.media_name }}">
                     <i class="fas fa-file-pdf fa-3x text-danger mb-2" style="cursor: pointer;"></i>
                   </a>
                 {% elif media.media_type == 'video' %}
-                  <a href="/media/{{ media.media_filename if media.media_filename and '/' in media.media_filename else media.media_path }}"
+                  <a href="{{ media.url }}"
                      class="glightbox" data-type="video" data-gallery="pottery-videos"
                      data-title="{{ media.media_name }}">
                     <i class="fas fa-video fa-3x text-primary mb-2" style="cursor: pointer;"></i>
@@ -181,10 +181,10 @@
               </div>
               <div class="card-footer text-center">
                 <div class="btn-group btn-group-sm">
-                  <a href="/media/{{ media.media_filename if media.media_filename and '/' in media.media_filename else media.media_path }}" target="_blank" class="btn btn-primary" title="View">
+                  <a href="{{ media.url }}" target="_blank" class="btn btn-primary" title="View">
                     <i class="fas fa-eye"></i>
                   </a>
-                  <a href="/media/{{ media.media_filename if media.media_filename and '/' in media.media_filename else media.media_path }}" download="{{ media.media_name }}" class="btn btn-success" title="Download">
+                  <a href="{{ media.url }}" download="{{ media.media_name }}" class="btn btn-success" title="Download">
                     <i class="fas fa-download"></i>
                   </a>
                   <form method="POST"

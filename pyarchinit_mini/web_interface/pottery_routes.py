@@ -78,11 +78,12 @@ def _register_pottery_routes(app):
         ids = [p.id_rep for p in items]
         media_ids: set[int] = set()
         if ids:
-            from ..models.media import Media
+            from ..models.media import MediaToEntity
             with app.db_manager.connection.get_session() as session:
                 rows = (
-                    session.query(Media.entity_id)
-                    .filter(Media.entity_type == "pottery", Media.entity_id.in_(ids))
+                    session.query(MediaToEntity.id_entity)
+                    .filter(MediaToEntity.table_name == "pottery_table",
+                            MediaToEntity.id_entity.in_(ids))
                     .distinct()
                     .all()
                 )
@@ -149,7 +150,16 @@ def _register_pottery_routes(app):
             try:
                 from ..services.media_service import MediaService
                 msvc = MediaService(app.db_manager)
-                return msvc.get_media_by_entity("pottery", id_rep)
+                items = msvc.get_media_by_entity("pottery", id_rep)
+                return [{
+                    "id_media": m.id_media,
+                    "media_name": m.filename,
+                    "media_type": m.mediatype,
+                    "description": m.descrizione,
+                    "filepath": m.filepath,
+                    "url": msvc.public_url(m.filepath),
+                    "thumb_url": msvc.thumb_url(m.id_media),
+                } for m in items]
             except Exception:
                 return []
 

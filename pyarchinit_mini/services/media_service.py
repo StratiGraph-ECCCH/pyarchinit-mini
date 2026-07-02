@@ -89,6 +89,10 @@ class MediaService:
                 s.expunge(r)
             return rows
 
+    def get_media_by_entity(self, entity_key, id_entity, page=1, size=10):
+        """Back-compat alias for get_media_for_entity (page/size ignored)."""
+        return self.get_media_for_entity(entity_key, id_entity)
+
     def get_media_for_entity_ids(self, entity_key, entity_ids):
         result = {eid: [] for eid in entity_ids}
         for eid in entity_ids:

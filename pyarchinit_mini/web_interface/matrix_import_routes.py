@@ -205,9 +205,9 @@ def apply():
 def _save_image_for_site(db, sito: str, image_b64: str) -> None:
     """Best-effort: persist the source image as a Media row linked to the site.
 
-    Uses MediaService.store_and_register_media via a temporary file. Looks up
-    id_sito by sito name; if MediaService isn't wired into this app context,
-    silently no-ops (the import already committed).
+    Uses MediaService.add_media via a temporary file. Looks up id_sito by
+    sito name; if MediaService isn't wired into this app context, silently
+    no-ops (the import already committed).
     """
     import tempfile
     from sqlalchemy import text as _text
@@ -228,11 +228,11 @@ def _save_image_for_site(db, sito: str, image_b64: str) -> None:
         media_svc = current_app.extensions.get("media_service")
         if media_svc is None:
             return
-        media_svc.store_and_register_media(
+        media_svc.add_media(
             tmp_path,
-            entity_type="site",
-            entity_id=id_sito,
-            description="AI Matrix Import source",
+            "site",
+            id_sito,
+            descrizione="AI Matrix Import source",
             tags="matrix_source,ai_import",
         )
     finally:

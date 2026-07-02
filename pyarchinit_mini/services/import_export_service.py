@@ -2564,7 +2564,7 @@ class ImportExportService:
             ('us_table', 'id_us'),
             ('inventario_materiali_table', 'id_invmat'),
             ('media_table', 'id_media'),
-            ('media_thumb_table', 'id_thumb'),
+            ('media_thumb_table', 'id_media_thumb'),
             ('documentation_table', 'id_doc'),
             ('users', 'id'),
             ('datazioni_table', 'id_datazione'),
