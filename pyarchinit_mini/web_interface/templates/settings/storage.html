@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Media Storage Settings') }}{% endblock %}
+{% block content %}
+<div class="container mt-3">
+  <h1><i class="fas fa-cloud"></i> {{ _('Media Storage Settings') }}</h1>
+  <p class="text-muted">
+    {{ _('Credentials are stored encrypted at rest and are never shown again after saving. Leave a field blank to keep its current value.') }}
+  </p>
+
+  <form method="post" action="{{ url_for('settings_storage') }}" id="storage-settings-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">{{ _('Paths') }}</h5>
+        <div class="mb-3">
+          <label class="form-label" for="media_root">{{ _('Media root') }}</label>
+          <input class="form-control" id="media_root" name="media_root" type="text"
+                 value="{{ media_root }}"
+                 placeholder="/data/media  |  s3://bucket/media  |  unibo://project/folder  |  webdav://server/path">
+          <small class="text-muted">{{ _('Local path or scheme-prefixed URI (s3://, r2://, unibo://, webdav://, gdrive://, dropbox://, cloudinary://, http(s)://).') }}</small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="thumb_path">{{ _('Thumbnail path') }}</label>
+          <input class="form-control" id="thumb_path" name="thumb_path" type="text"
+                 value="{{ thumb_path }}" placeholder="/data/media/thumb  |  s3://bucket/thumb">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="thumb_resize">{{ _('Resized thumbnail path') }}</label>
+          <input class="form-control" id="thumb_resize" name="thumb_resize" type="text"
+                 value="{{ thumb_resize }}" placeholder="/data/media/thumb_resize  |  s3://bucket/thumb_resize">
+        </div>
+      </div>
+    </div>
+
+    {% for backend_key, defn in backends.items() %}
+    <fieldset class="card mb-3" data-backend="{{ backend_key }}">
+      <div class="card-body">
+        <legend class="card-title h5">
+          {{ defn.label }}
+          {% if configured.get(backend_key) %}
+            <span class="badge bg-success">{{ _('Configured') }}</span>
+          {% endif %}
+        </legend>
+        <p class="text-muted small mb-2"><code>{{ defn.scheme_hint }}</code></p>
+
+        <div class="row">
+          {% for field in defn.fields %}
+          {% set input_name = backend_key ~ '_' ~ field %}
+          <div class="col-md-6 mb-3">
+            <label class="form-label" for="{{ input_name }}">{{ field.replace('_', ' ') | title }}</label>
+            {% if field in defn.checkboxes %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="{{ input_name }}" name="{{ input_name }}" value="1">
+              <label class="form-check-label" for="{{ input_name }}">{{ _('Enabled') }}</label>
+            </div>
+            {% else %}
+            <input class="form-control"
+                   id="{{ input_name }}" name="{{ input_name }}"
+                   type="{{ 'password' if field in defn.secret_fields else 'text' }}"
+                   autocomplete="off"
+                   placeholder="{{ _('Leave blank to keep existing') if configured.get(backend_key) else '' }}">
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+
+        <button type="button" class="btn btn-outline-secondary btn-sm storage-test-btn" data-backend="{{ backend_key }}">
+          <i class="fas fa-plug"></i> {{ _('Test connection') }}
+        </button>
+        {% if 'r2' in defn.get('mirror_to', []) %}
+        <button type="button" class="btn btn-outline-secondary btn-sm storage-test-btn" data-backend="r2" data-fieldset-backend="{{ backend_key }}">
+          <i class="fas fa-plug"></i> {{ _('Test as R2') }}
+        </button>
+        {% endif %}
+        <span class="storage-test-result ms-2"></span>
+      </div>
+    </fieldset>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ _('Save') }}</button>
+  </form>
+</div>
+
+<script>
+(function () {
+  var csrfToken = document.querySelector('#storage-settings-form input[name="csrf_token"]').value;
+
+  document.querySelectorAll('.storage-test-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var testBackend = btn.getAttribute('data-backend');
+      var fieldsetBackend = btn.getAttribute('data-fieldset-backend') || testBackend;
+      var fieldset = document.querySelector('fieldset[data-backend="' + fieldsetBackend + '"]');
+      var resultSpan = fieldset.querySelector('.storage-test-result');
+      var mediaRoot = document.getElementById('media_root').value;
+
+      var formData = new FormData();
+      formData.append('media_root', mediaRoot);
+      fieldset.querySelectorAll('input').forEach(function (input) {
+        if (input.type === 'checkbox') {
+          if (input.checked) formData.append(input.name, '1');
+        } else {
+          formData.append(input.name, input.value);
+        }
+      });
+
+      resultSpan.textContent = '{{ _("Testing...") }}';
+      resultSpan.className = 'storage-test-result ms-2 text-muted';
+
+      fetch('/settings/storage/test/' + encodeURIComponent(testBackend), {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrfToken },
+        body: formData,
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          resultSpan.textContent = data.message || (data.ok ? 'OK' : 'Failed');
+          resultSpan.className = 'storage-test-result ms-2 ' + (data.ok ? 'text-success' : 'text-danger');
+        })
+        .catch(function (err) {
+          resultSpan.textContent = 'Error: ' + err;
+          resultSpan.className = 'storage-test-result ms-2 text-danger';
+        });
+    });
+  });
+})();
+</script>
+{% endblock %}

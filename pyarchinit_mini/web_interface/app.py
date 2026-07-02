@@ -34,6 +34,7 @@ from pyarchinit_mini.services.relationship_sync_service import RelationshipSyncS
 from pyarchinit_mini.services.datazione_service import DatazioneService
 from pyarchinit_mini.services.media_service import MediaService
 from pyarchinit_mini.services.import_export_service import ImportExportService
+from pyarchinit_mini.services.storage_config_service import StorageConfigService
 from pyarchinit_mini.harris_matrix.matrix_generator import HarrisMatrixGenerator
 # MatrixVisualizer and PyArchInitMatrixVisualizer are lazy-loaded on first use
 # (matplotlib import is very slow; defer until Harris Matrix is actually accessed)
@@ -394,6 +395,93 @@ def _backup_scheduler_loop(app):
         _backup_time_module.sleep(3600)  # check every hour
 
 
+# ---------------------------------------------------------------------------
+# /settings/storage — per-backend credential field definitions.
+#
+# Field names MUST match the storage backends' ``credentials.get(...)`` keys
+# exactly (see pyarchinit_mini/storage/backends/*.py and credentials.py).
+# Shared by the real route (below) and by tests that hand-copy the route body.
+# ---------------------------------------------------------------------------
+STORAGE_BACKEND_DEFS = {
+    'unibo': {
+        'label': 'Unibo File Manager',
+        'scheme_hint': 'unibo://project_code/folder',
+        'fields': ['server_url', 'username', 'password', 'project_code', 'base_folder', 'verify_ssl'],
+        'checkboxes': {'verify_ssl'},
+        'secret_fields': {'password'},
+    },
+    'cloudinary': {
+        'label': 'Cloudinary',
+        'scheme_hint': 'cloudinary://folder',
+        'fields': ['cloud_name', 'api_key', 'api_secret', 'folder', 'auto_tagging'],
+        'checkboxes': {'auto_tagging'},
+        'secret_fields': {'api_key', 'api_secret'},
+    },
+    'gdrive': {
+        'label': 'Google Drive',
+        'scheme_hint': 'gdrive://folder',
+        'fields': ['client_id', 'client_secret', 'refresh_token'],
+        'checkboxes': set(),
+        'secret_fields': {'client_secret', 'refresh_token'},
+    },
+    'dropbox': {
+        'label': 'Dropbox',
+        'scheme_hint': 'dropbox://folder',
+        'fields': ['access_token', 'app_key', 'app_secret'],
+        'checkboxes': set(),
+        'secret_fields': {'access_token', 'app_secret'},
+    },
+    's3': {
+        'label': 'Amazon S3 / Cloudflare R2',
+        'scheme_hint': 's3://bucket/media  (or  r2://bucket/media)',
+        'fields': ['access_key', 'secret_key', 'region', 'endpoint', 'account_id'],
+        'checkboxes': set(),
+        'secret_fields': {'access_key', 'secret_key'},
+        # S3 and R2 share one credential set entered once in the UI, saved
+        # under both StorageType keys so either scheme works out of the box.
+        'mirror_to': ['r2'],
+    },
+    'webdav': {
+        'label': 'WebDAV',
+        'scheme_hint': 'webdav://server/path',
+        'fields': ['username', 'password', 'verify_ssl'],
+        'checkboxes': {'verify_ssl'},
+        'secret_fields': {'password'},
+    },
+    'http': {
+        'label': 'HTTP(S)',
+        'scheme_hint': 'http(s)://server/path',
+        'fields': ['api_key', 'username', 'password', 'bearer_token'],
+        'checkboxes': set(),
+        'secret_fields': {'api_key', 'password', 'bearer_token'},
+    },
+}
+
+# Backend keys accepted by POST /settings/storage/test/<backend> — includes
+# 'r2' even though it has no dedicated fieldset (it shares the 's3' one).
+STORAGE_TESTABLE_BACKENDS = set(STORAGE_BACKEND_DEFS.keys()) | {'r2'}
+
+
+def _storage_merge_backend_fields(request_form, existing_creds, prefix, fields, checkboxes):
+    """Merge posted per-backend fields with what's already stored.
+
+    A blank text/password field keeps the previously-saved value (so the UI
+    never needs to re-render a secret to let the admin leave it unchanged).
+    Checkboxes have no "blank" state, so they always take the submitted
+    on/off value.
+    """
+    merged = dict(existing_creds or {})
+    for field in fields:
+        form_key = f"{prefix}_{field}"
+        if field in checkboxes:
+            merged[field] = "true" if request_form.get(form_key) else "false"
+        else:
+            posted = (request_form.get(form_key) or "").strip()
+            if posted:
+                merged[field] = posted
+    return merged
+
+
 def create_app():
     # Declare global variables for database and services
     # This allows switch_database() to access and modify them
@@ -552,6 +640,7 @@ def create_app():
     pdf_generator = PDFGenerator()
     media_handler = MediaHandler()
     media_service = MediaService(db_manager, media_handler)
+    storage_service = StorageConfigService(db_manager)
 
     def _media_gallery(entity_key, id_entity):
         """Template-ready media descriptors (url/thumb_url resolved) for an entity."""
@@ -579,6 +668,7 @@ def create_app():
     app.matrix_generator = matrix_generator
     app.export_import_service = export_import_service
     app.media_service = media_service
+    app.storage_service = storage_service
 
     # Initialize Flask-Login
     init_login_manager(app, user_service)
@@ -5809,6 +5899,97 @@ def create_app():
             ai_provider=svc.get("ai_provider") or "openai",
             ai_model=svc.get("ai_model") or "",
         )
+
+    # ===== Settings: Media Storage =====
+    @app.route("/settings/storage", methods=["GET", "POST"])
+    @admin_required
+    def settings_storage():
+        cfg = storage_service.get()
+        existing_creds = cfg.get("credentials") or {}
+
+        if request.method == "POST":
+            media_root = request.form.get("media_root", "").strip()
+            thumb_path = request.form.get("thumb_path", "").strip()
+            thumb_resize = request.form.get("thumb_resize", "").strip()
+
+            # Merge posted per-backend fields with what's already stored —
+            # a blank field keeps the existing (encrypted) value so secrets
+            # never have to round-trip through the browser.
+            credentials_out = dict(existing_creds)
+            for backend_key, defn in STORAGE_BACKEND_DEFS.items():
+                merged = _storage_merge_backend_fields(
+                    request.form, existing_creds.get(backend_key, {}),
+                    backend_key, defn["fields"], defn["checkboxes"],
+                )
+                credentials_out[backend_key] = merged
+                for alias in defn.get("mirror_to", []):
+                    credentials_out[alias] = merged
+
+            try:
+                storage_service.save(media_root, thumb_path, thumb_resize, credentials_out)
+                flash("Storage settings saved.", "success")
+            except RuntimeError:
+                flash("Set PYARCHINIT_SECRET_KEY to store credentials.", "error")
+            return redirect(url_for("settings_storage"))
+
+        configured = {k: bool(v) for k, v in existing_creds.items()}
+        return render_template(
+            "settings/storage.html",
+            media_root=cfg.get("media_root") or "",
+            thumb_path=cfg.get("thumb_path") or "",
+            thumb_resize=cfg.get("thumb_resize") or "",
+            backends=STORAGE_BACKEND_DEFS,
+            configured=configured,
+        )
+
+    @app.route("/settings/storage/test/<backend>", methods=["POST"])
+    @admin_required
+    def settings_storage_test(backend):
+        """AJAX: build the given backend from the posted (unsaved) credential
+        fields and try to connect. Always returns JSON — never raises to the
+        client, even for unknown backends or missing optional dependencies."""
+        from pyarchinit_mini.storage.base_backend import StorageType
+        from pyarchinit_mini.storage.storage_manager import StorageManager
+
+        if backend not in STORAGE_TESTABLE_BACKENDS:
+            return jsonify({"ok": False, "message": f"Unknown backend '{backend}'"}), 400
+
+        # 'r2' has no dedicated fieldset - it shares the 's3' one.
+        prefix = "s3" if backend == "r2" else backend
+        defn = STORAGE_BACKEND_DEFS.get(prefix, STORAGE_BACKEND_DEFS["s3"])
+
+        fields = {}
+        for field in defn["fields"]:
+            form_key = f"{prefix}_{field}"
+            if field in defn["checkboxes"]:
+                fields[field] = "true" if request.form.get(form_key) else "false"
+            else:
+                val = (request.form.get(form_key) or "").strip()
+                if val:
+                    fields[field] = val
+
+        try:
+            storage_type = StorageType(backend)
+            mgr = StorageManager()
+            mgr.credentials_manager.set_credentials(storage_type, fields)
+
+            # Prefer the real target the admin typed into media_root (if it
+            # matches this backend's scheme) so the test hits the actual
+            # server; otherwise fall back to a harmless placeholder path.
+            probe_path = request.form.get("media_root", "").strip()
+            if not probe_path.lower().startswith(f"{backend}://"):
+                probe_path = f"{backend}://probe"
+
+            backend_obj = mgr.get_backend(probe_path, connect=True)
+            ok = bool(getattr(backend_obj, "_connected", False))
+            message = "Connected successfully." if ok else "Connection failed - check credentials."
+            return jsonify({"ok": ok, "message": message})
+        except Exception as e:
+            return jsonify({"ok": False, "message": str(e)})
+
+    # JSON endpoint used by an in-page fetch() call - exempt from CSRF like
+    # the other JSON API routes in this app (see csrf.exempt(...) above).
+    csrf.exempt(settings_storage_test)
 
     # ===== Admin: Backups =====
     @app.route("/admin/backups", methods=["GET"])
