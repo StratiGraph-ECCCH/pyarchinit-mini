@@ -15,31 +15,63 @@ class MediaHandler:
     Handles media file operations, storage, and organization
     """
     
-    def __init__(self, base_media_path: str = None):
-        # Use centralized media directory by default
-        if base_media_path is None:
-            base_media_path = str(Path.home() / '.pyarchinit_mini' / 'media')
+    def __init__(self, media_root: str = None, thumb_path: str = None, thumb_resize: str = None):
+        home = os.environ.get("PYARCHINIT_HOME")
+        default_media = (os.path.join(home, "pyarchinit_Media_folder") if home
+                         else str(Path.home() / ".pyarchinit_mini" / "media"))
+        self.media_root = Path(media_root or os.environ.get("PYARCHINIT_MEDIA_ROOT") or default_media)
+        self.thumb_path = Path(thumb_path or os.environ.get("PYARCHINIT_THUMB_PATH")
+                               or (self.media_root / "thumb"))
+        self.thumb_resize = Path(thumb_resize or os.environ.get("PYARCHINIT_THUMB_RESIZE")
+                                 or (self.media_root / "thumb_resize"))
+        for p in (self.media_root, self.thumb_path, self.thumb_resize):
+            p.mkdir(parents=True, exist_ok=True)
 
-        self.base_media_path = Path(base_media_path)
-        self.base_media_path.mkdir(parents=True, exist_ok=True)
+    @property
+    def thumb_base(self) -> str:
+        return str(self.thumb_path)
 
-        # Create subdirectories for media types
-        self.images_path = self.base_media_path / "images"
-        self.documents_path = self.base_media_path / "documents"
-        self.videos_path = self.base_media_path / "videos"
-        self.models_path = self.base_media_path / "3d_models"
-        self.thumbnails_path = self.base_media_path / "thumbnails"
+    def store_original(self, file_path: str) -> Dict[str, Any]:
+        """Copy the source file into the media folder (plugin convention) and describe it."""
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"File not found: {file_path}")
+        src = Path(file_path)
+        filename = src.name
+        filetype = src.suffix.lower().lstrip(".")
+        info = self._analyze_file(src)
+        dest_path = self.media_root / filename
+        shutil.copy2(src, dest_path)
+        return {
+            "filename": filename,
+            "filetype": filetype,
+            "mediatype": info["media_type"],
+            "dest_path": str(dest_path),
+        }
 
-        # Create subdirectories for system operations
-        self.logs_path = self.base_media_path / "logs"
-        self.backup_path = self.base_media_path / "backup"
-        self.export_path = self.base_media_path / "export"
+    def make_thumbnails(self, source_file: str, id_media: int, filename: str) -> Optional[Dict[str, str]]:
+        """Generate 200x200 + 600x600 thumbnails named thumb_<id_media>_<filename>."""
+        try:
+            if self._determine_media_type(None, Path(filename)) != "image" and \
+               not (mimetypes.guess_type(filename)[0] or "").startswith("image/"):
+                return None
+            thumb_filename = f"thumb_{id_media}_{filename}"
+            thumb_full = self.thumb_path / thumb_filename
+            resize_full = self.thumb_resize / thumb_filename
+            with Image.open(source_file) as im:
+                small = im.copy(); small.thumbnail((200, 200), Image.Resampling.LANCZOS)
+                small.save(thumb_full)
+            with Image.open(source_file) as im:
+                big = im.copy(); big.thumbnail((600, 600), Image.Resampling.LANCZOS)
+                big.save(resize_full)
+            return {
+                "media_thumb_filename": thumb_filename,
+                "thumb_path": str(thumb_full),
+                "resize_path": str(resize_full),
+            }
+        except Exception as e:
+            print(f"Error generating thumbnail: {e}")
+            return None
 
-        for path in [self.images_path, self.documents_path, self.videos_path,
-                     self.models_path, self.thumbnails_path, self.logs_path,
-                     self.backup_path, self.export_path]:
-            path.mkdir(parents=True, exist_ok=True)
-    
     def store_file(self, file_path: str, entity_type: str, entity_id: int,
                    description: str = "", tags: str = "", author: str = "") -> Dict[str, Any]:
         """
