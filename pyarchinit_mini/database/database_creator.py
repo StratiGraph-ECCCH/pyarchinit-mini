@@ -28,7 +28,8 @@ def _import_all_models():
     from ..models.datazione import Datazione
     from ..models.thesaurus import ThesaurusSigle, ThesaurusField, ThesaurusCategory
     from ..models.media import Media
-    
+    from ..models.tomba import Tomba  # noqa: F401
+
     return Base
 
 
