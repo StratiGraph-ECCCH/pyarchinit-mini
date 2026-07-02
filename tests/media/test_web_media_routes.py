@@ -15,6 +15,11 @@ Covers the four behaviors requested for Task 8:
   2. GET /media/list -> 200, filename appears
   3. GET /media/serve?p=<abs path> -> 200, image bytes
   4. POST /media/delete/<id> -> media gone from /media/list
+
+Also covers the /media/serve local-path guard (CWE-22 prefix-without-boundary
+fix): a sibling directory that merely shares the media root's string prefix
+(e.g. "<media_root>_backup") must be rejected (403), a path genuinely under a
+root that doesn't exist on disk must 404, and a remote-scheme URI must 501.
 """
 import os
 import tempfile
@@ -317,7 +322,10 @@ def flask_app(db_manager, media_service, media_handler, site_service, us_service
         roots = [str(media_handler.media_root), str(media_handler.thumb_path),
                  str(media_handler.thumb_resize)]
         real = os.path.realpath(p)
-        if not any(real.startswith(os.path.realpath(r)) for r in roots):
+        def _under(root):
+            rr = os.path.realpath(root)
+            return real == rr or real.startswith(rr + os.sep)
+        if not any(_under(r) for r in roots):
             abort(403)
         if not os.path.isfile(real):
             abort(404)
@@ -440,6 +448,42 @@ def test_upload_list_serve_delete_flow(logged_in_client, us_row, test_image):
     resp = client.get("/media/list")
     assert resp.status_code == 200
     assert b"upload_test.png" not in resp.data
+
+
+def test_media_serve_rejects_sibling_path_sharing_root_prefix(logged_in_client, media_handler):
+    """CWE-22 regression: a path outside the media/thumb roots that merely
+    shares the root's *string* prefix (e.g. "<media_root>_backup/...") must
+    be rejected with 403, not accepted by a naive str.startswith() check."""
+    client = logged_in_client
+
+    evil_dir = str(media_handler.media_root) + "_backup"
+    os.makedirs(evil_dir, exist_ok=True)
+    evil_path = os.path.join(evil_dir, "secret.txt")
+    with open(evil_path, "w") as fh:
+        fh.write("should not be servable")
+
+    resp = client.get(f"/media/serve?p={evil_path}")
+    assert resp.status_code == 403
+
+
+def test_media_serve_missing_file_under_root_is_404(logged_in_client, media_handler):
+    """A path that IS genuinely under an allowed root but doesn't exist on
+    disk must 404 (guard passes, existence check fails)."""
+    client = logged_in_client
+
+    os.makedirs(media_handler.media_root, exist_ok=True)
+    missing_path = os.path.join(media_handler.media_root, "does_not_exist.txt")
+
+    resp = client.get(f"/media/serve?p={missing_path}")
+    assert resp.status_code == 404
+
+
+def test_media_serve_remote_scheme_is_501(logged_in_client):
+    """A recognized-but-unimplemented remote scheme returns 501."""
+    client = logged_in_client
+
+    resp = client.get("/media/serve?p=unibo://x/y")
+    assert resp.status_code == 501
 
 
 def _find_uploaded_media(client):

@@ -3079,7 +3079,10 @@ def create_app():
         roots = [str(media_handler.media_root), str(media_handler.thumb_path),
                  str(media_handler.thumb_resize)]
         real = os.path.realpath(p)
-        if not any(real.startswith(os.path.realpath(r)) for r in roots):
+        def _under(root):
+            rr = os.path.realpath(root)
+            return real == rr or real.startswith(rr + os.sep)
+        if not any(_under(r) for r in roots):
             abort(403)
         if not os.path.isfile(real):
             abort(404)
