@@ -6997,6 +6997,143 @@ msgstr "Importa un altro file"
 msgid "Tombe"
 msgstr "Tombe"
 
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:2
+msgid "Tomba"
+msgstr "Tomba"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:7
+msgid "Edit Tomba"
+msgstr "Modifica Tomba"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:7
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:9
+msgid "New Tomba"
+msgstr "Nuova Tomba"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:17
+msgid "Rito e Sepoltura"
+msgstr "Rito e Sepoltura"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:18
+msgid "Corredo"
+msgstr "Corredo"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:37
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:45
+msgid "Nr. Scheda TAF"
+msgstr "Nr. Scheda TAF"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:41
+msgid "Sigla Struttura"
+msgstr "Sigla Struttura"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:45
+msgid "Nr. Struttura"
+msgstr "Nr. Struttura"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:49
+msgid "Nr. Individuo"
+msgstr "Nr. Individuo"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:58
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:44
+msgid "Rito"
+msgstr "Rito"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:63
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:46
+msgid "Tipo Sepoltura"
+msgstr "Tipo Sepoltura"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:68
+msgid "Tipo Deposizione"
+msgstr "Tipo Deposizione"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:73
+msgid "Copertura Tipo"
+msgstr "Copertura Tipo"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:78
+msgid "Tipo Contenitore Resti"
+msgstr "Tipo Contenitore Resti"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:83
+msgid "Stato di Conservazione"
+msgstr "Stato di Conservazione"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:88
+msgid "Segnacoli"
+msgstr "Segnacoli"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:92
+msgid "Canale Libatorio (Sì/No)"
+msgstr "Canale Libatorio (Sì/No)"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:96
+msgid "Oggetti Rinvenuti Esterno"
+msgstr "Oggetti Rinvenuti Esterno"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:100
+msgid "Descrizione TAF"
+msgstr "Descrizione TAF"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:104
+msgid "Interpretazione TAF"
+msgstr "Interpretazione TAF"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:113
+msgid "Corredo Presenza"
+msgstr "Corredo Presenza"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:118
+msgid "Corredo Tipo"
+msgstr "Corredo Tipo"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:122
+msgid "Corredo Descrizione"
+msgstr "Corredo Descrizione"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:131
+msgid "Periodo Iniziale"
+msgstr "Periodo Iniziale"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:135
+msgid "Fase Iniziale"
+msgstr "Fase Iniziale"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:139
+msgid "Periodo Finale"
+msgstr "Periodo Finale"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:143
+msgid "Fase Finale"
+msgstr "Fase Finale"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:147
+msgid "Datazione Estesa"
+msgstr "Datazione Estesa"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:156
+msgid "Tomba Media"
+msgstr "Media Tomba"
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:2
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:6
+msgid "Tombe - Sepolture"
+msgstr "Tombe - Sepolture"
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:18
+msgid "Search by site, rito, struttura, individuo..."
+msgstr "Cerca per sito, rito, struttura, individuo..."
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:64
+msgid "Delete this Tomba record?"
+msgstr "Eliminare questo record Tomba?"
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:97
+msgid "No Tomba records found."
+msgstr "Nessun record Tomba trovato."
+
 #~ msgid "OK"
 #~ msgstr "OK"
 

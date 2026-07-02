@@ -31,11 +31,11 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Area') }}</label>
-                    <input type="text" name="area" class="form-control" value="{{ tomba.area or '' }}">
+                    <input type="number" name="area" class="form-control" value="{{ tomba.area or '' }}">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Nr. Scheda TAF') }}</label>
-                    <input type="text" name="nr_scheda_taf" class="form-control" value="{{ tomba.nr_scheda_taf or '' }}">
+                    <input type="number" name="nr_scheda_taf" class="form-control" value="{{ tomba.nr_scheda_taf or '' }}">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Sigla Struttura') }}</label>
@@ -43,7 +43,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Nr. Struttura') }}</label>
-                    <input type="text" name="nr_struttura" class="form-control" value="{{ tomba.nr_struttura or '' }}">
+                    <input type="number" name="nr_struttura" class="form-control" value="{{ tomba.nr_struttura or '' }}">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Nr. Individuo') }}</label>
@@ -129,19 +129,19 @@
             <div class="row g-2">
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Periodo Iniziale') }}</label>
-                    <input type="text" name="periodo_iniziale" class="form-control" value="{{ tomba.periodo_iniziale or '' }}">
+                    <input type="number" name="periodo_iniziale" class="form-control" value="{{ tomba.periodo_iniziale or '' }}">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Fase Iniziale') }}</label>
-                    <input type="text" name="fase_iniziale" class="form-control" value="{{ tomba.fase_iniziale or '' }}">
+                    <input type="number" name="fase_iniziale" class="form-control" value="{{ tomba.fase_iniziale or '' }}">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Periodo Finale') }}</label>
-                    <input type="text" name="periodo_finale" class="form-control" value="{{ tomba.periodo_finale or '' }}">
+                    <input type="number" name="periodo_finale" class="form-control" value="{{ tomba.periodo_finale or '' }}">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Fase Finale') }}</label>
-                    <input type="text" name="fase_finale" class="form-control" value="{{ tomba.fase_finale or '' }}">
+                    <input type="number" name="fase_finale" class="form-control" value="{{ tomba.fase_finale or '' }}">
                 </div>
                 <div class="col-md-12">
                     <label class="form-label">{{ _('Datazione Estesa') }}</label>

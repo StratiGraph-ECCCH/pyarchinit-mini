@@ -35,3 +35,67 @@ def test_search_matches_text_fields(svc):
     assert len(svc.list_tomba(search="inum")) == 1
     assert svc.count_tomba(search="inum") == 1
     assert svc.list_tomba(search="zzz") == []
+
+
+def test_create_tomba_ignores_mass_assignment_of_managed_fields(svc):
+    """A crafted POST injecting id_tomba/version_number/entity_uuid/sync_status
+    must not be able to force those values — they are BaseModel-managed or
+    the PK, and must be assigned by the DB/model defaults only."""
+    tid = svc.create_tomba({
+        "sito": "S",
+        "id_tomba": 999,
+        "version_number": 42,
+        "entity_uuid": "x",
+        "sync_status": "hacked",
+    })
+    assert tid is not None
+    assert tid != 999
+    row = svc.get_tomba(tid)
+    assert row["id_tomba"] == tid
+    assert row["version_number"] != 42
+    assert row["entity_uuid"] != "x"
+    assert row["sync_status"] != "hacked"
+
+
+def test_update_tomba_ignores_mass_assignment_of_managed_fields(svc):
+    tid = svc.create_tomba({"sito": "S"})
+    original = svc.get_tomba(tid)
+    ok = svc.update_tomba(tid, {
+        "id_tomba": 999,
+        "version_number": 42,
+        "entity_uuid": "x",
+        "sync_status": "hacked",
+        "sito": "Updated",
+    })
+    assert ok is True
+    row = svc.get_tomba(tid)
+    assert row["id_tomba"] == tid  # unchanged, not 999
+    assert row["sito"] == "Updated"  # legitimate field still writable
+    assert row["version_number"] != 42
+    assert row["entity_uuid"] != "x"
+    assert row["sync_status"] != "hacked"
+    assert row["entity_uuid"] == original["entity_uuid"]
+
+
+def test_create_tomba_coerces_integer_string(svc):
+    tid = svc.create_tomba({"sito": "S", "area": "5"})
+    row = svc.get_tomba(tid)
+    assert row["area"] == 5
+    assert isinstance(row["area"], int)
+
+
+def test_create_tomba_unparseable_integer_becomes_none(svc):
+    tid = svc.create_tomba({"sito": "S", "area": "abc"})
+    row = svc.get_tomba(tid)
+    assert row["area"] is None
+
+
+def test_update_tomba_coerces_integer_string(svc):
+    tid = svc.create_tomba({"sito": "S"})
+    assert svc.update_tomba(tid, {"area": "12"}) is True
+    row = svc.get_tomba(tid)
+    assert row["area"] == 12
+
+    assert svc.update_tomba(tid, {"area": "xyz"}) is True
+    row = svc.get_tomba(tid)
+    assert row["area"] is None

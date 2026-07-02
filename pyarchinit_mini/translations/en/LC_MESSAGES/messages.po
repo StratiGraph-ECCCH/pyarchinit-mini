@@ -7210,6 +7210,143 @@ msgstr ""
 msgid "Tombe"
 msgstr "Graves"
 
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:2
+msgid "Tomba"
+msgstr "Grave"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:7
+msgid "Edit Tomba"
+msgstr "Edit Grave"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:7
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:9
+msgid "New Tomba"
+msgstr "New Grave"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:17
+msgid "Rito e Sepoltura"
+msgstr "Rite and Burial"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:18
+msgid "Corredo"
+msgstr "Grave Goods"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:37
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:45
+msgid "Nr. Scheda TAF"
+msgstr "TAF Sheet No."
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:41
+msgid "Sigla Struttura"
+msgstr "Structure Code"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:45
+msgid "Nr. Struttura"
+msgstr "Structure No."
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:49
+msgid "Nr. Individuo"
+msgstr "Individual No."
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:58
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:44
+msgid "Rito"
+msgstr "Rite"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:63
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:46
+msgid "Tipo Sepoltura"
+msgstr "Burial Type"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:68
+msgid "Tipo Deposizione"
+msgstr "Deposition Type"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:73
+msgid "Copertura Tipo"
+msgstr "Covering Type"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:78
+msgid "Tipo Contenitore Resti"
+msgstr "Remains Container Type"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:83
+msgid "Stato di Conservazione"
+msgstr "Conservation Status"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:88
+msgid "Segnacoli"
+msgstr "Grave Markers"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:92
+msgid "Canale Libatorio (Sì/No)"
+msgstr "Libation Channel (Yes/No)"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:96
+msgid "Oggetti Rinvenuti Esterno"
+msgstr "Objects Found Outside"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:100
+msgid "Descrizione TAF"
+msgstr "TAF Description"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:104
+msgid "Interpretazione TAF"
+msgstr "TAF Interpretation"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:113
+msgid "Corredo Presenza"
+msgstr "Grave Goods Presence"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:118
+msgid "Corredo Tipo"
+msgstr "Grave Goods Type"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:122
+msgid "Corredo Descrizione"
+msgstr "Grave Goods Description"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:131
+msgid "Periodo Iniziale"
+msgstr "Initial Period"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:135
+msgid "Fase Iniziale"
+msgstr "Initial Phase"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:139
+msgid "Periodo Finale"
+msgstr "Final Period"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:143
+msgid "Fase Finale"
+msgstr "Final Phase"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:147
+msgid "Datazione Estesa"
+msgstr "Extended Dating"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:156
+msgid "Tomba Media"
+msgstr "Grave Media"
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:2
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:6
+msgid "Tombe - Sepolture"
+msgstr "Graves - Burials"
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:18
+msgid "Search by site, rito, struttura, individuo..."
+msgstr "Search by site, rite, structure, individual..."
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:64
+msgid "Delete this Tomba record?"
+msgstr "Delete this Grave record?"
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:97
+msgid "No Tomba records found."
+msgstr "No Grave records found."
+
 #~ msgid "OK"
 #~ msgstr "OK"
 
