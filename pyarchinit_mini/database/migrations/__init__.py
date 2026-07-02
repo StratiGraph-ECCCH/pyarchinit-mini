@@ -829,7 +829,7 @@ class DatabaseMigrations:
                     total_migrations += 1
                 logger.info(f"Media plugin-schema migration: {media_result}")
             except Exception as e:
-                logger.warning(f"Media plugin-schema migration failed: {e}")
+                logger.error(f"Media plugin-schema migration failed: {e}")
 
             logger.info(f"All migrations completed. Total migrations applied: {total_migrations}")
             return total_migrations

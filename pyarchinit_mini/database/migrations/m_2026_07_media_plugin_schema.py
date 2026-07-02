@@ -105,7 +105,7 @@ def _migrate_data(engine) -> dict:
         resolved_id_media = [None] * len(legacy_rows)
         media_count = 0
         for i, row in enumerate(legacy_rows):
-            filepath = row.get("media_path")
+            filepath = row.get("media_path") or None
             id_media = row.get("id_media")
             if filepath and filepath in filepath_to_id_media:
                 # Duplicate filepath (UNIQUE in the new schema) — reuse the
@@ -160,13 +160,14 @@ def _migrate_data(engine) -> dict:
             seen_links.add(dedup_key)
 
             filename = row.get("media_filename") or row.get("media_name")
+            filepath = row.get("media_path") or None
             link_rows.append({
                 "id_mediaToEntity": link_id,
                 "id_entity": entity_id,
                 "entity_type": entity_type,
                 "table_name": table_name,
                 "id_media": id_media,
-                "filepath": row.get("media_path"),
+                "filepath": filepath,
                 "media_name": filename,
                 "entity_uuid": str(uuid.uuid4()),
             })

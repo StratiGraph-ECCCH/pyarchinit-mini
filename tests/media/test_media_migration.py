@@ -248,6 +248,42 @@ class _DBM:
     def __init__(self, engine):
         self.connection = _Conn(engine)
 
+def test_data_migration_empty_media_path_becomes_null():
+    """Two OLD-schema rows with media_path='' (empty string) must both migrate
+    to filepath=NULL (SQL NULL, which UNIQUE permits multiple of). Previously
+    empty strings were inserted directly, causing UNIQUE constraint violations
+    when two rows had media_path=''."""
+    eng = create_engine("sqlite:///:memory:")
+    rows = [
+        {
+            "id_media": 1, "entity_type": "us", "entity_id": 10,
+            "media_name": None, "media_filename": None, "media_path": "",
+            "media_type": None, "description": None, "tags": None,
+        },
+        {
+            "id_media": 2, "entity_type": "us", "entity_id": 20,
+            "media_name": None, "media_filename": None, "media_path": "",
+            "media_type": None, "description": None, "tags": None,
+        },
+    ]
+    _old_schema_full(eng, rows, thumb_rows=0)
+
+    res = migrate(eng)
+
+    assert res["status"] == "data_migrated"
+    assert res["media"] == 2
+    assert res["links"] == 2
+    assert res["links_skipped"] == 0
+
+    with eng.connect() as c:
+        media_rows = c.execute(text("SELECT id_media, filepath FROM media_table ORDER BY id_media")).mappings().all()
+        assert len(media_rows) == 2
+        assert media_rows[0]["filepath"] is None
+        assert media_rows[1]["filepath"] is None
+
+        legacy_count = c.execute(text("SELECT COUNT(*) FROM media_table_legacy")).scalar()
+        assert legacy_count == 2
+
 def test_bootstrap_migrate_all_tables_invokes_media_migration():
     """The app's migration bootstrap (DatabaseMigrations.migrate_all_tables,
     called from DatabaseConnection.initialize_database) must actually run
