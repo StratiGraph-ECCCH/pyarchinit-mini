@@ -9,7 +9,7 @@ from .inventario_materiali import InventarioMateriali
 from .harris_matrix import HarrisMatrix, USRelationships, Period, Periodizzazione
 from .extended_matrix import ExtendedMatrix
 from .datazione import Datazione
-from .media import Media, MediaThumb, Documentation
+from .media import Media, MediaThumb, MediaToEntity, Documentation
 from .thesaurus import ThesaurusSigle, ThesaurusField, ThesaurusCategory
 from .user import User, UserRole
 from .pottery import Pottery
@@ -29,6 +29,7 @@ __all__ = [
     "Datazione",
     "Media",
     "MediaThumb",
+    "MediaToEntity",
     "Documentation",
     "ThesaurusSigle",
     "ThesaurusField",
