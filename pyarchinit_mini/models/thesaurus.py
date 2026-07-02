@@ -314,4 +314,19 @@ THESAURUS_MAPPINGS = {
             'Sì', 'No', 'Parziale'
         ]
     },
+    'struttura_table': {
+        'categoria_struttura': [
+            'Muro', 'Fondazione', 'Pavimentazione', 'Focolare', 'Pozzo',
+            'Canaletta', 'Buca', 'Struttura muraria'
+        ],
+        'tipologia_struttura': [
+            'In pietra', 'In laterizio', 'Mista', 'In terra', 'Lignea'
+        ],
+        'orientamento_ingresso': [
+            'N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'
+        ],
+        'articolazione': [
+            'Semplice', 'Complessa', 'A vani multipli'
+        ]
+    },
 }
