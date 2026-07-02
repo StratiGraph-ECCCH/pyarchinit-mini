@@ -27,6 +27,22 @@ class MediaHandler:
         for p in (self.media_root, self.thumb_path, self.thumb_resize):
             p.mkdir(parents=True, exist_ok=True)
 
+        # Legacy media layout — retained so the desktop GUI media manager
+        # (deferred for schema alignment) keeps working via the old methods.
+        self.base_media_path = Path.home() / ".pyarchinit_mini" / "media"
+        self.images_path = self.base_media_path / "images"
+        self.documents_path = self.base_media_path / "documents"
+        self.videos_path = self.base_media_path / "videos"
+        self.models_path = self.base_media_path / "3d_models"
+        self.thumbnails_path = self.base_media_path / "thumbnails"
+        self.logs_path = self.base_media_path / "logs"
+        self.backup_path = self.base_media_path / "backup"
+        self.export_path = self.base_media_path / "export"
+        for p in (self.base_media_path, self.images_path, self.documents_path,
+                  self.videos_path, self.models_path, self.thumbnails_path,
+                  self.logs_path, self.backup_path, self.export_path):
+            p.mkdir(parents=True, exist_ok=True)
+
     @property
     def thumb_base(self) -> str:
         return str(self.thumb_path)
