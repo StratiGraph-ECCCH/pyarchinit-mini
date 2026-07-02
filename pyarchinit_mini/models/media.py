@@ -4,7 +4,7 @@ The three media tables are shared with the QGIS plugin, so they do NOT inherit
 BaseModel (the plugin tables have only entity_uuid as a sync column).
 """
 import uuid
-from sqlalchemy import Column, Integer, BigInteger, String, Text, Boolean, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, BigInteger, String, Text, Boolean, DateTime, ForeignKey, UniqueConstraint
 from .base import Base, BaseModel
 
 
@@ -50,6 +50,9 @@ class MediaThumb(Base):
 class MediaToEntity(Base):
     """media_to_entity_table — M:N link between a media file and an archaeological entity."""
     __tablename__ = 'media_to_entity_table'
+    __table_args__ = (
+        UniqueConstraint('id_entity', 'entity_type', 'id_media', name='ID_mediaToEntity_unico'),
+    )
 
     id_mediaToEntity = Column(BigInteger, primary_key=True, autoincrement=True)
     id_entity = Column(BigInteger)
