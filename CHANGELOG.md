@@ -1,3 +1,12 @@
+## Unreleased
+
+### Added — Tomba (burial) record type
+- New **Tomba** entity mirroring the classic PyArchInit `tomba_table`: ritual, structure, grave-goods (corredo), and chronology fields, with `TombaService` (list/count/get/create/update/delete, site filtering, free-text search).
+- Web UI: `/tomba` list + create/edit form, media upload panel (same media pipeline as Sites/US/Inventario), and a "Tombe" dashboard tile/nav entry.
+- Thesaurus-backed dropdowns for 7 fields (Rito, Tipo Sepoltura, Tipo Deposizione, Copertura Tipo, Tipo Contenitore Resti, Stato di Conservazione, Corredo Presenza) via `GET /api/tomba/thesaurus/<field>`.
+- Docs: Sphinx autodoc stubs (`docs/tomba.rst`, `docs/tomba_service.rst`) and a new "Schede Tomba" section in the Web Interface Tutorial.
+- i18n: added the missing `"Tombe"` catalog entry (IT: "Tombe", EN: "Graves") so the dashboard tile/nav label translates correctly instead of leaking Italian into the English UI.
+
 ## 2.9.1 — 2026-05-19
 
 ### Fixed — Harris Matrix proper rendering (post-2.9.0 feedback)

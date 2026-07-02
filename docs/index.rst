@@ -171,6 +171,8 @@ Data Management
    data/sites
    data/stratigraphic_units
    data/inventory
+   tomba
+   tomba_service
    features/stratigraphic_relationships
 
 Harris Matrix & Visualization

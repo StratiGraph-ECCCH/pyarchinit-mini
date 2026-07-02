@@ -6992,6 +6992,11 @@ msgstr "Datazione"
 msgid "Import another file"
 msgstr "Importa un altro file"
 
+#: pyarchinit_mini/web_interface/templates/base.html:174
+#: pyarchinit_mini/web_interface/templates/dashboard.html:70
+msgid "Tombe"
+msgstr "Tombe"
+
 #~ msgid "OK"
 #~ msgstr "OK"
 

@@ -594,6 +594,72 @@ Tab 8: Documentation
 .. note::
    Use this tab to document technical analysis, parallels, and scholarly references that support artifact interpretation.
 
+Schede Tomba (Tomba Records)
+=============================
+
+The Tomba module manages burial/grave records (mirroring the classic PyArchInit ``tomba_table``), covering ritual, structure, grave goods, and dating.
+
+Tomba List
+----------
+
+Navigate to **Tombe** in the top menu (``/tomba``) to see the paginated list of burial records.
+
+Features:
+
+* Paginated list (50 records per page)
+* Filter by site (Sito) and free-text search (matches Sito, Rito, Sigla Struttura, Nr. Individuo)
+* Create new Tomba button
+* Direct links to each record's edit form
+
+Creating/Editing a Tomba
+-------------------------
+
+The Tomba form is a single-page layout grouping identification, ritual/structure, grave goods, and chronology fields.
+
+**Required Fields:**
+
+* Site (Sito) - Select from dropdown
+
+**Identification:**
+
+* Area, Nr. Scheda TAF, Sigla Struttura, Nr. Struttura, Nr. Individuo
+
+**Ritual and Structure:**
+
+* Rito (Rite), Tipo Sepoltura (Burial Type), Tipo Deposizione (Deposition Type), Copertura Tipo (Covering Type), Tipo Contenitore Resti (Remains Container Type), Stato di Conservazione (Conservation State), Segnacoli (Markers), Canale Libatorio (Sì/No), Oggetti Rinvenuti Esterno (Objects Found Outside), Descrizione TAF, Interpretazione TAF
+
+**Grave Goods (Corredo):**
+
+* Corredo Presenza (Presence), Corredo Tipo (Type), Corredo Descrizione (Description)
+
+**Chronology:**
+
+* Periodo Iniziale / Fase Iniziale, Periodo Finale / Fase Finale, Datazione Estesa (Extended Dating)
+
+.. tip::
+   Save the record first (Create), then continue editing it to attach media — the media upload panel becomes available once the Tomba has an ID.
+
+Thesaurus Dropdowns
+--------------------
+
+Seven fields use ICCD-style controlled vocabulary, populated live from the thesaurus via ``GET /api/tomba/thesaurus/<field>``:
+
+* Rito, Tipo Sepoltura, Tipo Deposizione, Copertura Tipo, Tipo Contenitore Resti, Stato di Conservazione, Corredo Presenza
+
+Each of these renders as a text input backed by an HTML ``<datalist>`` of suggested values, so you can either pick a standardized term or enter a custom value.
+
+Uploading Media to a Tomba
+----------------------------
+
+From the Tomba edit form, use the **Tomba Media** panel to attach photos, drawings, or documents:
+
+1. Open an existing Tomba record (``/tomba/<id>``)
+2. In the Tomba Media section, choose a file and upload
+3. The file is linked to the Tomba entity via the standard media pipeline (same viewers and formats as Sites, US, and Inventario)
+
+.. note::
+   Media uploaded here appears in the entity's media gallery alongside other archaeological records, keeping documentation centralized per grave.
+
 Upload Media
 ============
 
@@ -1104,6 +1170,7 @@ You now know how to:
 * Create and manage archaeological sites
 * Document stratigraphic units with all their attributes
 * Record material inventory finds with ICCD-compliant fields
+* Manage Tomba (burial) records with thesaurus-backed ritual/structure fields
 * Upload and manage media files
 * Create and visualize Harris Matrix diagrams
 * Export diagrams to GraphML and Extended Matrix formats

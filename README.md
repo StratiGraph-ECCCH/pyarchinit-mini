@@ -24,6 +24,7 @@ PyArchInit-Mini is a standalone, modular version of PyArchInit focused on core a
 - **Site Management**: Complete CRUD operations for archaeological sites with i18n support
 - **Stratigraphic Units (US)**: 49 fields organized in 6 tabs, matching desktop GUI
 - **Material Inventory**: 37 fields in 8 tabs with ICCD thesaurus support
+- **Tomba Records** (NEW): Burial/grave records matching the classic PyArchInit `tomba_table` — ritual, structure, grave goods, and dating fields with thesaurus-backed dropdowns and media attachments
 - **Multi-Database**: SQLite and PostgreSQL with upload/connect capabilities
 - **Internationalization**: Full support for Italian and English languages
 
