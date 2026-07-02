@@ -628,6 +628,7 @@ code {
 .stats-card-clay       { background: var(--grad-clay); }
 .stats-card-earth      { background: var(--grad-earth); }
 .stats-card-pottery    { background: linear-gradient(135deg, #8e6e53 0%, #a17c5b 100%); color: #fff; }
+.stats-card-tomba      { background: linear-gradient(135deg, #5b5f97 0%, #7b7fc4 100%); color: #fff; }
 
 
 /* ============================================================

@@ -821,6 +821,10 @@ def create_app():
                 total_pottery = PotteryService(db_manager).count_pottery()
             except Exception:
                 total_pottery = 0
+            try:
+                total_tomba = tomba_service.count_tomba()
+            except Exception:
+                total_tomba = 0
 
             stats = {
                 'total_sites': total_sites,
@@ -828,6 +832,7 @@ def create_app():
                 'total_inventory': total_inventory,
                 'total_media': total_media,
                 'total_pottery': total_pottery,
+                'total_tomba': total_tomba,
                 'recent_sites': sites
             }
 

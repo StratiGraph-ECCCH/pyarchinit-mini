@@ -37,8 +37,8 @@ class PyArchInitSyncTool(BaseTool):
                     },
                     "data_types": {
                         "type": "array",
-                        "items": {"type": "string", "enum": ["sites", "us", "inventario", "thesaurus"]},
-                        "description": "Types of data to sync: sites, us, inventario, thesaurus",
+                        "items": {"type": "string", "enum": ["sites", "us", "inventario", "thesaurus", "tomba"]},
+                        "description": "Types of data to sync: sites, us, inventario, thesaurus, tomba",
                         "default": ["sites", "us"]
                     },
                     "site_filter": {
@@ -119,6 +119,19 @@ class PyArchInitSyncTool(BaseTool):
                 if not us_result.get('success', True):
                     results['errors'].append(f"US import: {us_result.get('message', 'failed')}")
 
+            # Import tomba (burials)
+            if 'tomba' in data_types:
+                logger.info("Importing tomba...")
+                if hasattr(service, 'import_tomba'):
+                    tomba_result = service.import_tomba(sito_filter=site_filter, auto_backup=auto_backup)
+                    results['imported']['tomba'] = tomba_result.get('tomba_imported', 0)
+                    if not results['backup_path'] and tomba_result.get('backup_path'):
+                        results['backup_path'] = tomba_result['backup_path']
+                    if not tomba_result.get('success', True):
+                        results['errors'].append(f"Tomba import: {tomba_result.get('message', 'failed')}")
+                else:
+                    results['errors'].append("Tomba import: not yet supported by ImportExportService")
+
             # Import thesaurus
             if 'thesaurus' in data_types:
                 logger.info("Importing thesaurus...")
@@ -159,6 +172,17 @@ class PyArchInitSyncTool(BaseTool):
                 results['exported']['relationships'] = us_result.get('relationships_exported', 0)
                 if not us_result.get('success', True):
                     results['errors'].append(f"US export: {us_result.get('message', 'failed')}")
+
+            # Export tomba (burials)
+            if 'tomba' in data_types:
+                logger.info("Exporting tomba...")
+                if hasattr(service, 'export_tomba'):
+                    tomba_result = service.export_tomba(target_db_connection=target_db_url, sito_filter=site_filter)
+                    results['exported']['tomba'] = tomba_result.get('tomba_exported', 0)
+                    if not tomba_result.get('success', True):
+                        results['errors'].append(f"Tomba export: {tomba_result.get('message', 'failed')}")
+                else:
+                    results['errors'].append("Tomba export: not yet supported by ImportExportService")
 
             if results['errors']:
                 results['success'] = len(results['errors']) < len(data_types)

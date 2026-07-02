@@ -57,6 +57,15 @@ class DataImportParserTool(BaseTool):
             "tipo_reperto": ["tipo_reperto", "artifact_type", "tipo", "type"],
             "materiale": ["materiale", "material", "materia"],
             "descrizione": ["descrizione", "description", "desc"],
+        },
+        # Tomba (burial) table mappings
+        "tomba_table": {
+            "sito": ["sito", "site", "site_name"],
+            "area": ["area", "settore", "sector"],
+            "nr_scheda_taf": ["nr_scheda_taf", "scheda_taf", "tomb_number", "nr_tomba", "n_tomba", "tomb_id"],
+            "rito": ["rito", "burial_rite", "rite"],
+            "tipo_sepoltura": ["tipo_sepoltura", "burial_type", "grave_type", "tipo_tomba"],
+            "descrizione_taf": ["descrizione_taf", "description", "descrizione", "desc"],
         }
     }
 
@@ -78,7 +87,7 @@ class DataImportParserTool(BaseTool):
                 "   1. Detects file format (CSV, Excel, JSON, XML)\n"
                 "   2. Auto-maps column headers to database fields (e.g., 'site' → 'sito', 'description' → 'descrizione')\n"
                 "   3. Validates data before import\n"
-                "   4. Imports records into appropriate table (site_table, us_table, inventario_materiali_table)\n"
+                "   4. Imports records into appropriate table (site_table, us_table, inventario_materiali_table, tomba_table)\n"
                 "   5. Provides detailed statistics and error reports\n\n"
                 "💡 **Supported operations**:\n"
                 "   • 'parse' = Analyze file structure and detect mappings\n"
@@ -115,7 +124,7 @@ class DataImportParserTool(BaseTool):
                     },
                     "target_table": {
                         "type": "string",
-                        "enum": ["site_table", "us_table", "inventario_materiali_table", "auto"],
+                        "enum": ["site_table", "us_table", "inventario_materiali_table", "tomba_table", "auto"],
                         "description": "Target database table ('auto' for auto-detection)",
                         "default": "auto"
                     },
@@ -611,6 +620,9 @@ class DataImportParserTool(BaseTool):
                 elif target_table == "us_table":
                     if not mapped_row.get("sito") or not mapped_row.get("us"):
                         raise ValueError("sito and us are required")
+                elif target_table == "tomba_table":
+                    if not mapped_row.get("sito"):
+                        raise ValueError("sito is required")
 
                 valid_count += 1
 
@@ -660,6 +672,8 @@ class DataImportParserTool(BaseTool):
                     service.create_us(mapped_row)
                 elif target_table == "inventario_materiali_table":
                     service.create_inventario(mapped_row)
+                elif target_table == "tomba_table":
+                    service.create_tomba(mapped_row)
 
                 imported += 1
 
@@ -691,5 +705,8 @@ class DataImportParserTool(BaseTool):
         elif table_name == "inventario_materiali_table":
             from ...services.inventario_service import InventarioService
             return InventarioService(self.db_manager)
+        elif table_name == "tomba_table":
+            from ...services.tomba_service import TombaService
+            return TombaService(self.db_manager)
         else:
             raise ValueError(f"Unsupported table: {table_name}")
