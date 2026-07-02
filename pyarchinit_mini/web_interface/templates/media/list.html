@@ -130,13 +130,13 @@
                         <tr>
                             <td class="text-center">
                                 {% if media.media_type == 'image' %}
-                                    {% if media.media_path %}
-                                        <a href="/media/{{ media.media_filename if media.media_filename and '/' in media.media_filename else media.media_path }}"
+                                    {% if media.url %}
+                                        <a href="{{ media.url }}"
                                            class="glightbox"
                                            data-gallery="media-list-gallery"
                                            data-title="{{ media.media_name }}"
                                            data-description="{{ media.description if media.description else '' }}">
-                                            <img src="/media/{{ media.media_path }}"
+                                            <img src="{{ media.url }}"
                                                  alt="{{ media.media_name }}"
                                                  class="img-thumbnail"
                                                  style="max-width: 60px; max-height: 60px; cursor: pointer;"
@@ -146,7 +146,7 @@
                                         <i class="fas fa-image fa-2x text-muted"></i>
                                     {% endif %}
                                 {% elif media.media_type == 'document' %}
-                                    <a href="/media/{{ media.media_filename if media.media_filename and '/' in media.media_filename else media.media_path }}"
+                                    <a href="{{ media.url }}"
                                        class="glightbox"
                                        data-type="iframe"
                                        data-gallery="media-docs"
@@ -155,7 +155,7 @@
                                         <i class="fas fa-file-pdf fa-2x text-danger" style="cursor: pointer;"></i>
                                     </a>
                                 {% elif media.media_type == 'video' %}
-                                    <a href="/media/{{ media.media_filename if media.media_filename and '/' in media.media_filename else media.media_path }}"
+                                    <a href="{{ media.url }}"
                                        class="glightbox"
                                        data-type="video"
                                        data-gallery="media-videos"
@@ -192,9 +192,6 @@
                                 {% if media.description %}
                                 <br><small class="text-muted">{{ media.description[:100] }}{% if media.description|length > 100 %}...{% endif %}</small>
                                 {% endif %}
-                                {% if media.is_primary %}
-                                <br><span class="badge bg-success">Primary</span>
-                                {% endif %}
                             </td>
                             <td>
                                 <span class="badge bg-secondary">{{ media.media_type|title if media.media_type else 'Unknown' }}</span>
@@ -222,14 +219,14 @@
                             <td>{{ media.author if media.author else '-' }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    {% if media.media_path %}
-                                    <a href="/media/{{ media.media_filename if media.media_filename and '/' in media.media_filename else media.media_path }}"
+                                    {% if media.url %}
+                                    <a href="{{ media.url }}"
                                        target="_blank"
                                        class="btn btn-primary"
                                        title="Open">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="/media/{{ media.media_filename if media.media_filename and '/' in media.media_filename else media.media_path }}"
+                                    <a href="{{ media.url }}"
                                        download="{{ media.media_name }}"
                                        class="btn btn-success"
                                        title="Download">

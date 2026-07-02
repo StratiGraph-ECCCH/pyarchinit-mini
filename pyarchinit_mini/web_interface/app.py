@@ -551,6 +551,19 @@ def create_app():
     media_handler = MediaHandler()
     media_service = MediaService(db_manager, media_handler)
 
+    def _media_gallery(entity_key, id_entity):
+        """Template-ready media descriptors (url/thumb_url resolved) for an entity."""
+        items = media_service.get_media_for_entity(entity_key, id_entity)
+        return [{
+            'id_media': m.id_media,
+            'media_name': m.filename,
+            'media_type': m.mediatype,
+            'description': m.descrizione,
+            'filepath': m.filepath,
+            'url': media_service.public_url(m.filepath),
+            'thumb_url': media_service.thumb_url(m.id_media),
+        } for m in items]
+
     # Store services in app for access in routes
     app.db_manager = db_manager
     app.user_service = user_service
@@ -868,7 +881,7 @@ def create_app():
 
         # Get associated media files
         try:
-            media_list = media_service.get_media_by_entity('site', site_id, size=100)
+            media_list = _media_gallery('site', site_id)
         except Exception as e:
             logger.warning(f"Failed to fetch media for site {site_id}: {e}")
             media_list = []
@@ -1515,7 +1528,7 @@ def create_app():
 
         # Get associated media files
         try:
-            media_list = media_service.get_media_by_entity('us', us_id, size=100)
+            media_list = _media_gallery('us', us_id)
         except Exception as e:
             logger.warning(f"Failed to fetch media for US {us_id}: {e}")
             media_list = []
@@ -1555,11 +1568,14 @@ def create_app():
         media_ids = set()
         ids = [item.id_invmat for item in inventory_list]
         if ids:
-            from pyarchinit_mini.models.media import Media
+            from pyarchinit_mini.models.media import MediaToEntity
+            from pyarchinit_mini.media_manager.entity_map import resolve_entity
+            inv_entity_type, _, _ = resolve_entity('inventario')
             with db_manager.connection.get_session() as session:
                 rows = (
-                    session.query(Media.entity_id)
-                    .filter(Media.entity_type == 'inventario', Media.entity_id.in_(ids))
+                    session.query(MediaToEntity.id_entity)
+                    .filter(MediaToEntity.entity_type == inv_entity_type,
+                            MediaToEntity.id_entity.in_(ids))
                     .distinct()
                     .all()
                 )
@@ -1827,7 +1843,7 @@ def create_app():
 
         # Get associated media files
         try:
-            media_list = media_service.get_media_by_entity('inventario', inv_id, size=100)
+            media_list = _media_gallery('inventario', inv_id)
         except Exception as e:
             logger.warning(f"Failed to fetch media for inventario {inv_id}: {e}")
             media_list = []
@@ -2434,11 +2450,10 @@ def create_app():
             # Get media for the site
             media_list = []
             try:
-                media_base = Path.home() / '.pyarchinit_mini' / 'media'
-                site_media = media_service.get_media_by_entity('site', site_id, size=50)
+                site_media = media_service.get_media_for_entity('site', site_id)
                 for m in site_media:
-                    md = {'media_name': m.media_name, 'media_path': str(media_base / m.media_path) if m.media_path else '',
-                          'description': m.description, 'media_type': m.media_type}
+                    md = {'media_name': m.filename, 'media_path': m.filepath,
+                          'description': m.descrizione, 'media_type': m.mediatype}
                     media_list.append(md)
             except Exception:
                 pass
@@ -2783,22 +2798,11 @@ def create_app():
     @app.route('/api/media/by-entity/<entity_type>/<int:entity_id>')
     @login_required
     def api_media_by_entity(entity_type: str, entity_id: int):
-        from pyarchinit_mini.services.media_service import MediaService
-        msvc = MediaService(app.db_manager)
-        items = msvc.get_media_by_entity(entity_type, entity_id)
-        return jsonify({
-            "items": [
-                {
-                    "id_media": m.id_media,
-                    "media_name": m.media_name,
-                    "media_path": m.media_path,
-                    "media_type": m.media_type,
-                    "url": f"/media/{m.media_path}",
-                    "thumb_url": f"/media/{m.media_path}",
-                }
-                for m in items
-            ]
-        })
+        try:
+            items = media_service.get_media_for_entity_ids(entity_type, [entity_id])[entity_id]
+        except KeyError:
+            return jsonify({'error': f'Unknown entity type: {entity_type}'}), 400
+        return jsonify({"items": items})
 
     @app.route('/media/upload', methods=['GET', 'POST'])
     @login_required
@@ -2885,24 +2889,12 @@ def create_app():
                     temp_path = os.path.join(tempfile.gettempdir(), filename)
                     uploaded_file.save(temp_path)
 
-                    # Store using media handler
-                    metadata = media_handler.store_file(
-                        temp_path,
-                        entity_type,
-                        entity_id,
-                        form.description.data,
-                        "",  # tags
-                        form.author.data
+                    # Store + link via the plugin-schema media service
+                    media = media_service.add_media(
+                        temp_path, entity_type, entity_id,
+                        descrizione=form.description.data or "", tags="",
                     )
-
-                    # Remove thumbnail_path - thumbnails go in MediaThumb table, not Media table
-                    metadata.pop('thumbnail_path', None)
-
-                    # Save record to database
-                    media_record = media_service.create_media_record(metadata)
-
-                    # Get ID immediately while object is in memory
-                    media_id = media_record.id_media
+                    media_id = media.id_media
 
                     # Clean up temp file
                     os.remove(temp_path)
@@ -2960,22 +2952,9 @@ def create_app():
                     temp_path = os.path.join(tempfile.gettempdir(), filename)
                     uploaded_file.save(temp_path)
 
-                    # Store using media handler
-                    metadata = media_handler.store_file(
-                        temp_path,
-                        entity_type,
-                        entity_id,
-                        "",  # description (empty for drag-drop)
-                        "",  # tags
-                        ""   # author
-                    )
-
-                    # Remove thumbnail_path
-                    metadata.pop('thumbnail_path', None)
-
-                    # Save record to database
-                    media_record = media_service.create_media_record(metadata)
-                    uploaded_ids.append(media_record.id_media)
+                    # Store + link via the plugin-schema media service
+                    media = media_service.add_media(temp_path, entity_type, entity_id)
+                    uploaded_ids.append(media.id_media)
 
                     # Clean up temp file
                     os.remove(temp_path)
@@ -2994,6 +2973,10 @@ def create_app():
     def media_list():
         """List all uploaded media files with search and filter capabilities"""
         try:
+            from sqlalchemy import func, or_
+            from pyarchinit_mini.models.media import Media, MediaToEntity
+            from pyarchinit_mini.media_manager.entity_map import resolve_entity
+
             # Get query parameters
             search_term = request.args.get('search', '').strip()
             media_type_filter = request.args.get('type', '').strip()
@@ -3001,48 +2984,69 @@ def create_app():
             page = int(request.args.get('page', 1))
             per_page = int(request.args.get('per_page', 20))
 
-            # Get media list based on filters
-            if search_term:
-                media_list = media_service.search_media(search_term, page=page, size=per_page)
-            elif media_type_filter:
-                media_list = media_service.get_media_by_type(media_type_filter, page=page, size=per_page)
-            elif entity_type_filter:
-                # For entity filter, we need to get all media and filter (or modify service)
-                media_list = media_service.get_all_media(page=page, size=per_page,
-                                                        filters={'entity_type': entity_type_filter} if entity_type_filter else None)
-            else:
-                media_list = media_service.get_all_media(page=page, size=per_page)
+            with db_manager.connection.get_session() as session:
+                query = session.query(Media)
+                if search_term:
+                    like = f"%{search_term}%"
+                    query = query.filter(or_(Media.filename.ilike(like),
+                                              Media.descrizione.ilike(like)))
+                if media_type_filter:
+                    query = query.filter(Media.mediatype == media_type_filter)
+                if entity_type_filter:
+                    try:
+                        resolved_entity_type, _, _ = resolve_entity(entity_type_filter)
+                    except KeyError:
+                        resolved_entity_type = entity_type_filter
+                    query = (query.join(MediaToEntity, MediaToEntity.id_media == Media.id_media)
+                                  .filter(MediaToEntity.entity_type == resolved_entity_type))
 
-            # Get statistics
-            stats = media_service.get_media_statistics()
+                total = query.count()
+                rows = (query.order_by(Media.id_media.desc())
+                              .offset((page - 1) * per_page)
+                              .limit(per_page)
+                              .all())
 
-            # Enrich media with entity information
-            # First, capture entity info while objects are in memory
-            media_enrichment = []
-            for media in media_list:
-                try:
-                    entity_type = media.entity_type
-                    entity_id = media.entity_id
-                    media_enrichment.append((media, entity_type, entity_id))
-                except:
-                    media_enrichment.append((media, None, None))
+                type_counts = dict(
+                    session.query(Media.mediatype, func.count(Media.id_media))
+                           .group_by(Media.mediatype).all()
+                )
 
-            # Now enrich with entity names
-            for media, entity_type, entity_id in media_enrichment:
-                try:
-                    if entity_type == 'site':
-                        site = site_service.get_site_by_id(entity_id)
-                        media.entity_name = site.sito if site else f'Site ID {entity_id}'
-                    elif entity_type == 'us':
-                        us = us_service.get_us_by_id(entity_id)
-                        media.entity_name = f"{us.sito} - US {us.us}" if us else f'US ID {entity_id}'
-                    elif entity_type == 'inventario':
-                        inv = inventario_service.get_inventario_by_id(entity_id)
-                        media.entity_name = f"{inv.sito} - {inv.numero_inventario}" if inv else f'Inventory ID {entity_id}'
-                    else:
-                        media.entity_name = f'{entity_type} ID {entity_id}' if entity_type else 'Unknown'
-                except:
-                    media.entity_name = f'{entity_type} ID {entity_id}' if entity_type else 'Unknown'
+                media_list = []
+                for m in rows:
+                    link = (session.query(MediaToEntity)
+                                    .filter(MediaToEntity.id_media == m.id_media)
+                                    .first())
+                    entity_type = link.entity_type if link else None
+                    entity_id = link.id_entity if link else None
+                    entity_name = f'{entity_type} ID {entity_id}' if entity_type else 'Unknown'
+                    try:
+                        if entity_type == 'SITE':
+                            site = site_service.get_site_by_id(entity_id)
+                            entity_name = site.sito if site else entity_name
+                        elif entity_type == 'US':
+                            us = us_service.get_us_by_id(entity_id)
+                            entity_name = f"{us.sito} - US {us.us}" if us else entity_name
+                        elif entity_type == 'REPERTO':
+                            inv = inventario_service.get_inventario_by_id(entity_id)
+                            entity_name = f"{inv.sito} - {inv.numero_inventario}" if inv else entity_name
+                    except Exception:
+                        pass
+                    media_list.append({
+                        'id_media': m.id_media,
+                        'media_name': m.filename,
+                        'media_type': m.mediatype,
+                        'description': m.descrizione,
+                        'url': media_service.public_url(m.filepath),
+                        'thumb_url': media_service.thumb_url(m.id_media),
+                        'entity_type': entity_type,
+                        'entity_name': entity_name,
+                    })
+
+            stats = {
+                'total_media': total,
+                'type_distribution': type_counts,
+                'total_storage_mb': 0,
+            }
 
             return render_template('media/list.html',
                                  media_list=media_list,
@@ -3056,10 +3060,35 @@ def create_app():
             flash(f'Error loading media list: {str(e)}', 'error')
             return render_template('media/list.html', media_list=[], stats={})
 
+    @app.route('/media/serve')
+    @login_required
+    def media_serve():
+        """Serve/redirect a media file stored under the plugin schema (absolute path or URI)."""
+        from pyarchinit_mini.media_manager.path_resolver import is_remote_url, cloudinary_to_url
+        p = request.args.get('p', '')
+        if not p:
+            abort(404)
+        low = p.lower()
+        if low.startswith('cloudinary://'):
+            return redirect(cloudinary_to_url(p))
+        if low.startswith(('http://', 'https://')):
+            return redirect(p)
+        if is_remote_url(p):  # unibo:// / storage-backend → follow-up plan
+            abort(501)
+        # Local absolute path: restrict to the configured media/thumb roots.
+        roots = [str(media_handler.media_root), str(media_handler.thumb_path),
+                 str(media_handler.thumb_resize)]
+        real = os.path.realpath(p)
+        if not any(real.startswith(os.path.realpath(r)) for r in roots):
+            abort(403)
+        if not os.path.isfile(real):
+            abort(404)
+        return send_file(real)
+
     @app.route('/media/<path:filepath>')
     @login_required
     def serve_media(filepath):
-        """Serve media files from the media directory"""
+        """Serve legacy (pre-plugin-schema) media files from the media directory."""
         from flask import send_from_directory
         from pathlib import Path
 
@@ -3086,18 +3115,13 @@ def create_app():
     def delete_media(media_id):
         """Delete a media file"""
         try:
-            # Get the media record to retrieve entity info before deletion
             media = media_service.get_media_by_id(media_id)
             if not media:
                 flash('Media file not found', 'error')
                 return redirect(url_for('media_list'))
 
-            # Store entity info for potential redirect
-            entity_type = media.entity_type
-            entity_id = media.entity_id
-
-            # Delete the media
-            success = media_service.delete_media(media_id, delete_file=True)
+            # Delete the media (cascades thumbs + entity links)
+            success = media_service.delete_media(media_id)
 
             if success:
                 flash('Media file deleted successfully', 'success')
@@ -3129,10 +3153,10 @@ def create_app():
                 return '<html><body><h3>Media file not found</h3></body></html>', 404
 
             # Get file path
-            if not media.media_path:
+            if not media.filepath:
                 return '<html><body><h3>File path not available</h3></body></html>', 404
 
-            file_path = Path(media.media_path)
+            file_path = Path(media.filepath)
             if not file_path.exists():
                 return '<html><body><h3>File not found on disk</h3></body></html>', 404
 
@@ -3164,7 +3188,7 @@ def create_app():
                 <head>
                     <meta charset="utf-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <title>{media.media_name}</title>
+                    <title>{media.filename}</title>
                     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
                     <style>
                         body {{
@@ -3198,7 +3222,7 @@ def create_app():
                 </head>
                 <body>
                     <div class="container-fluid">
-                        <h3>{media.media_name}</h3>
+                        <h3>{media.filename}</h3>
                         <div class="info">
                             <p class="mb-1"><strong>Rows:</strong> {len(df)} | <strong>Columns:</strong> {len(df.columns)}</p>
                             {f'<p class="mb-0 text-muted"><small>Showing first 1000 rows</small></p>' if len(df) > 1000 else ''}
@@ -3234,10 +3258,10 @@ def create_app():
                 return '<html><body><h3>Media file not found</h3></body></html>', 404
 
             # Get file path
-            if not media.media_path:
+            if not media.filepath:
                 return '<html><body><h3>File path not available</h3></body></html>', 404
 
-            file_path = Path(media.media_path)
+            file_path = Path(media.filepath)
             if not file_path.exists():
                 return '<html><body><h3>File not found on disk</h3></body></html>', 404
 
@@ -3286,7 +3310,7 @@ def create_app():
                 <head>
                     <meta charset="utf-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <title>{media.media_name}</title>
+                    <title>{media.filename}</title>
                     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
                     <style>
                         body {{
@@ -3319,7 +3343,7 @@ def create_app():
                 <body>
                     <div class="container">
                         <div class="header">
-                            <h2>{media.media_name}</h2>
+                            <h2>{media.filename}</h2>
                         </div>
                         <div class="content">
                             {document_html}
@@ -3350,10 +3374,10 @@ def create_app():
                 return '<html><body><h3>Media file not found</h3></body></html>', 404
 
             # Get file path and validate
-            if not media.media_path:
+            if not media.filepath:
                 return '<html><body><h3>File path not available</h3></body></html>', 404
 
-            file_path = Path(media.media_path)
+            file_path = Path(media.filepath)
             if not file_path.exists():
                 return '<html><body><h3>File not found on disk</h3></body></html>', 404
 
@@ -3375,8 +3399,8 @@ def create_app():
 
             loader_type = loader_map.get(file_ext, 'GLTFLoader')
 
-            # Create the model URL - need to serve it relative to web root
-            model_url = f'/{media.media_path}'.replace('\\', '/')
+            # Create the model URL via the plugin-schema media route
+            model_url = media_service.public_url(media.filepath)
 
             # Create complete HTML page with Three.js viewer
             full_html = f'''
@@ -3385,7 +3409,7 @@ def create_app():
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>{media.media_name} - 3D Viewer</title>
+                <title>{media.filename} - 3D Viewer</title>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
                 <style>
                     body {{
@@ -3463,9 +3487,9 @@ def create_app():
             <body>
                 <div class="viewer-container">
                     <div class="header">
-                        <h2><i class="fas fa-cube"></i> {media.media_name}</h2>
+                        <h2><i class="fas fa-cube"></i> {media.filename}</h2>
                         <div class="info">
-                            {media.description if media.description else 'Interactive 3D Model Viewer'}
+                            {media.descrizione if media.descrizione else 'Interactive 3D Model Viewer'}
                         </div>
                     </div>
 
@@ -4673,7 +4697,7 @@ def create_app():
         # Load attached media
         media_items = []
         try:
-            media_items = media_service.get_media_by_entity('tma', tma_id, size=50)
+            media_items = _media_gallery('tma', tma_id)
         except Exception:
             pass
         return render_template('tma/form.html', tma=tma, materials=materials, media=media_items)
@@ -4720,10 +4744,8 @@ def create_app():
             filename = secure_filename(f.filename)
             tmp_path = os.path.join(tempfile.gettempdir(), filename)
             f.save(tmp_path)
-            metadata = media_handler.store_file(tmp_path, 'tma', tma_id, '', '', '')
-            if metadata:
-                media_service.create_media_record(metadata)
-                flash('Media caricato', 'success')
+            media_service.add_media(tmp_path, 'tma', tma_id)
+            flash('Media caricato', 'success')
             os.unlink(tmp_path)
         except Exception as e:
             flash(f'Errore upload: {e}', 'error')
@@ -4965,12 +4987,12 @@ def create_app():
 
                         # Collect media images
                         try:
-                            site_media = media_service.get_media_by_entity('site', site.id_sito, size=10)
-                            for m in site_media:
-                                if m.media_type == 'image' and m.media_path:
+                            site_media = media_service.get_media_for_entity('site', site.id_sito)
+                            for m in site_media[:10]:
+                                if m.mediatype == 'image' and m.filepath:
                                     media_urls.append({
-                                        'url': f'/media/{m.media_path}',
-                                        'caption': m.description or m.media_name or ''
+                                        'url': media_service.public_url(m.filepath),
+                                        'caption': m.descrizione or m.filename or ''
                                     })
                         except Exception:
                             pass
@@ -5125,7 +5147,13 @@ def create_app():
             def _rewrite(match):
                 full = match.group(0); url = match.group(1)
                 if url.startswith('data:'): return full
-                if url.startswith('/media/'):
+                if url.startswith('/media/serve?'):
+                    qs = _up.parse_qs(_up.urlparse(url).query)
+                    cand = (qs.get('p') or [''])[0]
+                    if cand and _os.path.isfile(cand):
+                        images[_os.path.basename(cand)] = cand
+                        return full.replace(url, 'images/' + _os.path.basename(cand))
+                elif url.startswith('/media/'):
                     rel = _up.unquote(url[len('/media/'):])
                     cand = _os.path.join(media_root, rel)
                     if _os.path.isfile(cand):

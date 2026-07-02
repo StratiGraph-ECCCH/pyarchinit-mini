@@ -214,7 +214,7 @@
                 <div class="col-md-3">
                     <div class="card">
                         {% if m.media_type == 'image' %}
-                        <img src="/media/{{ m.media_path }}" class="card-img-top" style="max-height:150px;object-fit:cover;">
+                        <img src="{{ m.url }}" class="card-img-top" style="max-height:150px;object-fit:cover;">
                         {% else %}
                         <div class="card-body text-center"><i class="fas fa-file fa-3x text-muted"></i></div>
                         {% endif %}
