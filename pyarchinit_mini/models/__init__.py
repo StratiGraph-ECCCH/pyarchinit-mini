@@ -17,6 +17,7 @@ from .app_setting import AppSetting
 from .ai_chat import AIConversation, AIMessage
 from .storage_config import StorageConfig
 from .tomba import Tomba
+from .struttura import Struttura
 
 __all__ = [
     "BaseModel",
@@ -44,4 +45,5 @@ __all__ = [
     "AIMessage",
     "StorageConfig",
     "Tomba",
+    "Struttura",
 ]
