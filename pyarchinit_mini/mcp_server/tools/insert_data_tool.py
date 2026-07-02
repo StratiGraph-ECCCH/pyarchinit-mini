@@ -127,15 +127,15 @@ def insert_data(
                     f"to ensure proper file storage and path management. "
                     f"\n\n📋 How to use manage_media:\n"
                     f"1. Upload file with operation='upload'\n"
-                    f"2. Provide entity_type ('site', 'us', or 'inventario')\n"
-                    f"3. Provide entity_id (site name, US id, or inventario id)\n"
+                    f"2. Provide entity_type (one of: us, inventario, pottery, struttura, tomba, tma, ut, site)\n"
+                    f"3. Provide entity_id (the entity's integer primary key, e.g. id_sito, id_us, id_invmat)\n"
                     f"4. Either provide file_path on server OR file_content_base64\n"
                     f"5. The tool will copy files to ~/.pyarchinit_mini/media/ and create DB record\n\n"
                     f"Example:\n"
                     f"{{\n"
                     f"  'operation': 'upload',\n"
                     f"  'entity_type': 'site',\n"
-                    f"  'entity_id': 'Pompei',\n"
+                    f"  'entity_id': 12,\n"
                     f"  'file_content_base64': '<base64-encoded-content>',\n"
                     f"  'filename': 'site_photo.jpg',\n"
                     f"  'description': 'Site overview'\n"
@@ -144,7 +144,7 @@ def insert_data(
                     f"not in temporary directories like /tmp/ where they will be lost."
                 ),
                 "correct_tool": "manage_media",
-                "tool_operations": ["upload", "get", "list", "update", "delete", "statistics", "set_primary"]
+                "tool_operations": ["upload", "get", "list", "update", "delete"]
             }
 
         # Reflect table structure

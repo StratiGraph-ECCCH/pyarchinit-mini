@@ -3,21 +3,23 @@ Media Management Tool
 
 Provides comprehensive media file management for archaeological entities:
 - Upload and store media files (images, documents, videos, 3D models)
-- Associate media with entities (site, us, inventario)
-- Get, update, and delete media records
-- Manage media metadata and thumbnails
-- Get media statistics and summaries
+- Associate media with entities (us, inventario, pottery, struttura, tomba, tma, ut, site)
+- Get, list, update, and delete media records
+
+Built on the plugin-schema MediaService (shared with the QGIS plugin's media_table /
+media_to_entity_table / media_thumb_table).
 """
 
 import logging
 import os
 import base64
 import tempfile
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any
 from pathlib import Path
 from .base_tool import BaseTool, ToolDescription
 from ...services.media_service import MediaService
 from ...media_manager.media_handler import MediaHandler
+from ...models.media import Media
 
 logger = logging.getLogger(__name__)
 
@@ -33,13 +35,13 @@ class MediaManagementTool(BaseTool):
                 "DO NOT use 'insert_data' tool for media_table - it will fail. "
                 "\n\n"
                 "Comprehensive media file management tool: "
-                "Upload, retrieve, update, and delete media files (images, documents, videos, 3D models). "
-                "Associate media with entities: site, us, inventario. "
+                "Upload, retrieve, list, update, and delete media files (images, documents, videos, 3D models). "
+                "Associate media with entities: us, inventario, pottery, struttura, tomba, tma, ut, site. "
                 "Supports base64-encoded content or file paths. "
                 "Automatically handles: "
                 "1) File storage in permanent location (~/.pyarchinit_mini/media/) "
-                "2) Unique filename generation with hash "
-                "3) Database record creation with correct relative paths "
+                "2) Unique filename generation "
+                "3) Database record creation with correct paths "
                 "4) Thumbnail generation for images "
                 "\n\n"
                 "Files are stored permanently, NOT in /tmp/ where they would be lost on reboot."
@@ -49,29 +51,27 @@ class MediaManagementTool(BaseTool):
                 "properties": {
                     "operation": {
                         "type": "string",
-                        "enum": ["upload", "get", "list", "update", "delete", "statistics", "set_primary"],
+                        "enum": ["upload", "get", "list", "update", "delete"],
                         "description": (
                             "'upload' = Store new media file, "
                             "'get' = Get media by ID, "
                             "'list' = List media for entity, "
-                            "'update' = Update media metadata, "
-                            "'delete' = Delete media file and record, "
-                            "'statistics' = Get media statistics, "
-                            "'set_primary' = Set media as primary for entity"
+                            "'update' = Update media description/tags, "
+                            "'delete' = Delete media file and record"
                         )
                     },
                     "media_id": {
                         "type": "integer",
-                        "description": "Media ID (for get, update, delete, set_primary operations)"
+                        "description": "Media ID (for get, update, delete operations)"
                     },
                     "entity_type": {
                         "type": "string",
-                        "enum": ["site", "us", "inventario"],
-                        "description": "Type of entity: site, us, or inventario"
+                        "enum": ["us", "inventario", "pottery", "struttura", "tomba", "tma", "ut", "site"],
+                        "description": "Entity key: us, inventario, pottery, struttura, tomba, tma, ut, or site"
                     },
                     "entity_id": {
                         "type": ["string", "integer"],
-                        "description": "Entity ID (site name, US number, or inventario ID)"
+                        "description": "Entity primary key (integer id, e.g. id_us, id_invmat, id_rep, id_sito)"
                     },
                     "file_path": {
                         "type": "string",
@@ -85,47 +85,18 @@ class MediaManagementTool(BaseTool):
                         "type": "string",
                         "description": "Filename for uploaded content (required with file_content_base64)"
                     },
-                    "media_type": {
-                        "type": "string",
-                        "enum": ["image", "document", "video", "audio", "3d_model"],
-                        "description": "Type of media file"
-                    },
                     "description": {
                         "type": "string",
-                        "description": "Description of media file"
+                        "description": "Description of media file (stored as descrizione)"
                     },
                     "tags": {
                         "type": "string",
                         "description": "Comma-separated tags"
                     },
-                    "author": {
-                        "type": "string",
-                        "description": "Author/creator name"
-                    },
-                    "is_primary": {
-                        "type": "boolean",
-                        "description": "Set as primary media for entity",
-                        "default": False
-                    },
-                    "is_public": {
-                        "type": "boolean",
-                        "description": "Make media publicly accessible",
-                        "default": True
-                    },
                     "delete_file": {
                         "type": "boolean",
                         "description": "Delete physical file (for delete operation)",
                         "default": True
-                    },
-                    "page": {
-                        "type": "integer",
-                        "description": "Page number for pagination",
-                        "default": 1
-                    },
-                    "size": {
-                        "type": "integer",
-                        "description": "Results per page",
-                        "default": 10
                     }
                 },
                 "required": ["operation"],
@@ -163,10 +134,6 @@ class MediaManagementTool(BaseTool):
                 return await self._handle_update(media_service, arguments)
             elif operation == "delete":
                 return await self._handle_delete(media_service, arguments)
-            elif operation == "statistics":
-                return await self._handle_statistics(media_service, arguments)
-            elif operation == "set_primary":
-                return await self._handle_set_primary(media_service, arguments)
             else:
                 return self._format_error(f"Unknown operation: {operation}")
 
@@ -187,11 +154,14 @@ class MediaManagementTool(BaseTool):
         filename = arguments.get("filename")
         description = arguments.get("description", "")
         tags = arguments.get("tags", "")
-        author = arguments.get("author", "")
-        is_primary = arguments.get("is_primary", False)
 
-        if not entity_type or not entity_id:
+        if not entity_type or entity_id is None:
             return self._format_error("entity_type and entity_id are required for upload")
+
+        try:
+            id_entity = int(entity_id)
+        except (TypeError, ValueError):
+            return self._format_error(f"entity_id must be an integer, got: {entity_id!r}")
 
         # Handle base64 content
         temp_file = None
@@ -217,29 +187,26 @@ class MediaManagementTool(BaseTool):
             if not os.path.exists(file_path):
                 return self._format_error(f"File not found: {file_path}")
 
-            # Store and register media
-            media = media_service.store_and_register_media(
+            # Store and register media (plugin schema)
+            media = media_service.add_media(
                 file_path=file_path,
-                entity_type=entity_type,
-                entity_id=str(entity_id),
-                description=description,
+                entity_key=entity_type,
+                id_entity=id_entity,
+                descrizione=description,
                 tags=tags,
-                author=author,
-                is_primary=is_primary
             )
 
             return self._format_success(
                 result={
                     "media_id": media.id_media,
-                    "media_name": media.media_name,
-                    "media_type": media.media_type,
-                    "media_path": media.media_path,
-                    "file_size": media.file_size,
-                    "entity_type": media.entity_type,
-                    "entity_id": media.entity_id,
-                    "is_primary": media.is_primary
+                    "filename": media.filename,
+                    "mediatype": media.mediatype,
+                    "filepath": media.filepath,
+                    "entity_type": entity_type,
+                    "entity_id": id_entity,
+                    "url": media_service.public_url(media.filepath),
                 },
-                message=f"Media uploaded successfully: {media.media_name}"
+                message=f"Media uploaded successfully: {media.filename}"
             )
 
         finally:
@@ -247,7 +214,7 @@ class MediaManagementTool(BaseTool):
             if temp_file and os.path.exists(temp_file.name):
                 try:
                     os.unlink(temp_file.name)
-                except:
+                except Exception:
                     pass
 
     async def _handle_get(
@@ -261,7 +228,7 @@ class MediaManagementTool(BaseTool):
         if not media_id:
             return self._format_error("media_id is required for get operation")
 
-        media = media_service.get_media_by_id(media_id)
+        media = media_service.get_media_by_id(int(media_id))
 
         if not media:
             return self._format_error(f"Media not found: {media_id}")
@@ -269,20 +236,16 @@ class MediaManagementTool(BaseTool):
         return self._format_success(
             result={
                 "media_id": media.id_media,
-                "media_name": media.media_name,
-                "media_filename": media.media_filename,
-                "media_type": media.media_type,
-                "media_path": media.media_path,
-                "file_size": media.file_size,
-                "entity_type": media.entity_type,
-                "entity_id": media.entity_id,
-                "description": media.description,
+                "filename": media.filename,
+                "filetype": media.filetype,
+                "mediatype": media.mediatype,
+                "filepath": media.filepath,
+                "descrizione": media.descrizione,
                 "tags": media.tags,
-                "author": media.author,
-                "is_primary": media.is_primary,
-                "is_public": media.is_public
+                "url": media_service.public_url(media.filepath),
+                "thumb_url": media_service.thumb_url(media.id_media),
             },
-            message=f"Media retrieved: {media.media_name}"
+            message=f"Media retrieved: {media.filename}"
         )
 
     async def _handle_list(
@@ -293,46 +256,30 @@ class MediaManagementTool(BaseTool):
         """Handle list media for entity operation"""
         entity_type = arguments.get("entity_type")
         entity_id = arguments.get("entity_id")
-        page = arguments.get("page", 1)
-        size = arguments.get("size", 10)
 
-        if not entity_type or not entity_id:
+        if not entity_type or entity_id is None:
             return self._format_error("entity_type and entity_id are required for list operation")
 
-        media_list = media_service.get_media_by_entity(
-            entity_type=entity_type,
-            entity_id=str(entity_id),
-            page=page,
-            size=size
-        )
+        try:
+            id_entity = int(entity_id)
+        except (TypeError, ValueError):
+            return self._format_error(f"entity_id must be an integer, got: {entity_id!r}")
 
-        # Get total count
-        total_count = media_service.count_media({
-            "entity_type": entity_type,
-            "entity_id": str(entity_id)
-        })
-
-        # Get primary media
-        primary_media = media_service.get_primary_media(entity_type, str(entity_id))
+        media_list = media_service.get_media_for_entity(entity_type, id_entity)
 
         result = {
             "entity_type": entity_type,
-            "entity_id": entity_id,
-            "total_count": total_count,
-            "page": page,
-            "size": size,
-            "primary_media_id": primary_media.id_media if primary_media else None,
+            "entity_id": id_entity,
+            "total_count": len(media_list),
             "media_items": [
                 {
-                    "media_id": media.id_media,
-                    "media_name": media.media_name,
-                    "media_type": media.media_type,
-                    "media_path": media.media_path,
-                    "file_size": media.file_size,
-                    "description": media.description,
+                    "id_media": media.id_media,
+                    "filename": media.filename,
+                    "filepath": media.filepath,
+                    "mediatype": media.mediatype,
+                    "descrizione": media.descrizione,
                     "tags": media.tags,
-                    "author": media.author,
-                    "is_primary": media.is_primary
+                    "url": media_service.public_url(media.filepath),
                 }
                 for media in media_list
             ]
@@ -340,7 +287,7 @@ class MediaManagementTool(BaseTool):
 
         return self._format_success(
             result=result,
-            message=f"Found {total_count} media items for {entity_type} {entity_id}"
+            message=f"Found {len(media_list)} media items for {entity_type} {id_entity}"
         )
 
     async def _handle_update(
@@ -348,36 +295,45 @@ class MediaManagementTool(BaseTool):
         media_service: MediaService,
         arguments: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Handle update media metadata operation"""
+        """Handle update media metadata operation (descrizione/tags only)"""
         media_id = arguments.get("media_id")
 
         if not media_id:
             return self._format_error("media_id is required for update operation")
 
-        # Build update data
+        # Build update data - the plugin schema only exposes descrizione/tags as
+        # user-editable metadata (no author/is_public/etc. anymore).
         update_data = {}
         if "description" in arguments:
-            update_data["description"] = arguments["description"]
+            update_data["descrizione"] = arguments["description"]
         if "tags" in arguments:
             update_data["tags"] = arguments["tags"]
-        if "author" in arguments:
-            update_data["author"] = arguments["author"]
-        if "is_public" in arguments:
-            update_data["is_public"] = arguments["is_public"]
 
         if not update_data:
-            return self._format_error("No update data provided")
+            return self._format_error(
+                "No update data provided (only 'description' and 'tags' are supported)"
+            )
 
-        media = media_service.update_media(media_id, update_data)
+        with media_service.db_manager.connection.get_session() as session:
+            media = session.get(Media, int(media_id))
+            if not media:
+                return self._format_error(f"Media not found: {media_id}")
 
-        return self._format_success(
-            result={
+            for field, value in update_data.items():
+                setattr(media, field, value)
+            session.commit()
+            session.refresh(media)
+
+            result = {
                 "media_id": media.id_media,
-                "media_name": media.media_name,
-                "updated_fields": list(update_data.keys())
-            },
-            message=f"Media updated: {media.media_name}"
-        )
+                "filename": media.filename,
+                "descrizione": media.descrizione,
+                "tags": media.tags,
+                "updated_fields": list(update_data.keys()),
+            }
+            message = f"Media updated: {media.filename}"
+
+        return self._format_success(result=result, message=message)
 
     async def _handle_delete(
         self,
@@ -392,103 +348,21 @@ class MediaManagementTool(BaseTool):
             return self._format_error("media_id is required for delete operation")
 
         # Get media info before deletion
-        media = media_service.get_media_by_id(media_id)
+        media = media_service.get_media_by_id(int(media_id))
         if not media:
             return self._format_error(f"Media not found: {media_id}")
 
-        media_name = media.media_name
-        success = media_service.delete_media(media_id, delete_file=delete_file)
+        filename = media.filename
+        success = media_service.delete_media(int(media_id), delete_files=delete_file)
 
         if success:
             return self._format_success(
                 result={
                     "media_id": media_id,
-                    "media_name": media_name,
+                    "filename": filename,
                     "deleted_file": delete_file
                 },
-                message=f"Media deleted: {media_name}"
+                message=f"Media deleted: {filename}"
             )
         else:
             return self._format_error(f"Failed to delete media: {media_id}")
-
-    async def _handle_statistics(
-        self,
-        media_service: MediaService,
-        arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """Handle get media statistics operation"""
-        entity_type = arguments.get("entity_type")
-        entity_id = arguments.get("entity_id")
-
-        if entity_type and entity_id:
-            # Get statistics for specific entity
-            # Count media for this entity
-            total_count = media_service.count_media({
-                "entity_type": entity_type,
-                "entity_id": str(entity_id)
-            })
-
-            # Get media list to analyze
-            media_list = media_service.get_media_by_entity(
-                entity_type=entity_type,
-                entity_id=str(entity_id),
-                size=1000  # Get all
-            )
-
-            # Analyze media
-            type_counts = {}
-            total_size = 0
-            authors = set()
-
-            for media in media_list:
-                media_type = media.media_type or 'unknown'
-                type_counts[media_type] = type_counts.get(media_type, 0) + 1
-                total_size += media.file_size or 0
-                if media.author:
-                    authors.add(media.author)
-
-            result = {
-                "entity_type": entity_type,
-                "entity_id": entity_id,
-                "total_media": total_count,
-                "type_distribution": type_counts,
-                "total_size_mb": round(total_size / (1024 * 1024), 2),
-                "unique_authors": len(authors)
-            }
-        else:
-            # Get global statistics
-            result = media_service.get_media_statistics()
-
-        return self._format_success(
-            result=result,
-            message="Media statistics retrieved"
-        )
-
-    async def _handle_set_primary(
-        self,
-        media_service: MediaService,
-        arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
-        """Handle set primary media operation"""
-        media_id = arguments.get("media_id")
-        entity_type = arguments.get("entity_type")
-        entity_id = arguments.get("entity_id")
-
-        if not media_id or not entity_type or not entity_id:
-            return self._format_error(
-                "media_id, entity_type, and entity_id are required for set_primary operation"
-            )
-
-        success = media_service.set_primary_media(
-            media_id=media_id,
-            entity_type=entity_type,
-            entity_id=str(entity_id)
-        )
-
-        if success:
-            return self._format_success(
-                result={"media_id": media_id, "is_primary": True},
-                message=f"Media {media_id} set as primary for {entity_type} {entity_id}"
-            )
-        else:
-            return self._format_error("Failed to set primary media")
