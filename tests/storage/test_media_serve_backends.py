@@ -20,3 +20,10 @@ def test_unibo_is_proxy():
 
 def test_local_is_file():
     kind, _ = serve_decision("/data/x.png"); assert kind == "file"
+
+
+def test_sftp_is_forbidden():
+    """sftp:// is a recognized remote scheme (path_resolver.REMOTE_SCHEMES)
+    but not in serve_decision's proxy list, so it must be rejected rather
+    than silently 501'd or served as a local file."""
+    kind, _ = serve_decision("sftp://host/x.png"); assert kind == "forbidden"

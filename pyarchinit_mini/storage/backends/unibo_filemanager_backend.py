@@ -31,10 +31,27 @@ from urllib.error import HTTPError, URLError
 from ..base_backend import StorageBackend, StorageType, StorageFile
 
 
-# Create SSL context that doesn't verify certificates (for self-signed certs)
-SSL_CONTEXT = ssl.create_default_context()
-SSL_CONTEXT.check_hostname = False
-SSL_CONTEXT.verify_mode = ssl.CERT_NONE
+def _truthy(value) -> bool:
+    """Coerce a credential value (bool, "true"/"1" string, etc.) to bool."""
+    if isinstance(value, str):
+        return value.strip().lower() in ('1', 'true', 'yes', 'on')
+    return bool(value)
+
+
+def _build_ssl_context(verify_ssl: bool = False) -> ssl.SSLContext:
+    """Build the SSL context used for Unibo File Manager requests.
+
+    DEFAULT (verify_ssl falsy) stays UNVERIFIED (CERT_NONE) — the Unibo
+    server uses a self-signed certificate, so changing the default would
+    break existing deployments. Passing a truthy ``verify_ssl`` credential
+    (True, "true", "1", ...) opts into full certificate verification.
+    """
+    if verify_ssl:
+        return ssl.create_default_context()
+    context = ssl.create_default_context()
+    context.check_hostname = False
+    context.verify_mode = ssl.CERT_NONE
+    return context
 
 
 class UniboFileManagerBackend(StorageBackend):
@@ -67,6 +84,10 @@ class UniboFileManagerBackend(StorageBackend):
         """
         super().__init__(base_path, credentials)
 
+        # Per-instance SSL context, honoring this instance's `verify_ssl`
+        # credential (default stays unverified — see _build_ssl_context).
+        self.ssl_context = _build_ssl_context(_truthy(self.credentials.get('verify_ssl')))
+
         # Parse server URL from credentials or use default
         self.server_url = self.credentials.get('server_url', 'https://137.204.128.220')
         if not self.server_url.endswith('/'):
@@ -98,7 +119,7 @@ class UniboFileManagerBackend(StorageBackend):
 
         try:
             request = Request(url, data=data, headers=req_headers, method=method)
-            with urlopen(request, context=SSL_CONTEXT, timeout=timeout) as response:
+            with urlopen(request, context=self.ssl_context, timeout=timeout) as response:
                 return response.read()
         except HTTPError as e:
             if e.code == 401 and retry_on_401:
@@ -567,7 +588,7 @@ class UniboFileManagerBackend(StorageBackend):
 
             request = Request(url, data=body, headers=headers, method='POST')
 
-            with urlopen(request, context=SSL_CONTEXT, timeout=self.DEFAULT_TIMEOUT * 3) as response:
+            with urlopen(request, context=self.ssl_context, timeout=self.DEFAULT_TIMEOUT * 3) as response:
                 result = json.loads(response.read().decode('utf-8'))
                 if result and 'id' in result:
                     print(f"UniboFileManager: Successfully uploaded '{actual_filename}' (ID: {result['id']})")

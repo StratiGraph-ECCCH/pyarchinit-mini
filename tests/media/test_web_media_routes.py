@@ -19,7 +19,11 @@ Covers the four behaviors requested for Task 8:
 Also covers the /media/serve local-path guard (CWE-22 prefix-without-boundary
 fix): a sibling directory that merely shares the media root's string prefix
 (e.g. "<media_root>_backup") must be rejected (403), a path genuinely under a
-root that doesn't exist on disk must 404, and a remote-scheme URI must 501.
+root that doesn't exist on disk must 404, and an unregistered remote scheme
+(e.g. sftp://) must 403 ("forbidden"). Registered remote schemes
+(unibo/webdav/s3/r2/gdrive/dropbox) are proxied instead of erroring — see
+serve_decision() in pyarchinit_mini/web_interface/media_serve.py and its
+dedicated unit coverage in tests/storage/test_media_serve_backends.py.
 """
 import os
 import tempfile
@@ -305,23 +309,41 @@ def flask_app(db_manager, media_service, media_handler, site_service, us_service
             return render_template('media/list.html', media_list=[], stats={})
 
     # ---- /media/serve (mirrors app.py's media_serve post-Task-8) ----
+    # Scheme classification is delegated to the REAL serve_decision() (see
+    # pyarchinit_mini/web_interface/media_serve.py) rather than hand-rolled
+    # here, so this mirror can't drift stale again like its predecessor did
+    # (which asserted a since-removed 501-for-remote-schemes behavior).
     @app.route('/media/serve')
     @login_required
     def media_serve():
-        from pyarchinit_mini.media_manager.path_resolver import is_remote_url, cloudinary_to_url
+        from pyarchinit_mini.web_interface.media_serve import serve_decision
         p = request.args.get('p', '')
         if not p:
             abort(404)
-        low = p.lower()
-        if low.startswith('cloudinary://'):
-            return redirect(cloudinary_to_url(p))
-        if low.startswith(('http://', 'https://')):
-            return redirect(p)
-        if is_remote_url(p):
-            abort(501)
+        kind, value = serve_decision(p)
+
+        if kind == 'redirect':
+            return redirect(value)
+
+        if kind == 'proxy':
+            from pyarchinit_mini.services.storage_config_service import StorageConfigService
+            mgr = StorageConfigService(db_manager).build_manager()
+            data = mgr.read(p)
+            if data is None:
+                abort(404)
+            import io
+            import mimetypes
+            mimetype = mimetypes.guess_type(p)[0] or 'application/octet-stream'
+            return send_file(io.BytesIO(data), mimetype=mimetype)
+
+        if kind == 'forbidden':
+            abort(403)
+
+        # kind == 'file': local absolute path, restrict to the configured
+        # media/thumb roots (existing CWE-22 guard).
         roots = [str(media_handler.media_root), str(media_handler.thumb_path),
                  str(media_handler.thumb_resize)]
-        real = os.path.realpath(p)
+        real = os.path.realpath(value)
         def _under(root):
             rr = os.path.realpath(root)
             return real == rr or real.startswith(rr + os.sep)
@@ -478,12 +500,17 @@ def test_media_serve_missing_file_under_root_is_404(logged_in_client, media_hand
     assert resp.status_code == 404
 
 
-def test_media_serve_remote_scheme_is_501(logged_in_client):
-    """A recognized-but-unimplemented remote scheme returns 501."""
+def test_media_serve_unregistered_remote_scheme_is_forbidden(logged_in_client):
+    """A remote scheme we recognize but don't know how to proxy (sftp://)
+    is rejected with 403 via serve_decision()'s 'forbidden' outcome — NOT
+    501; registered schemes (unibo/webdav/s3/r2/gdrive/dropbox) proxy
+    instead. Pure serve_decision() classification (incl. the proxy cases)
+    is unit-tested in tests/storage/test_media_serve_backends.py; this is
+    the route-integration check that the real wiring returns 403."""
     client = logged_in_client
 
-    resp = client.get("/media/serve?p=unibo://x/y")
-    assert resp.status_code == 501
+    resp = client.get("/media/serve?p=sftp://x/y")
+    assert resp.status_code == 403
 
 
 def _find_uploaded_media(client):
