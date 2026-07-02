@@ -679,6 +679,8 @@ def create_app():
     tma_service = TMAService(db_manager)
     from pyarchinit_mini.services.tomba_service import TombaService
     tomba_service = TombaService(db_manager)
+    from pyarchinit_mini.services.struttura_service import StrutturaService
+    struttura_service = StrutturaService(db_manager)
     # matrix_visualizer and graphviz_visualizer are declared at module level
     pdf_generator = PDFGenerator()
     storage_service = StorageConfigService(db_manager)
@@ -712,6 +714,7 @@ def create_app():
     app.media_service = media_service
     app.storage_service = storage_service
     app.tomba_service = tomba_service
+    app.struttura_service = struttura_service
 
     # Initialize Flask-Login
     init_login_manager(app, user_service)
@@ -5088,6 +5091,104 @@ def create_app():
         """Return thesaurus values for a Tomba field"""
         try:
             values = tomba_service.get_thesaurus_values(field)
+            return jsonify(values)
+        except Exception as e:
+            return jsonify({'error': str(e), 'values': []}), 500
+
+    # ===== Struttura =====
+    @app.route('/struttura')
+    @login_required
+    def struttura_list():
+        page = request.args.get('page', 1, type=int)
+        per_page = 50
+        search = request.args.get('search', '').strip()
+        sito_filter = request.args.get('sito', '').strip()
+        try:
+            struttura_list_data = struttura_service.list_struttura(page=page, size=per_page,
+                                                                     search=search, sito=sito_filter)
+            total = struttura_service.count_struttura(search=search, sito=sito_filter)
+            sites = struttura_service.get_distinct_sites()
+            import math
+            total_pages = max(math.ceil(total / per_page), 1)
+            return render_template('struttura/list.html', struttura_list=struttura_list_data,
+                                   total=total, page=page, total_pages=total_pages,
+                                   search=search, sito_filter=sito_filter, sites=sites)
+        except Exception as e:
+            flash(f'Errore Struttura: {str(e)}', 'error')
+            return redirect(url_for('index'))
+
+    @app.route('/struttura/new', methods=['GET', 'POST'])
+    @login_required
+    @write_permission_required
+    def struttura_create():
+        if request.method == 'POST':
+            data = {k: v for k, v in request.form.items()}
+            struttura_id = struttura_service.create_struttura(data)
+            if struttura_id:
+                flash('Struttura creata', 'success')
+                return redirect(url_for('struttura_edit', struttura_id=struttura_id))
+            flash('Errore creazione Struttura', 'error')
+        return render_template('struttura/form.html', struttura={}, media=[])
+
+    @app.route('/struttura/<int:struttura_id>', methods=['GET', 'POST'])
+    @login_required
+    @write_permission_required
+    def struttura_edit(struttura_id):
+        struttura = struttura_service.get_struttura(struttura_id)
+        if not struttura:
+            flash('Struttura non trovata', 'error')
+            return redirect(url_for('struttura_list'))
+        if request.method == 'POST':
+            data = {k: v for k, v in request.form.items()}
+            if struttura_service.update_struttura(struttura_id, data):
+                flash('Struttura aggiornata', 'success')
+            else:
+                flash('Errore aggiornamento', 'error')
+            return redirect(url_for('struttura_edit', struttura_id=struttura_id))
+        # Load attached media
+        media_items = []
+        try:
+            media_items = _media_gallery('struttura', struttura_id)
+        except Exception:
+            pass
+        return render_template('struttura/form.html', struttura=struttura, media=media_items)
+
+    @app.route('/struttura/<int:struttura_id>/delete', methods=['POST'])
+    @login_required
+    @write_permission_required
+    def struttura_delete(struttura_id):
+        if struttura_service.delete_struttura(struttura_id):
+            flash('Struttura eliminata', 'success')
+        else:
+            flash('Errore eliminazione', 'error')
+        return redirect(url_for('struttura_list'))
+
+    @app.route('/struttura/<int:struttura_id>/media/upload', methods=['POST'])
+    @login_required
+    @write_permission_required
+    def struttura_media_upload(struttura_id):
+        try:
+            f = request.files.get('file')
+            if not f or not f.filename:
+                flash('Nessun file', 'error')
+                return redirect(url_for('struttura_edit', struttura_id=struttura_id))
+            from werkzeug.utils import secure_filename
+            filename = secure_filename(f.filename)
+            tmp_path = os.path.join(tempfile.gettempdir(), filename)
+            f.save(tmp_path)
+            media_service.add_media(tmp_path, 'struttura', struttura_id)
+            flash('Media caricato', 'success')
+            os.unlink(tmp_path)
+        except Exception as e:
+            flash(f'Errore upload: {e}', 'error')
+        return redirect(url_for('struttura_edit', struttura_id=struttura_id))
+
+    @app.route('/api/struttura/thesaurus/<field>')
+    @login_required
+    def struttura_thesaurus(field):
+        """Return thesaurus values for a Struttura field"""
+        try:
+            values = struttura_service.get_thesaurus_values(field)
             return jsonify(values)
         except Exception as e:
             return jsonify({'error': str(e), 'values': []}), 500

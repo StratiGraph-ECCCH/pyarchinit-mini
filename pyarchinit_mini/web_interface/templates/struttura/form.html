@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Struttura') }} {{ struttura.id_struttura if struttura and struttura.id_struttura else _('New') }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-archway"></i>
+        {% if struttura and struttura.id_struttura %}{{ _('Edit Struttura') }} #{{ struttura.id_struttura }}{% else %}{{ _('New Struttura') }}{% endif %}
+    </h2>
+    <a href="{{ url_for('struttura_list') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> {{ _('Back') }}
+    </a>
+</div>
+
+<form method="POST">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-basic">{{ _('Identification') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-desc">{{ _('Description') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-articolazione">{{ _('Articolazione') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-crono">{{ _('Chronology') }}</a></li>
+        {% if struttura and struttura.id_struttura %}
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-media">{{ _('Media') }} ({{ media|length }})</a></li>
+        {% endif %}
+    </ul>
+    <div class="tab-content border border-top-0 p-3">
+        <!-- Identification -->
+        <div class="tab-pane fade show active" id="tab-basic">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Site') }} *</label>
+                    <input type="text" name="sito" class="form-control" value="{{ struttura.sito or '' }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Sigla Struttura') }}</label>
+                    <input type="text" name="sigla_struttura" class="form-control" value="{{ struttura.sigla_struttura or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Numero Struttura') }}</label>
+                    <input type="number" name="numero_struttura" class="form-control" value="{{ struttura.numero_struttura if struttura.numero_struttura is not none else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Categoria Struttura') }}</label>
+                    <input type="text" name="categoria_struttura" class="form-control" value="{{ struttura.categoria_struttura or '' }}" list="thes-categoria_struttura">
+                    <datalist id="thes-categoria_struttura"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Tipologia Struttura') }}</label>
+                    <input type="text" name="tipologia_struttura" class="form-control" value="{{ struttura.tipologia_struttura or '' }}" list="thes-tipologia_struttura">
+                    <datalist id="thes-tipologia_struttura"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Definizione Struttura') }}</label>
+                    <input type="text" name="definizione_struttura" class="form-control" value="{{ struttura.definizione_struttura or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Data Compilazione') }}</label>
+                    <input type="text" name="data_compilazione" class="form-control" value="{{ struttura.data_compilazione or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Nome Compilatore') }}</label>
+                    <input type="text" name="nome_compilatore" class="form-control" value="{{ struttura.nome_compilatore or '' }}">
+                </div>
+            </div>
+        </div>
+        <!-- Description -->
+        <div class="tab-pane fade" id="tab-desc">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Descrizione') }}</label>
+                    <textarea name="descrizione" class="form-control" rows="3">{{ struttura.descrizione or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Interpretazione') }}</label>
+                    <textarea name="interpretazione" class="form-control" rows="3">{{ struttura.interpretazione or '' }}</textarea>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Quota') }}</label>
+                    <input type="number" step="any" name="quota" class="form-control" value="{{ struttura.quota if struttura.quota is not none else '' }}">
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label">{{ _('Stato di Conservazione') }}</label>
+                    <textarea name="stato_conservazione" class="form-control" rows="3">{{ struttura.stato_conservazione or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Relazione Topografica') }}</label>
+                    <input type="text" name="relazione_topografica" class="form-control" value="{{ struttura.relazione_topografica or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Materiali Impiegati') }}</label>
+                    <input type="text" name="materiali_impiegati" class="form-control" value="{{ struttura.materiali_impiegati or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Elementi Strutturali') }}</label>
+                    <input type="text" name="elementi_strutturali" class="form-control" value="{{ struttura.elementi_strutturali or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Rapporti Struttura') }}</label>
+                    <input type="text" name="rapporti_struttura" class="form-control" value="{{ struttura.rapporti_struttura or '' }}">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">{{ _('Misure Struttura') }}</label>
+                    <input type="text" name="misure_struttura" class="form-control" value="{{ struttura.misure_struttura or '' }}">
+                </div>
+            </div>
+        </div>
+        <!-- Articolazione -->
+        <div class="tab-pane fade" id="tab-articolazione">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Prospetto Ingresso') }}</label>
+                    <textarea name="prospetto_ingresso" class="form-control" rows="3">{{ struttura.prospetto_ingresso or '' }}</textarea>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Orientamento Ingresso') }}</label>
+                    <input type="text" name="orientamento_ingresso" class="form-control" value="{{ struttura.orientamento_ingresso or '' }}" list="thes-orientamento_ingresso">
+                    <datalist id="thes-orientamento_ingresso"></datalist>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Articolazione') }}</label>
+                    <input type="text" name="articolazione" class="form-control" value="{{ struttura.articolazione or '' }}" list="thes-articolazione">
+                    <datalist id="thes-articolazione"></datalist>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('N. Ambienti') }}</label>
+                    <input type="number" name="n_ambienti" class="form-control" value="{{ struttura.n_ambienti if struttura.n_ambienti is not none else '' }}">
+                </div>
+                <div class="col-md-9">
+                    <label class="form-label">{{ _('Sviluppo Planimetrico') }}</label>
+                    <input type="text" name="sviluppo_planimetrico" class="form-control" value="{{ struttura.sviluppo_planimetrico or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Orientamento Ambienti') }}</label>
+                    <textarea name="orientamento_ambienti" class="form-control" rows="3">{{ struttura.orientamento_ambienti or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Elementi Costitutivi') }}</label>
+                    <textarea name="elementi_costitutivi" class="form-control" rows="3">{{ struttura.elementi_costitutivi or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Motivo Decorativo') }}</label>
+                    <input type="text" name="motivo_decorativo" class="form-control" value="{{ struttura.motivo_decorativo or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Potenzialità Archeologica') }}</label>
+                    <input type="text" name="potenzialita_archeologica" class="form-control" value="{{ struttura.potenzialita_archeologica or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Manufatti') }}</label>
+                    <textarea name="manufatti" class="form-control" rows="3">{{ struttura.manufatti or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Elementi Datanti') }}</label>
+                    <input type="text" name="elementi_datanti" class="form-control" value="{{ struttura.elementi_datanti or '' }}">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">{{ _('Fasi Funzionali') }}</label>
+                    <textarea name="fasi_funzionali" class="form-control" rows="3">{{ struttura.fasi_funzionali or '' }}</textarea>
+                </div>
+            </div>
+        </div>
+        <!-- Chronology -->
+        <div class="tab-pane fade" id="tab-crono">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Periodo Iniziale') }}</label>
+                    <input type="number" name="periodo_iniziale" class="form-control" value="{{ struttura.periodo_iniziale if struttura.periodo_iniziale is not none else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Fase Iniziale') }}</label>
+                    <input type="number" name="fase_iniziale" class="form-control" value="{{ struttura.fase_iniziale if struttura.fase_iniziale is not none else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Periodo Finale') }}</label>
+                    <input type="number" name="periodo_finale" class="form-control" value="{{ struttura.periodo_finale if struttura.periodo_finale is not none else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Fase Finale') }}</label>
+                    <input type="number" name="fase_finale" class="form-control" value="{{ struttura.fase_finale if struttura.fase_finale is not none else '' }}">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">{{ _('Datazione Estesa') }}</label>
+                    <input type="text" name="datazione_estesa" class="form-control" value="{{ struttura.datazione_estesa or '' }}">
+                </div>
+            </div>
+        </div>
+
+        {% if struttura and struttura.id_struttura %}
+        <!-- Media -->
+        <div class="tab-pane fade" id="tab-media">
+            <h5>{{ _('Struttura Media') }}</h5>
+            {% if media %}
+            <div class="row g-2">
+                {% for m in media %}
+                <div class="col-md-3">
+                    <div class="card">
+                        {% if m.media_type == 'image' %}
+                        <img src="{{ m.url }}" class="card-img-top" style="max-height:150px;object-fit:cover;">
+                        {% else %}
+                        <div class="card-body text-center"><i class="fas fa-file fa-3x text-muted"></i></div>
+                        {% endif %}
+                        <div class="card-body p-2">
+                            <small>{{ m.media_name }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">{{ _('No media attached yet.') }}</p>
+            {% endif %}
+
+            <h6 class="mt-3">{{ _('Upload media') }}</h6>
+            <form method="POST" action="{{ url_for('struttura_media_upload', struttura_id=struttura.id_struttura) }}" enctype="multipart/form-data" class="row g-2">
+                <div class="col-md-8"><input type="file" name="file" class="form-control" required></div>
+                <div class="col-md-4"><button type="submit" class="btn btn-primary w-100">{{ _('Upload') }}</button></div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> {{ _('Save') }}
+        </button>
+    </div>
+</form>
+
+<script>
+// Populate datalist elements with thesaurus values from PyArchInit
+const STRUTTURA_THES_FIELDS = ['categoria_struttura','tipologia_struttura','orientamento_ingresso','articolazione'];
+STRUTTURA_THES_FIELDS.forEach(function(field) {
+    fetch('/api/struttura/thesaurus/' + field)
+        .then(function(r) { return r.json(); })
+        .then(function(values) {
+            if (!Array.isArray(values)) return;
+            const dl = document.getElementById('thes-' + field);
+            if (!dl) return;
+            dl.innerHTML = '';
+            values.forEach(function(v) {
+                const opt = document.createElement('option');
+                opt.value = v.value || '';
+                if (v.code) opt.label = v.code;
+                dl.appendChild(opt);
+            });
+        })
+        .catch(function() { /* silent */ });
+});
+</script>
+{% endblock %}
