@@ -17,8 +17,6 @@ ID_FIELD_MAPPINGS = {
     'individui_table': 'id_individuo',
     'tafonomia_table': 'id_tafonomia',
     'documentation_table': 'id_documentazione',
-    'media_table': 'id_media',
-    'media_thumb_table': 'id_media_thumb',
     'pottery_table': 'id_rep',
 }
 
