@@ -175,6 +175,8 @@ Data Management
    tomba_service
    struttura
    struttura_service
+   fauna
+   fauna_service
    features/stratigraphic_relationships
 
 Harris Matrix & Visualization

@@ -14,6 +14,13 @@
 - Docs: Sphinx autodoc stubs (`docs/struttura.rst`, `docs/struttura_service.rst`) and a new "Schede Struttura" section in the Web Interface Tutorial.
 - i18n: full template extraction — 32 new catalog entries (tab names, field labels, "New/Edit Struttura", list/search/delete strings) added to both the Italian and English catalogs, so the Struttura pages are fully translated instead of leaking raw Italian into the English UI.
 
+### Added — Fauna (faunal remains) record type
+- New **Fauna** entity mirroring the classic PyArchInit `fauna_table`: US-linked identification, recovery context, species/skeletal data, and combustion/taphonomy fields, with `FaunaService` (list/count/get/create/update/delete, site filtering, free-text search).
+- Web UI: `/fauna` list + create/edit form (5 tabs: Identification, Context, Fauna Data, Combustion & Conservation, Notes; no media panel — Fauna is a US-linked record), and a "Fauna" dashboard tile/nav entry.
+- Thesaurus-backed dropdowns for 6 fields (Specie, Parti Scheletriche, Contesto, Stato di Conservazione, Metodologia Recupero, Deposizione) via `GET /api/fauna/thesaurus/<field>`.
+- Docs: Sphinx autodoc stubs (`docs/fauna.rst`, `docs/fauna_service.rst`) and a new "Schede Fauna" section in the Web Interface Tutorial.
+- i18n: full template extraction — 40 new catalog entries (tab names, field labels, "New/Edit Fauna", list/search/delete strings) added to both the Italian and English catalogs, so the Fauna pages are fully translated instead of leaking raw Italian into the English UI.
+
 ## 2.9.1 — 2026-05-19
 
 ### Fixed — Harris Matrix proper rendering (post-2.9.0 feedback)

@@ -7485,6 +7485,168 @@ msgstr "Delete this Struttura record?"
 msgid "No Struttura records found."
 msgstr "No Struttura records found."
 
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:7
+msgid "Edit Fauna"
+msgstr "Edit Fauna"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:7
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:9
+msgid "New Fauna"
+msgstr "New Fauna"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:18
+msgid "Fauna Data"
+msgstr "Fauna Data"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:19
+msgid "Combustion & Conservation"
+msgstr "Combustion & Conservation"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:20
+msgid "Notes"
+msgstr "Notes"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:35
+msgid "Saggio"
+msgstr "Trench"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:43
+msgid "ID US"
+msgstr "US ID"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:47
+msgid "Datazione US"
+msgstr "US Dating"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:55
+msgid "Responsabile Scheda"
+msgstr "Record Compiler"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:59
+msgid "Documentazione Fotografica"
+msgstr "Photographic Documentation"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:68
+msgid "Metodologia Recupero"
+msgstr "Recovery Methodology"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:73
+msgid "Contesto"
+msgstr "Context"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:78
+msgid "Deposizione"
+msgstr "Deposition"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:83
+msgid "Descrizione Contesto"
+msgstr "Context Description"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:87
+msgid "Resti in Connessione Anatomica"
+msgstr "Remains in Anatomical Connection"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:91
+msgid "Tipologia Accumulo"
+msgstr "Accumulation Typology"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:95
+msgid "Note Terreno / Giacitura"
+msgstr "Field Notes / Position"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:99
+msgid "Affidabilità Stratigrafica"
+msgstr "Stratigraphic Reliability"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:108
+msgid "Numero Stimato Resti"
+msgstr "Estimated Number of Remains"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:112
+msgid "Numero Minimo Individui"
+msgstr "Minimum Number of Individuals"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:116
+msgid "Stato Frammentazione"
+msgstr "Fragmentation State"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:120
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:45
+msgid "Specie"
+msgstr "Species"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:125
+msgid "Parti Scheletriche"
+msgstr "Skeletal Parts"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:130
+msgid "Specie (PSI, JSON)"
+msgstr "Species (PSI, JSON)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:134
+msgid "Misure Ossa (JSON)"
+msgstr "Bone Measurements (JSON)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:143
+msgid "Tracce Combustione"
+msgstr "Combustion Traces"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:147
+msgid "Combustione Altri Materiali US"
+msgstr "Combustion of Other US Materials"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:149
+msgid "— —"
+msgstr "— —"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:150
+msgid "Sì"
+msgstr "Yes"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:155
+msgid "Tipo Combustione"
+msgstr "Combustion Type"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:159
+msgid "Segni Tafonomici Evidenti"
+msgstr "Evident Taphonomic Marks"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:163
+msgid "Caratterizzazione Segni Tafonomici"
+msgstr "Characterization of Taphonomic Marks"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:172
+msgid "Alterazioni Morfologiche"
+msgstr "Morphological Alterations"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:181
+msgid "Campionature Effettuate"
+msgstr "Sampling Performed"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:185
+msgid "Classi Reperti in Associazione"
+msgstr "Associated Find Classes"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:189
+msgid "Osservazioni"
+msgstr "Observations"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:18
+msgid "Search by site, area, us, saggio, specie, contesto..."
+msgstr "Search by site, area, us, trench, species, context..."
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:46
+msgid "N. Minimo Individui"
+msgstr "Min. No. Individuals"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:64
+msgid "Delete this Fauna record?"
+msgstr "Delete this Fauna record?"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:97
+msgid "No Fauna records found."
+msgstr "No Fauna records found."
+
 #~ msgid "OK"
 #~ msgstr "OK"
 

@@ -7272,6 +7272,168 @@ msgstr "Eliminare questo record Struttura?"
 msgid "No Struttura records found."
 msgstr "Nessun record Struttura trovato."
 
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:7
+msgid "Edit Fauna"
+msgstr "Modifica Fauna"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:7
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:9
+msgid "New Fauna"
+msgstr "Nuova Fauna"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:18
+msgid "Fauna Data"
+msgstr "Dati Fauna"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:19
+msgid "Combustion & Conservation"
+msgstr "Combustione e Conservazione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:20
+msgid "Notes"
+msgstr "Note"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:35
+msgid "Saggio"
+msgstr "Saggio"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:43
+msgid "ID US"
+msgstr "ID US"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:47
+msgid "Datazione US"
+msgstr "Datazione US"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:55
+msgid "Responsabile Scheda"
+msgstr "Responsabile Scheda"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:59
+msgid "Documentazione Fotografica"
+msgstr "Documentazione Fotografica"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:68
+msgid "Metodologia Recupero"
+msgstr "Metodologia Recupero"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:73
+msgid "Contesto"
+msgstr "Contesto"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:78
+msgid "Deposizione"
+msgstr "Deposizione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:83
+msgid "Descrizione Contesto"
+msgstr "Descrizione Contesto"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:87
+msgid "Resti in Connessione Anatomica"
+msgstr "Resti in Connessione Anatomica"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:91
+msgid "Tipologia Accumulo"
+msgstr "Tipologia Accumulo"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:95
+msgid "Note Terreno / Giacitura"
+msgstr "Note Terreno / Giacitura"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:99
+msgid "Affidabilità Stratigrafica"
+msgstr "Affidabilità Stratigrafica"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:108
+msgid "Numero Stimato Resti"
+msgstr "Numero Stimato Resti"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:112
+msgid "Numero Minimo Individui"
+msgstr "Numero Minimo Individui"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:116
+msgid "Stato Frammentazione"
+msgstr "Stato Frammentazione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:120
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:45
+msgid "Specie"
+msgstr "Specie"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:125
+msgid "Parti Scheletriche"
+msgstr "Parti Scheletriche"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:130
+msgid "Specie (PSI, JSON)"
+msgstr "Specie (PSI, JSON)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:134
+msgid "Misure Ossa (JSON)"
+msgstr "Misure Ossa (JSON)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:143
+msgid "Tracce Combustione"
+msgstr "Tracce Combustione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:147
+msgid "Combustione Altri Materiali US"
+msgstr "Combustione Altri Materiali US"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:149
+msgid "— —"
+msgstr "— —"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:150
+msgid "Sì"
+msgstr "Sì"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:155
+msgid "Tipo Combustione"
+msgstr "Tipo Combustione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:159
+msgid "Segni Tafonomici Evidenti"
+msgstr "Segni Tafonomici Evidenti"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:163
+msgid "Caratterizzazione Segni Tafonomici"
+msgstr "Caratterizzazione Segni Tafonomici"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:172
+msgid "Alterazioni Morfologiche"
+msgstr "Alterazioni Morfologiche"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:181
+msgid "Campionature Effettuate"
+msgstr "Campionature Effettuate"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:185
+msgid "Classi Reperti in Associazione"
+msgstr "Classi Reperti in Associazione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:189
+msgid "Osservazioni"
+msgstr "Osservazioni"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:18
+msgid "Search by site, area, us, saggio, specie, contesto..."
+msgstr "Cerca per sito, area, us, saggio, specie, contesto..."
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:46
+msgid "N. Minimo Individui"
+msgstr "N. Minimo Individui"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:64
+msgid "Delete this Fauna record?"
+msgstr "Eliminare questo record Fauna?"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:97
+msgid "No Fauna records found."
+msgstr "Nessun record Fauna trovato."
+
 #~ msgid "OK"
 #~ msgstr "OK"
 

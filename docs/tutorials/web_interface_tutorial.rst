@@ -732,6 +732,70 @@ From the Struttura edit form, use the **Struttura Media** panel to attach photos
 .. note::
    Media uploaded here appears in the entity's media gallery alongside other archaeological records, keeping documentation centralized per structure.
 
+Schede Fauna (Faunal Remains Records)
+=======================================
+
+The Fauna module manages faunal remains records (mirroring the classic PyArchInit ``fauna_table``), covering identification, recovery context, species/skeletal data, and combustion/taphonomy observations. Unlike Struttura and Tomba, a Fauna record is a **US-linked record** (it references the stratigraphic unit it was recovered from) and has **no media attachment panel**.
+
+Fauna List
+----------
+
+Navigate to **Fauna** in the top menu (``/fauna``) to see the paginated list of faunal remains records.
+
+Features:
+
+* Paginated list (50 records per page)
+* Filter by site (Sito) and free-text search (matches Sito, Area, US, Saggio, Specie, Contesto)
+* Create new Fauna button
+* Direct links to each record's edit form
+
+Creating/Editing a Fauna Record
+---------------------------------
+
+The Fauna form is organized into five tabs: Identification, Context, Fauna Data, Combustion & Conservation, and Notes.
+
+**Required Fields:**
+
+* Site (Sito) - free-text entry
+
+**Identification:**
+
+* Sito, Area, Saggio, US, ID US, Datazione US, Data Compilazione, Responsabile Scheda, Documentazione Fotografica
+
+**Context:**
+
+* Metodologia Recupero, Contesto, Deposizione, Descrizione Contesto, Resti in Connessione Anatomica, Tipologia Accumulo, Note Terreno / Giacitura, Affidabilità Stratigrafica
+
+**Fauna Data:**
+
+* Numero Stimato Resti, Numero Minimo Individui, Stato Frammentazione, Specie, Parti Scheletriche, Specie (PSI, JSON), Misure Ossa (JSON)
+
+**Combustion & Conservation:**
+
+* Tracce Combustione, Combustione Altri Materiali US, Tipo Combustione, Segni Tafonomici Evidenti, Caratterizzazione Segni Tafonomici, Stato di Conservazione, Alterazioni Morfologiche
+
+**Notes:**
+
+* Campionature Effettuate, Classi Reperti in Associazione, Osservazioni, Interpretazione
+
+.. note::
+   ``Data Compilazione`` renders as an HTML ``date`` input. ``Combustione Altri Materiali US`` is a boolean field rendered as a Sì / No / — — select (matching the classic PyArchInit desktop GUI's tri-state — unset, Sì, No). ``Numero Minimo Individui`` uses an HTML number input.
+
+.. note::
+   Two fields (Specie (PSI, JSON), Misure Ossa (JSON)) render as multi-line ``<textarea>`` inputs, matching the classic PyArchInit desktop GUI's free-text/JSON-list fields for these columns. Enter plain text, or a JSON-formatted list if you are keeping parity with data imported from the classic PyArchInit desktop client.
+
+Thesaurus Dropdowns
+--------------------
+
+Six fields use ICCD-style controlled vocabulary, populated live from the thesaurus via ``GET /api/fauna/thesaurus/<field>``:
+
+* Specie, Parti Scheletriche, Contesto, Stato di Conservazione, Metodologia Recupero, Deposizione
+
+Each of these renders as a text input backed by an HTML ``<datalist>`` of suggested values, so you can either pick a standardized term or enter a custom value.
+
+.. tip::
+   Because Fauna records are linked to a stratigraphic unit, fill in the US, ID US, and Datazione US fields on the Identification tab to keep the faunal remains tied to their originating context — there is no separate relationship editor for this link.
+
 Upload Media
 ============
 
@@ -1244,6 +1308,7 @@ You now know how to:
 * Record material inventory finds with ICCD-compliant fields
 * Manage Tomba (burial) records with thesaurus-backed ritual/structure fields
 * Manage Struttura (architectural structure) records with thesaurus-backed identification/articolazione fields
+* Manage Fauna (faunal remains) records linked to their stratigraphic unit, with thesaurus-backed species/context fields
 * Upload and manage media files
 * Create and visualize Harris Matrix diagrams
 * Export diagrams to GraphML and Extended Matrix formats
