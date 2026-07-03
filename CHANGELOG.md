@@ -1,3 +1,16 @@
+## 3.2.0 — 2026-07-03
+
+### Added — export for the new record types
+- **PDF / Excel / CSV export** for tomba, struttura, fauna, and UT (`/export/<entity>/{pdf,excel,csv}`), with buttons on each list page. A new generic per-record PDF layout (field: value) renders any entity readably. Struttura's `repr` sub-tables and fauna's JSON columns are flattened to human-readable strings in the exported files (no raw `[['x']]` literals).
+
+### Changed — UI
+- Thesaurus fields on the new-record forms are now visible **`<select>` dropdowns** (populated from the shared `pyarchinit_thesaurus_sigle` vocabulary, current value preserved) instead of autocomplete `<datalist>` inputs, so the controlled vocabularies are clearly visible — matching the classic plugin's comboboxes.
+- The **Media tab is always visible** on tomba/struttura/ut forms; on a new (unsaved) record it shows a "save first" hint, and after saving it shows the gallery + upload.
+
+### Fixed
+- i18n: recompiled the `.mo` catalogs without `--use-fuzzy`, dropping wrong machine-guessed fuzzy translations (e.g. the "Edit Site" button was rendering as "New Site").
+- Test: made the storage-config "is encrypted" assertion deterministic (a bare `AK` substring could appear by chance in the base64 ciphertext).
+
 ## 3.1.0 — 2026-07-03
 
 ### Added — structured sub-table widgets matching the classic plugin
