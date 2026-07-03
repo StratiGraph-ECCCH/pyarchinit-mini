@@ -175,3 +175,78 @@ def test_create_fauna_retries_on_id_collision(svc, monkeypatch):
     assert calls["n"] == 1
     assert second == 2
     assert svc.count_fauna() == 2
+
+
+# --------------------------------------------------------------------------
+# specie_psi / misure_ossa JSON normalization (plugin-compatible format)
+# --------------------------------------------------------------------------
+
+def test_create_fauna_normalizes_specie_psi_to_plugin_json(svc):
+    """specie_psi must round-trip as a list of [specie, psi] string pairs —
+    the SAME shape the classic pyarchinit_fauna plugin writes."""
+    import json
+    fid = svc.create_fauna({
+        "sito": "S",
+        "specie_psi": '[["Bos taurus","femore"],["Ovis aries","omero"]]',
+    })
+    row = svc.get_fauna(fid)
+    assert json.loads(row["specie_psi"]) == [["Bos taurus", "femore"], ["Ovis aries", "omero"]]
+
+
+def test_create_fauna_normalizes_misure_ossa_to_plugin_json(svc):
+    """misure_ossa must round-trip as a list of 6-element string lists
+    (elemento, specie, GL, GB, Bp, Bd) — blank measures stay '' not 0."""
+    import json
+    fid = svc.create_fauna({
+        "sito": "S",
+        "misure_ossa": '[["femore","Bos taurus","120","","45",""]]',
+    })
+    row = svc.get_fauna(fid)
+    assert json.loads(row["misure_ossa"]) == [["femore", "Bos taurus", "120", "", "45", ""]]
+
+
+def test_create_fauna_malformed_specie_psi_becomes_empty_list(svc):
+    fid = svc.create_fauna({"sito": "S", "specie_psi": "not-json{{{"})
+    row = svc.get_fauna(fid)
+    assert row["specie_psi"] == "[]"
+
+
+def test_create_fauna_malformed_misure_ossa_becomes_empty_list(svc):
+    fid = svc.create_fauna({"sito": "S", "misure_ossa": "{broken"})
+    row = svc.get_fauna(fid)
+    assert row["misure_ossa"] == "[]"
+
+
+def test_create_fauna_specie_psi_non_list_json_becomes_empty_list(svc):
+    """A JSON value that parses but isn't a list (e.g. a bare object) must
+    still normalize to '[]' — the plugin format is always a list."""
+    fid = svc.create_fauna({"sito": "S", "specie_psi": '{"not":"a list"}'})
+    row = svc.get_fauna(fid)
+    assert row["specie_psi"] == "[]"
+
+
+def test_update_fauna_normalizes_specie_psi_to_plugin_json(svc):
+    import json
+    fid = svc.create_fauna({"sito": "S"})
+    assert svc.update_fauna(fid, {
+        "specie_psi": '[["Sus scrofa","mandibola"]]',
+    }) is True
+    row = svc.get_fauna(fid)
+    assert json.loads(row["specie_psi"]) == [["Sus scrofa", "mandibola"]]
+
+
+def test_update_fauna_malformed_misure_ossa_becomes_empty_list(svc):
+    fid = svc.create_fauna({"sito": "S"})
+    assert svc.update_fauna(fid, {"misure_ossa": "nope"}) is True
+    row = svc.get_fauna(fid)
+    assert row["misure_ossa"] == "[]"
+
+
+def test_get_thesaurus_values_elemento_anatomico_uses_13_13_map(svc):
+    """elemento_anatomico has no fauna_table column of its own — it's used
+    only by the misure_ossa widget's per-cell datalist — but THESAURUS_MAP
+    must still resolve it to sigla 13.13 and return a (possibly empty) list
+    without crashing on a DB with no matching thesaurus rows."""
+    assert svc.THESAURUS_MAP["elemento_anatomico"] == "13.13"
+    values = svc.get_thesaurus_values("elemento_anatomico")
+    assert isinstance(values, list)

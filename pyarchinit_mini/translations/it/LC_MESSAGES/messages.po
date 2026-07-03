@@ -7361,6 +7361,43 @@ msgstr "Numero Minimo Individui"
 msgid "Stato Frammentazione"
 msgstr "Stato Frammentazione"
 
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:125
+msgid "Specie / PSI"
+msgstr "Specie / PSI"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:130
+msgid "PSI (Parti Scheletriche)"
+msgstr "PSI (Parti Scheletriche)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:137
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:160
+msgid "Aggiungi riga"
+msgstr "Aggiungi riga"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:144
+msgid "Misure Ossa"
+msgstr "Misure Ossa"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:148
+msgid "Elemento Anatomico"
+msgstr "Elemento Anatomico"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:150
+msgid "GL (mm)"
+msgstr "GL (mm)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:151
+msgid "GB (mm)"
+msgstr "GB (mm)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:152
+msgid "Bp (mm)"
+msgstr "Bp (mm)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:153
+msgid "Bd (mm)"
+msgstr "Bd (mm)"
+
 #: pyarchinit_mini/web_interface/templates/fauna/form.html:120
 #: pyarchinit_mini/web_interface/templates/fauna/list.html:45
 msgid "Specie"

@@ -254,7 +254,15 @@ def test_create_post_inserts_record_retrievable_via_service(logged_in_client, fa
 
 
 def test_edit_page_shows_specie(logged_in_client, fauna_service):
-    fid = fauna_service.create_fauna({"sito": "Volterra", "specie": "Ovis aries"})
+    """The flat specie column is deprecated (the classic plugin always
+    writes it empty and stores species in specie_psi instead), so the form
+    no longer renders a flat specie input — the edit page must instead
+    surface the stored specie_psi JSON for the repeatable-row widget to
+    render client-side (via the window.SPECIE_PSI script variable)."""
+    fid = fauna_service.create_fauna({
+        "sito": "Volterra",
+        "specie_psi": '[["Ovis aries","omero"]]',
+    })
     r = logged_in_client.get(f"/fauna/{fid}")
     assert r.status_code == 200
     assert b"Ovis aries" in r.data
@@ -303,3 +311,21 @@ def test_no_media_upload_route_exists(flask_app):
     media upload endpoint was never registered."""
     rules = {r.rule for r in flask_app.url_map.iter_rules()}
     assert not any('/media/upload' in r for r in rules if r.startswith('/fauna'))
+
+
+def test_create_post_specie_psi_json_round_trips(logged_in_client, fauna_service):
+    """POST /fauna/new with a specie_psi JSON string (as the form's hidden
+    input would send it) must round-trip through FaunaService's
+    plugin-format normalization — same shape the classic pyarchinit_fauna
+    plugin writes: a list of [specie, psi] string pairs."""
+    import json
+    r = logged_in_client.post(
+        "/fauna/new",
+        data={"sito": "Volterra", "specie_psi": '[["x","y"]]'},
+        follow_redirects=False,
+    )
+    assert r.status_code in (302, 303)
+
+    items = fauna_service.list_fauna()
+    assert len(items) == 1
+    assert json.loads(items[0]["specie_psi"]) == [["x", "y"]]

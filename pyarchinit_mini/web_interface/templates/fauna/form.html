@@ -11,7 +11,7 @@
     </a>
 </div>
 
-<form method="POST">
+<form method="POST" id="faunaForm">
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-basic">{{ _('Identification') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-context">{{ _('Context') }}</a></li>
@@ -121,23 +121,46 @@
                     <input type="text" name="stato_frammentazione" class="form-control" value="{{ fauna.stato_frammentazione or '' }}" list="thes-stato_frammentazione">
                     <datalist id="thes-stato_frammentazione"></datalist>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">{{ _('Specie') }}</label>
-                    <input type="text" name="specie" class="form-control" value="{{ fauna.specie or '' }}" list="thes-specie">
+                <div class="col-md-12">
+                    <label class="form-label">{{ _('Specie / PSI') }}</label>
+                    <table class="table table-sm table-bordered align-middle" id="specie_psi_table">
+                        <thead>
+                            <tr>
+                                <th>{{ _('Specie') }}</th>
+                                <th>{{ _('PSI (Parti Scheletriche)') }}</th>
+                                <th style="width:2.5rem;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="specie_psi_tbody"></tbody>
+                    </table>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="specie_psi_add">
+                        <i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}
+                    </button>
+                    <input type="hidden" name="specie_psi" id="specie_psi_json">
                     <datalist id="thes-specie"></datalist>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">{{ _('Parti Scheletriche') }}</label>
-                    <input type="text" name="parti_scheletriche" class="form-control" value="{{ fauna.parti_scheletriche or '' }}" list="thes-parti_scheletriche">
                     <datalist id="thes-parti_scheletriche"></datalist>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">{{ _('Specie (PSI, JSON)') }}</label>
-                    <textarea name="specie_psi" class="form-control" rows="4">{{ fauna.specie_psi or '' }}</textarea>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">{{ _('Misure Ossa (JSON)') }}</label>
-                    <textarea name="misure_ossa" class="form-control" rows="4">{{ fauna.misure_ossa or '' }}</textarea>
+                <div class="col-md-12">
+                    <label class="form-label">{{ _('Misure Ossa') }}</label>
+                    <table class="table table-sm table-bordered align-middle" id="misure_ossa_table">
+                        <thead>
+                            <tr>
+                                <th>{{ _('Elemento Anatomico') }}</th>
+                                <th>{{ _('Specie') }}</th>
+                                <th>{{ _('GL (mm)') }}</th>
+                                <th>{{ _('GB (mm)') }}</th>
+                                <th>{{ _('Bp (mm)') }}</th>
+                                <th>{{ _('Bd (mm)') }}</th>
+                                <th style="width:2.5rem;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="misure_ossa_tbody"></tbody>
+                    </table>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" id="misure_ossa_add">
+                        <i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}
+                    </button>
+                    <input type="hidden" name="misure_ossa" id="misure_ossa_json">
+                    <datalist id="thes-elemento_anatomico"></datalist>
                 </div>
             </div>
         </div>
@@ -214,8 +237,15 @@
 </form>
 
 <script>
-// Populate datalist elements with thesaurus values from PyArchInit
-const THES_FIELDS = ['contesto','metodologia_recupero','tipologia_accumulo','deposizione','stato_frammentazione','stato_conservazione','affidabilita_stratigrafica','tracce_combustione','tipo_combustione','resti_connessione_anatomica','specie','parti_scheletriche','segni_tafonomici_evidenti','caratterizzazione_segni_tafonomici','numero_stimato_resti'];
+window.SPECIE_PSI = {{ (fauna.specie_psi or "[]") | tojson }};
+window.MISURE_OSSA = {{ (fauna.misure_ossa or "[]") | tojson }};
+</script>
+<script>
+// Populate datalist elements with thesaurus values from PyArchInit. specie
+// and parti_scheletriche no longer back flat inputs (they moved into the
+// specie_psi widget's per-cell datalists below); elemento_anatomico is new
+// (13.13, used by the misure_ossa widget's Elemento Anatomico cell).
+const THES_FIELDS = ['contesto','metodologia_recupero','tipologia_accumulo','deposizione','stato_frammentazione','stato_conservazione','affidabilita_stratigrafica','tracce_combustione','tipo_combustione','resti_connessione_anatomica','specie','parti_scheletriche','elemento_anatomico','segni_tafonomici_evidenti','caratterizzazione_segni_tafonomici','numero_stimato_resti'];
 THES_FIELDS.forEach(function(field) {
     fetch('/api/fauna/thesaurus/' + field)
         .then(function(r) { return r.json(); })
@@ -232,6 +262,94 @@ THES_FIELDS.forEach(function(field) {
             });
         })
         .catch(function() { /* silent */ });
+});
+
+// Repeatable-row widgets for specie_psi ([[specie, psi], ...]) and
+// misure_ossa ([[elemento, specie, GL, GB, Bp, Bd], ...]) matching the
+// classic pyarchinit_fauna plugin's stored JSON format exactly (list of
+// string lists; blank cells stay "" rather than becoming 0/null).
+function initFaunaRepeatableTable(opts) {
+    const tbody = document.getElementById(opts.tbodyId);
+    const addBtn = document.getElementById(opts.addBtnId);
+    const hidden = document.getElementById(opts.hiddenInputId);
+    const ncols = opts.columns.length;
+
+    function addRow(values) {
+        const vals = values || new Array(ncols).fill('');
+        const tr = document.createElement('tr');
+        opts.columns.forEach(function(col, i) {
+            const td = document.createElement('td');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control form-control-sm';
+            if (col.list) input.setAttribute('list', col.list);
+            input.value = vals[i] != null ? vals[i] : '';
+            td.appendChild(input);
+            tr.appendChild(td);
+        });
+        const tdBtn = document.createElement('td');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-sm btn-outline-danger';
+        btn.innerHTML = '<i class="fas fa-times"></i>';
+        btn.addEventListener('click', function() {
+            tr.remove();
+            serialize();
+        });
+        tdBtn.appendChild(btn);
+        tr.appendChild(tdBtn);
+        tbody.appendChild(tr);
+    }
+
+    function serialize() {
+        const rows = [];
+        Array.from(tbody.querySelectorAll('tr')).forEach(function(tr) {
+            const inputs = tr.querySelectorAll('input');
+            const vals = Array.from(inputs).map(function(inp) { return inp.value.trim(); });
+            const allBlank = vals.every(function(v) { return v === ''; });
+            if (!allBlank) rows.push(vals);
+        });
+        hidden.value = JSON.stringify(rows);
+        return rows;
+    }
+
+    addBtn.addEventListener('click', function() { addRow(); serialize(); });
+    tbody.addEventListener('input', serialize);
+
+    let initial = opts.initialData;
+    if (typeof initial === 'string') {
+        try { initial = JSON.parse(initial); } catch (e) { initial = []; }
+    }
+    if (!Array.isArray(initial)) initial = [];
+    if (initial.length === 0) {
+        addRow();
+    } else {
+        initial.forEach(function(row) { addRow(row); });
+    }
+    serialize();
+
+    return serialize;
+}
+
+const speciePsiSerialize = initFaunaRepeatableTable({
+    tbodyId: 'specie_psi_tbody',
+    addBtnId: 'specie_psi_add',
+    hiddenInputId: 'specie_psi_json',
+    columns: [{ list: 'thes-specie' }, { list: 'thes-parti_scheletriche' }],
+    initialData: window.SPECIE_PSI,
+});
+
+const misureOssaSerialize = initFaunaRepeatableTable({
+    tbodyId: 'misure_ossa_tbody',
+    addBtnId: 'misure_ossa_add',
+    hiddenInputId: 'misure_ossa_json',
+    columns: [{ list: 'thes-elemento_anatomico' }, { list: 'thes-specie' }, {}, {}, {}, {}],
+    initialData: window.MISURE_OSSA,
+});
+
+document.getElementById('faunaForm').addEventListener('submit', function() {
+    speciePsiSerialize();
+    misureOssaSerialize();
 });
 </script>
 {% endblock %}

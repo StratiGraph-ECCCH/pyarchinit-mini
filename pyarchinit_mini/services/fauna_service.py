@@ -2,6 +2,7 @@
 Fauna Service — manages fauna_table (faunal remains) records.
 """
 
+import json
 import logging
 import time
 from typing import Dict, Any, List, Optional
@@ -12,6 +13,22 @@ from pyarchinit_mini.models.fauna import Fauna
 from .coercion import coerce_types
 
 logger = logging.getLogger(__name__)
+
+
+def _normalize_json_list(v: str) -> str:
+    """Parse a specie_psi/misure_ossa JSON string and re-serialize it with
+    json.dumps (Python default separators), so the stored value is valid,
+    canonical JSON matching the classic pyarchinit_fauna plugin's format
+    (a list of 2-element [specie, psi] or 6-element
+    [elemento, specie, GL, GB, Bp, Bd] string lists). Malformed input, or
+    input that doesn't parse to a list, becomes '[]'."""
+    try:
+        parsed = json.loads(v)
+    except (TypeError, ValueError):
+        return '[]'
+    if not isinstance(parsed, list):
+        return '[]'
+    return json.dumps(parsed)
 
 
 class FaunaService:
@@ -97,6 +114,9 @@ class FaunaService:
         valid_keys = Fauna.writable_columns()
         clean = {k: v for k, v in data.items() if k in valid_keys and v is not None and v != ''}
         clean = coerce_types(Fauna, clean)
+        for key in ('specie_psi', 'misure_ossa'):
+            if key in clean and isinstance(clean[key], str) and clean[key]:
+                clean[key] = _normalize_json_list(clean[key])
         last = self._MAX_INSERT_ATTEMPTS - 1
         for attempt in range(self._MAX_INSERT_ATTEMPTS):
             try:
@@ -127,6 +147,9 @@ class FaunaService:
                 valid_keys = Fauna.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys}
                 clean = coerce_types(Fauna, clean)
+                for key in ('specie_psi', 'misure_ossa'):
+                    if key in clean and isinstance(clean[key], str) and clean[key]:
+                        clean[key] = _normalize_json_list(clean[key])
                 for k, v in clean.items():
                     setattr(row, k, v if v != '' else None)
                 session.commit()
@@ -157,6 +180,7 @@ class FaunaService:
         'deposizione': '13.4', 'stato_frammentazione': '13.5', 'stato_conservazione': '13.6',
         'affidabilita_stratigrafica': '13.7', 'tracce_combustione': '13.8', 'tipo_combustione': '13.9',
         'resti_connessione_anatomica': '13.10', 'specie': '13.11', 'parti_scheletriche': '13.12',
+        'elemento_anatomico': '13.13',
         'segni_tafonomici_evidenti': '13.14', 'caratterizzazione_segni_tafonomici': '13.15',
         'numero_stimato_resti': '13.16',
     }
