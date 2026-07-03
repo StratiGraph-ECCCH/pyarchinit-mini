@@ -4302,6 +4302,10 @@ msgstr "Strutture"
 msgid "Fauna"
 msgstr "Fauna"
 
+#: pyarchinit_mini/web_interface/templates/dashboard.html:97
+msgid "UT"
+msgstr "UT"
+
 #: pyarchinit_mini/web_interface/templates/harris_creator/editor.html:191
 #, fuzzy
 msgid "Esporta"

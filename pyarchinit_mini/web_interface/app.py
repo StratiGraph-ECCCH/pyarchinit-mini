@@ -842,6 +842,10 @@ def create_app():
                 total_fauna = fauna_service.count_fauna()
             except Exception:
                 total_fauna = 0
+            try:
+                total_ut = ut_service.count_ut()
+            except Exception:
+                total_ut = 0
 
             stats = {
                 'total_sites': total_sites,
@@ -852,6 +856,7 @@ def create_app():
                 'total_tomba': total_tomba,
                 'total_struttura': total_struttura,
                 'total_fauna': total_fauna,
+                'total_ut': total_ut,
                 'recent_sites': sites
             }
 

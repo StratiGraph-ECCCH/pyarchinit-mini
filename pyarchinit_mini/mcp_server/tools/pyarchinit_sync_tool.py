@@ -37,8 +37,8 @@ class PyArchInitSyncTool(BaseTool):
                     },
                     "data_types": {
                         "type": "array",
-                        "items": {"type": "string", "enum": ["sites", "us", "inventario", "thesaurus", "tomba", "struttura", "fauna"]},
-                        "description": "Types of data to sync: sites, us, inventario, thesaurus, tomba, struttura, fauna",
+                        "items": {"type": "string", "enum": ["sites", "us", "inventario", "thesaurus", "tomba", "struttura", "fauna", "ut"]},
+                        "description": "Types of data to sync: sites, us, inventario, thesaurus, tomba, struttura, fauna, ut",
                         "default": ["sites", "us"]
                     },
                     "site_filter": {
@@ -158,6 +158,19 @@ class PyArchInitSyncTool(BaseTool):
                 else:
                     results['errors'].append("Fauna import: not yet supported by ImportExportService")
 
+            # Import ut (tracciamento units)
+            if 'ut' in data_types:
+                logger.info("Importing ut...")
+                if hasattr(service, 'import_ut'):
+                    ut_result = service.import_ut(sito_filter=site_filter, auto_backup=auto_backup)
+                    results['imported']['ut'] = ut_result.get('ut_imported', 0)
+                    if not results['backup_path'] and ut_result.get('backup_path'):
+                        results['backup_path'] = ut_result['backup_path']
+                    if not ut_result.get('success', True):
+                        results['errors'].append(f"UT import: {ut_result.get('message', 'failed')}")
+                else:
+                    results['errors'].append("UT import: not yet supported by ImportExportService")
+
             # Import thesaurus
             if 'thesaurus' in data_types:
                 logger.info("Importing thesaurus...")
@@ -231,6 +244,17 @@ class PyArchInitSyncTool(BaseTool):
                         results['errors'].append(f"Fauna export: {fauna_result.get('message', 'failed')}")
                 else:
                     results['errors'].append("Fauna export: not yet supported by ImportExportService")
+
+            # Export ut (tracciamento units)
+            if 'ut' in data_types:
+                logger.info("Exporting ut...")
+                if hasattr(service, 'export_ut'):
+                    ut_result = service.export_ut(target_db_connection=target_db_url, sito_filter=site_filter)
+                    results['exported']['ut'] = ut_result.get('ut_exported', 0)
+                    if not ut_result.get('success', True):
+                        results['errors'].append(f"UT export: {ut_result.get('message', 'failed')}")
+                else:
+                    results['errors'].append("UT export: not yet supported by ImportExportService")
 
             if results['errors']:
                 results['success'] = len(results['errors']) < len(data_types)
