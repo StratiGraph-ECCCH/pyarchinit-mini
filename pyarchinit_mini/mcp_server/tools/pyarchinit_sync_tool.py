@@ -37,8 +37,8 @@ class PyArchInitSyncTool(BaseTool):
                     },
                     "data_types": {
                         "type": "array",
-                        "items": {"type": "string", "enum": ["sites", "us", "inventario", "thesaurus", "tomba", "struttura"]},
-                        "description": "Types of data to sync: sites, us, inventario, thesaurus, tomba, struttura",
+                        "items": {"type": "string", "enum": ["sites", "us", "inventario", "thesaurus", "tomba", "struttura", "fauna"]},
+                        "description": "Types of data to sync: sites, us, inventario, thesaurus, tomba, struttura, fauna",
                         "default": ["sites", "us"]
                     },
                     "site_filter": {
@@ -145,6 +145,19 @@ class PyArchInitSyncTool(BaseTool):
                 else:
                     results['errors'].append("Struttura import: not yet supported by ImportExportService")
 
+            # Import fauna (archaeozoology)
+            if 'fauna' in data_types:
+                logger.info("Importing fauna...")
+                if hasattr(service, 'import_fauna'):
+                    fauna_result = service.import_fauna(sito_filter=site_filter, auto_backup=auto_backup)
+                    results['imported']['fauna'] = fauna_result.get('fauna_imported', 0)
+                    if not results['backup_path'] and fauna_result.get('backup_path'):
+                        results['backup_path'] = fauna_result['backup_path']
+                    if not fauna_result.get('success', True):
+                        results['errors'].append(f"Fauna import: {fauna_result.get('message', 'failed')}")
+                else:
+                    results['errors'].append("Fauna import: not yet supported by ImportExportService")
+
             # Import thesaurus
             if 'thesaurus' in data_types:
                 logger.info("Importing thesaurus...")
@@ -207,6 +220,17 @@ class PyArchInitSyncTool(BaseTool):
                         results['errors'].append(f"Struttura export: {struttura_result.get('message', 'failed')}")
                 else:
                     results['errors'].append("Struttura export: not yet supported by ImportExportService")
+
+            # Export fauna (archaeozoology)
+            if 'fauna' in data_types:
+                logger.info("Exporting fauna...")
+                if hasattr(service, 'export_fauna'):
+                    fauna_result = service.export_fauna(target_db_connection=target_db_url, sito_filter=site_filter)
+                    results['exported']['fauna'] = fauna_result.get('fauna_exported', 0)
+                    if not fauna_result.get('success', True):
+                        results['errors'].append(f"Fauna export: {fauna_result.get('message', 'failed')}")
+                else:
+                    results['errors'].append("Fauna export: not yet supported by ImportExportService")
 
             if results['errors']:
                 results['success'] = len(results['errors']) < len(data_types)

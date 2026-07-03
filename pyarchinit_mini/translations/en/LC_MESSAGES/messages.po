@@ -4388,6 +4388,11 @@ msgstr "Activity"
 msgid "Strutture"
 msgstr "Structures"
 
+#: pyarchinit_mini/web_interface/templates/base.html:176
+#: pyarchinit_mini/web_interface/templates/dashboard.html:88
+msgid "Fauna"
+msgstr "Fauna"
+
 #: pyarchinit_mini/web_interface/templates/harris_creator/editor.html:191
 #, fuzzy
 msgid "Esporta"

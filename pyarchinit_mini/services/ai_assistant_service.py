@@ -51,6 +51,7 @@ REGOLE (OBBLIGATORIE):
    Quando rispondi su frammenti ceramici cita conteggi totali e per US.
    Link alle tombe: <a href="/tomba/ID" class="text-primary">Tomba ID</a>
    Link alle strutture: <a href="/struttura/ID" class="text-primary">Struttura ID</a>
+   Link alla fauna: <a href="/fauna/ID" class="text-primary">Fauna ID</a>
 7. MAI tralasciare dati. Se ci sono 700 US, cita e analizza TUTTE le US — raggruppa per tipo, area, periodo, anno, ma includi TUTTI i numeri. Crea tabelle complete.
 8. Includi statistiche dettagliate: conteggi per tipo, per area, per periodo, per operatore.
 9. Sii ESAUSTIVO: ogni US, ogni materiale, ogni relazione deve essere menzionata o inclusa in una tabella.
@@ -74,6 +75,7 @@ RULES (MANDATORY):
    When asked about pottery sherds, include totals and per-US counts.
    Tomba links: <a href="/tomba/ID" class="text-primary">Tomba ID</a>
    Struttura links: <a href="/struttura/ID" class="text-primary">Struttura ID</a>
+   Fauna links: <a href="/fauna/ID" class="text-primary">Fauna ID</a>
 7. NEVER omit data. If there are 700 US, cite and analyze ALL of them — group by type, area, period, year, but include ALL numbers. Create complete tables.
 8. Include detailed statistics: counts by type, area, period, operator.
 9. Be EXHAUSTIVE: every US, every material, every relationship must be mentioned or included in a table.
