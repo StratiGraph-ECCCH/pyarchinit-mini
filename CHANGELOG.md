@@ -1,3 +1,12 @@
+## 3.1.0 — 2026-07-03
+
+### Added — structured sub-table widgets matching the classic plugin
+- **Fauna**: the flat `specie`/`parti_scheletriche` fields (deprecated in the classic plugin) are replaced by two repeatable-row widgets — `specie_psi` (Specie + PSI/Parti Scheletriche) and `misure_ossa` (Elemento, Specie, GL/GB/Bp/Bd) — serialized as `json.dumps` of a list-of-lists exactly like the plugin. Server-side normalization guarantees plugin-readable output; the list view + search derive species from `specie_psi`. Thesaurus datalists per cell (specie 13.11, parti 13.12, elemento 13.13).
+- **Struttura**: the 10 list-of-lists columns (`materiali_impiegati`, `elementi_strutturali`, `rapporti_struttura`, `misure_struttura`, `stato_conservazione`, `prospetto_ingresso`, `orientamento_ambienti`, `elementi_costitutivi`, `manufatti`, `fasi_funzionali`) are now repeatable-row widgets on a "Sotto-tabelle" tab, serialized as Python `repr()` (single-quoted, `eval`-readable by the plugin) and read back with `ast.literal_eval`. Per-cell thesaurus datalists (sigle 6.5–6.14) and fixed selects match the plugin.
+
+### Changed
+- New-record forms (tomba/struttura/ut) show a hint that the Media tab becomes available after the record is saved.
+
 ## 3.0.2 — 2026-07-03
 
 ### Fixed
