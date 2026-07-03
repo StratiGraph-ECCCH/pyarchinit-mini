@@ -2691,9 +2691,8 @@ msgstr "Dossier del sito"
 #: pyarchinit_mini/pdf_export/pdf_generator.py:1117
 #: pyarchinit_mini/web_interface/templates/sites/list.html:169
 #: pyarchinit_mini/web_interface/templates/tma/list.html:88
-#, fuzzy
 msgid "Page"
-msgstr "Phase"
+msgstr "Pagina"
 
 #: pyarchinit_mini/pdf_export/pdf_generator.py:1196
 #, fuzzy
@@ -4047,9 +4046,8 @@ msgstr "tabelle trovate"
 
 #: pyarchinit_mini/web_interface/templates/datazioni/list.html:58
 #: pyarchinit_mini/web_interface/templates/tma/list.html:132
-#, fuzzy
 msgid "Create the first one"
-msgstr "ha creato il sito"
+msgstr "Crea il primo"
 
 #: pyarchinit_mini/web_interface/templates/excel_import/index.html:10
 msgid "Import stratigraphic data from Excel files and generate Extended Matrix"
@@ -5664,9 +5662,8 @@ msgstr "Frammenti Totali"
 #: pyarchinit_mini/web_interface/templates/tma/list.html:93
 #: pyarchinit_mini/web_interface/templates/us/form.html:23
 #: pyarchinit_mini/web_interface/templates/us/form.html:27
-#, fuzzy
 msgid "Previous"
-msgstr "Anteprima"
+msgstr "Precedente"
 
 #: pyarchinit_mini/web_interface/templates/periodizzazione/list.html:88
 #: pyarchinit_mini/web_interface/templates/periodizzazione/periods.html:88
@@ -5674,9 +5671,8 @@ msgstr "Anteprima"
 #: pyarchinit_mini/web_interface/templates/tma/list.html:97
 #: pyarchinit_mini/web_interface/templates/us/form.html:37
 #: pyarchinit_mini/web_interface/templates/us/form.html:41
-#, fuzzy
 msgid "Next"
-msgstr "Esci"
+msgstr "Successivo"
 
 #: pyarchinit_mini/web_interface/templates/periodizzazione/list.html:98
 #: pyarchinit_mini/web_interface/templates/periodizzazione/periods.html:98
@@ -6356,9 +6352,8 @@ msgid "TMA"
 msgstr "max"
 
 #: pyarchinit_mini/web_interface/templates/tma/form.html:2
-#, fuzzy
 msgid "New"
-msgstr "Ora"
+msgstr "Nuovo"
 
 #: pyarchinit_mini/web_interface/templates/tma/form.html:7
 #, fuzzy
@@ -6551,9 +6546,8 @@ msgid "Search by site, box, inventory, material..."
 msgstr "Cerca per sito, cassetta, inventario, materiale..."
 
 #: pyarchinit_mini/web_interface/templates/tma/list.html:32
-#, fuzzy
 msgid "records"
-msgstr "Recorder"
+msgstr "record"
 
 #: pyarchinit_mini/web_interface/templates/tma/list.html:48
 #, fuzzy
