@@ -86,11 +86,13 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Segnacoli') }}</label>
-                    <input type="text" name="segnacoli" class="form-control" value="{{ tomba.segnacoli or '' }}">
+                    <input type="text" name="segnacoli" class="form-control" value="{{ tomba.segnacoli or '' }}" list="thes-segnacoli">
+                    <datalist id="thes-segnacoli"></datalist>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Canale Libatorio (Sì/No)') }}</label>
-                    <input type="text" name="canale_libatorio_si_no" class="form-control" value="{{ tomba.canale_libatorio_si_no or '' }}">
+                    <input type="text" name="canale_libatorio_si_no" class="form-control" value="{{ tomba.canale_libatorio_si_no or '' }}" list="thes-canale_libatorio_si_no">
+                    <datalist id="thes-canale_libatorio_si_no"></datalist>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Oggetti Rinvenuti Esterno') }}</label>
@@ -193,7 +195,7 @@
 
 <script>
 // Populate datalist elements with thesaurus values from PyArchInit
-const TOMBA_THES_FIELDS = ['rito','tipo_sepoltura','tipo_deposizione','copertura_tipo','tipo_contenitore_resti','stato_di_conservazione','corredo_presenza'];
+const TOMBA_THES_FIELDS = ['rito','stato_di_conservazione','copertura_tipo','tipo_contenitore_resti','tipo_deposizione','tipo_sepoltura','segnacoli','canale_libatorio_si_no','corredo_presenza'];
 TOMBA_THES_FIELDS.forEach(function(field) {
     fetch('/api/tomba/thesaurus/' + field)
         .then(function(r) { return r.json(); })

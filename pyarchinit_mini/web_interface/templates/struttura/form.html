@@ -31,7 +31,8 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Sigla Struttura') }}</label>
-                    <input type="text" name="sigla_struttura" class="form-control" value="{{ struttura.sigla_struttura or '' }}">
+                    <input type="text" name="sigla_struttura" class="form-control" value="{{ struttura.sigla_struttura or '' }}" list="thes-sigla_struttura">
+                    <datalist id="thes-sigla_struttura"></datalist>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Numero Struttura') }}</label>
@@ -49,7 +50,8 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Definizione Struttura') }}</label>
-                    <input type="text" name="definizione_struttura" class="form-control" value="{{ struttura.definizione_struttura or '' }}">
+                    <input type="text" name="definizione_struttura" class="form-control" value="{{ struttura.definizione_struttura or '' }}" list="thes-definizione_struttura">
+                    <datalist id="thes-definizione_struttura"></datalist>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Data Compilazione') }}</label>
@@ -111,13 +113,25 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Orientamento Ingresso') }}</label>
-                    <input type="text" name="orientamento_ingresso" class="form-control" value="{{ struttura.orientamento_ingresso or '' }}" list="thes-orientamento_ingresso">
-                    <datalist id="thes-orientamento_ingresso"></datalist>
+                    <select name="orientamento_ingresso" class="form-select">
+                        <option value="">-- --</option>
+                        <option value="N" {{ 'selected' if struttura.orientamento_ingresso == 'N' else '' }}>N</option>
+                        <option value="NE" {{ 'selected' if struttura.orientamento_ingresso == 'NE' else '' }}>NE</option>
+                        <option value="E" {{ 'selected' if struttura.orientamento_ingresso == 'E' else '' }}>E</option>
+                        <option value="SE" {{ 'selected' if struttura.orientamento_ingresso == 'SE' else '' }}>SE</option>
+                        <option value="S" {{ 'selected' if struttura.orientamento_ingresso == 'S' else '' }}>S</option>
+                        <option value="SO" {{ 'selected' if struttura.orientamento_ingresso == 'SO' else '' }}>SO</option>
+                        <option value="O" {{ 'selected' if struttura.orientamento_ingresso == 'O' else '' }}>O</option>
+                        <option value="NO" {{ 'selected' if struttura.orientamento_ingresso == 'NO' else '' }}>NO</option>
+                    </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Articolazione') }}</label>
-                    <input type="text" name="articolazione" class="form-control" value="{{ struttura.articolazione or '' }}" list="thes-articolazione">
-                    <datalist id="thes-articolazione"></datalist>
+                    <select name="articolazione" class="form-select">
+                        <option value="">-- --</option>
+                        <option value="AMBIENTE UNICO" {{ 'selected' if struttura.articolazione == 'AMBIENTE UNICO' else '' }}>AMBIENTE UNICO</option>
+                        <option value="AMBIENTE COMPOSITO" {{ 'selected' if struttura.articolazione == 'AMBIENTE COMPOSITO' else '' }}>AMBIENTE COMPOSITO</option>
+                    </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('N. Ambienti') }}</label>
@@ -125,7 +139,8 @@
                 </div>
                 <div class="col-md-9">
                     <label class="form-label">{{ _('Sviluppo Planimetrico') }}</label>
-                    <input type="text" name="sviluppo_planimetrico" class="form-control" value="{{ struttura.sviluppo_planimetrico or '' }}">
+                    <input type="text" name="sviluppo_planimetrico" class="form-control" value="{{ struttura.sviluppo_planimetrico or '' }}" list="thes-sviluppo_planimetrico">
+                    <datalist id="thes-sviluppo_planimetrico"></datalist>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Orientamento Ambienti') }}</label>
@@ -141,7 +156,13 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Potenzialità Archeologica') }}</label>
-                    <input type="text" name="potenzialita_archeologica" class="form-control" value="{{ struttura.potenzialita_archeologica or '' }}">
+                    <select name="potenzialita_archeologica" class="form-select">
+                        <option value="">-- --</option>
+                        <option value="NULLA" {{ 'selected' if struttura.potenzialita_archeologica == 'NULLA' else '' }}>NULLA</option>
+                        <option value="BASSA" {{ 'selected' if struttura.potenzialita_archeologica == 'BASSA' else '' }}>BASSA</option>
+                        <option value="MEDIA" {{ 'selected' if struttura.potenzialita_archeologica == 'MEDIA' else '' }}>MEDIA</option>
+                        <option value="ALTA" {{ 'selected' if struttura.potenzialita_archeologica == 'ALTA' else '' }}>ALTA</option>
+                    </select>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Manufatti') }}</label>
@@ -226,7 +247,7 @@
 
 <script>
 // Populate datalist elements with thesaurus values from PyArchInit
-const STRUTTURA_THES_FIELDS = ['categoria_struttura','tipologia_struttura','orientamento_ingresso','articolazione'];
+const STRUTTURA_THES_FIELDS = ['sigla_struttura','categoria_struttura','tipologia_struttura','definizione_struttura','sviluppo_planimetrico'];
 STRUTTURA_THES_FIELDS.forEach(function(field) {
     fetch('/api/struttura/thesaurus/' + field)
         .then(function(r) { return r.json(); })

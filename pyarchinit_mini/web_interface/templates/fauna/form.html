@@ -85,11 +85,13 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Resti in Connessione Anatomica') }}</label>
-                    <input type="text" name="resti_connessione_anatomica" class="form-control" value="{{ fauna.resti_connessione_anatomica or '' }}">
+                    <input type="text" name="resti_connessione_anatomica" class="form-control" value="{{ fauna.resti_connessione_anatomica or '' }}" list="thes-resti_connessione_anatomica">
+                    <datalist id="thes-resti_connessione_anatomica"></datalist>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Tipologia Accumulo') }}</label>
-                    <input type="text" name="tipologia_accumulo" class="form-control" value="{{ fauna.tipologia_accumulo or '' }}">
+                    <input type="text" name="tipologia_accumulo" class="form-control" value="{{ fauna.tipologia_accumulo or '' }}" list="thes-tipologia_accumulo">
+                    <datalist id="thes-tipologia_accumulo"></datalist>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Note Terreno / Giacitura') }}</label>
@@ -97,7 +99,8 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Affidabilità Stratigrafica') }}</label>
-                    <input type="text" name="affidabilita_stratigrafica" class="form-control" value="{{ fauna.affidabilita_stratigrafica or '' }}">
+                    <input type="text" name="affidabilita_stratigrafica" class="form-control" value="{{ fauna.affidabilita_stratigrafica or '' }}" list="thes-affidabilita_stratigrafica">
+                    <datalist id="thes-affidabilita_stratigrafica"></datalist>
                 </div>
             </div>
         </div>
@@ -106,7 +109,8 @@
             <div class="row g-2">
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Numero Stimato Resti') }}</label>
-                    <input type="text" name="numero_stimato_resti" class="form-control" value="{{ fauna.numero_stimato_resti or '' }}">
+                    <input type="text" name="numero_stimato_resti" class="form-control" value="{{ fauna.numero_stimato_resti or '' }}" list="thes-numero_stimato_resti">
+                    <datalist id="thes-numero_stimato_resti"></datalist>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Numero Minimo Individui') }}</label>
@@ -114,7 +118,8 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Stato Frammentazione') }}</label>
-                    <input type="text" name="stato_frammentazione" class="form-control" value="{{ fauna.stato_frammentazione or '' }}">
+                    <input type="text" name="stato_frammentazione" class="form-control" value="{{ fauna.stato_frammentazione or '' }}" list="thes-stato_frammentazione">
+                    <datalist id="thes-stato_frammentazione"></datalist>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Specie') }}</label>
@@ -141,7 +146,8 @@
             <div class="row g-2">
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Tracce Combustione') }}</label>
-                    <input type="text" name="tracce_combustione" class="form-control" value="{{ fauna.tracce_combustione or '' }}">
+                    <input type="text" name="tracce_combustione" class="form-control" value="{{ fauna.tracce_combustione or '' }}" list="thes-tracce_combustione">
+                    <datalist id="thes-tracce_combustione"></datalist>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Combustione Altri Materiali US') }}</label>
@@ -153,15 +159,18 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Tipo Combustione') }}</label>
-                    <input type="text" name="tipo_combustione" class="form-control" value="{{ fauna.tipo_combustione or '' }}">
+                    <input type="text" name="tipo_combustione" class="form-control" value="{{ fauna.tipo_combustione or '' }}" list="thes-tipo_combustione">
+                    <datalist id="thes-tipo_combustione"></datalist>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Segni Tafonomici Evidenti') }}</label>
-                    <input type="text" name="segni_tafonomici_evidenti" class="form-control" value="{{ fauna.segni_tafonomici_evidenti or '' }}">
+                    <input type="text" name="segni_tafonomici_evidenti" class="form-control" value="{{ fauna.segni_tafonomici_evidenti or '' }}" list="thes-segni_tafonomici_evidenti">
+                    <datalist id="thes-segni_tafonomici_evidenti"></datalist>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Caratterizzazione Segni Tafonomici') }}</label>
-                    <input type="text" name="caratterizzazione_segni_tafonomici" class="form-control" value="{{ fauna.caratterizzazione_segni_tafonomici or '' }}">
+                    <input type="text" name="caratterizzazione_segni_tafonomici" class="form-control" value="{{ fauna.caratterizzazione_segni_tafonomici or '' }}" list="thes-caratterizzazione_segni_tafonomici">
+                    <datalist id="thes-caratterizzazione_segni_tafonomici"></datalist>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Stato di Conservazione') }}</label>
@@ -206,7 +215,7 @@
 
 <script>
 // Populate datalist elements with thesaurus values from PyArchInit
-const THES_FIELDS = ['specie','parti_scheletriche','contesto','stato_conservazione','metodologia_recupero','deposizione'];
+const THES_FIELDS = ['contesto','metodologia_recupero','tipologia_accumulo','deposizione','stato_frammentazione','stato_conservazione','affidabilita_stratigrafica','tracce_combustione','tipo_combustione','resti_connessione_anatomica','specie','parti_scheletriche','segni_tafonomici_evidenti','caratterizzazione_segni_tafonomici','numero_stimato_resti'];
 THES_FIELDS.forEach(function(field) {
     fetch('/api/fauna/thesaurus/' + field)
         .then(function(r) { return r.json(); })
