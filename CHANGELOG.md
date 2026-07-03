@@ -1,3 +1,16 @@
+## 3.0.1 — 2026-07-03
+
+Post-3.0.0 cleanup + plugin-thesaurus interop alignment for the new record types.
+
+### Changed — thesaurus vocabularies shared with the classic plugin
+- The tomba/struttura/fauna/ut web forms now read their controlled vocabularies from the classic plugin's `pyarchinit_thesaurus_sigle` table (by `nome_tabella` + `tipologia_sigla`, returning the extended label `sigla_estesa`), falling back to mini's `thesaurus_field` and then the in-memory seed. On a shared DB the dropdown values now match the plugin exactly. Combobox coverage expanded to the plugin's full set (fauna 6→15 fields, tomba 7→9, ut 5→7), and struttura's `orientamento_ingresso`/`articolazione`/`potenzialita_archeologica` are now fixed selects (the plugin uses hardcoded lists there, not the thesaurus).
+- Note: the 4 new record tables are already covered by the generic nightly classic→v2 sync engine (`pyarchinit_mini/sync/`) with no code change — they mirror automatically once present in both databases.
+
+### Fixed
+- Media upload: all upload routes now go through a shared helper with a `finally`-guaranteed temp-file cleanup (no leak on error) and unique temp names (no collision on duplicate filenames).
+- i18n: unfuzzed the shared list/pagination chrome msgids (`records`/`Page`/`Previous`/`Next`/`New`/`Create the first one`) — they had wrong machine translations and were dropped at compile, leaking English into the Italian UI.
+- UT `potential_score`/`risk_score` now read back as `float` (`Numeric(asdecimal=False)`) instead of `Decimal`; the shared coercion helper's boolean branch also accepts raw `int` `0`/`1`.
+
 ## 3.0.0 — 2026-07-03
 
 Major release: **four new archaeological record types** — Tomba, Struttura, Fauna, and UT (Unità Topografica) — added to the web interface, each mapping the classic PyArchInit plugin schema for shared-DB interop, with full CRUD, thesaurus-backed dropdowns, media (all except Fauna), dashboard tiles, AI + MCP integration, Sphinx docs + tutorial sections, and full IT/EN i18n. Internals: a shared `services/coercion.py` (int/float/bool/date/numeric) helper, a `BaseModel.writable_columns()` mass-assignment allowlist, and Postgres-safe search (ILIKE restricted to text columns) applied across the new entities.
