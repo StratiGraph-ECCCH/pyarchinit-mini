@@ -150,7 +150,9 @@ class StrutturaService:
                         for r in rows:
                             results.append({'value': r.sigla_estesa or r.sigla, 'code': r.sigla})
                     except Exception:
-                        pass
+                        # Clear any aborted-transaction state (PostgreSQL) so the
+                        # thesaurus_field fallback query below can still run.
+                        session.rollback()
 
                 if not results:
                     try:

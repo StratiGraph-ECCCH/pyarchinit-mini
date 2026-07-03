@@ -5914,6 +5914,7 @@ def create_app():
     @app.route('/import/sites/csv', methods=['POST'])
     def import_sites_csv():
         """Import sites from CSV"""
+        tmp_path = None
         try:
             if 'file' not in request.files:
                 flash('Nessun file selezionato', 'error')
@@ -5929,16 +5930,13 @@ def create_app():
                 return redirect(url_for('export_page'))
 
             # Save uploaded file temporarily
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.csv') as tmp:
-                file.save(tmp.name)
-                tmp_path = tmp.name
+            fd, tmp_path = tempfile.mkstemp(suffix='.csv')
+            os.close(fd)
+            file.save(tmp_path)
 
             # Import data
             skip_duplicates = request.form.get('skip_duplicates', 'true').lower() == 'true'
             result = csv_excel_service.batch_import_sites_from_csv(tmp_path, skip_duplicates)
-
-            # Clean up
-            os.unlink(tmp_path)
 
             flash(f'Import completato: {result["imported"]} importati, '
                   f'{result["skipped"]} saltati, {len(result["errors"])} errori', 'success')
@@ -5952,10 +5950,17 @@ def create_app():
         except Exception as e:
             flash(f'Errore import CSV: {str(e)}', 'error')
             return redirect(url_for('export_page'))
+        finally:
+            if tmp_path and os.path.exists(tmp_path):
+                try:
+                    os.unlink(tmp_path)
+                except OSError:
+                    pass
 
     @app.route('/import/us/csv', methods=['POST'])
     def import_us_csv():
         """Import US from CSV"""
+        tmp_path = None
         try:
             if 'file' not in request.files:
                 flash('Nessun file selezionato', 'error')
@@ -5971,17 +5976,14 @@ def create_app():
                 return redirect(url_for('export_page'))
 
             # Save uploaded file temporarily
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.csv') as tmp:
-                file.save(tmp.name)
-                tmp_path = tmp.name
+            fd, tmp_path = tempfile.mkstemp(suffix='.csv')
+            os.close(fd)
+            file.save(tmp_path)
 
             # Import data
             skip_duplicates = request.form.get('skip_duplicates', 'true').lower() == 'true'
             result = csv_excel_service.batch_import_us_from_csv(tmp_path, skip_duplicates)
 
-            # Clean up
-            os.unlink(tmp_path)
-
             flash(f'Import completato: {result["imported"]} importati, '
                   f'{result["skipped"]} saltati, {len(result["errors"])} errori', 'success')
 
@@ -5994,10 +5996,17 @@ def create_app():
         except Exception as e:
             flash(f'Errore import CSV: {str(e)}', 'error')
             return redirect(url_for('export_page'))
+        finally:
+            if tmp_path and os.path.exists(tmp_path):
+                try:
+                    os.unlink(tmp_path)
+                except OSError:
+                    pass
 
     @app.route('/import/inventario/csv', methods=['POST'])
     def import_inventario_csv():
         """Import Inventario from CSV"""
+        tmp_path = None
         try:
             if 'file' not in request.files:
                 flash('Nessun file selezionato', 'error')
@@ -6013,16 +6022,13 @@ def create_app():
                 return redirect(url_for('export_page'))
 
             # Save uploaded file temporarily
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.csv') as tmp:
-                file.save(tmp.name)
-                tmp_path = tmp.name
+            fd, tmp_path = tempfile.mkstemp(suffix='.csv')
+            os.close(fd)
+            file.save(tmp_path)
 
             # Import data
             skip_duplicates = request.form.get('skip_duplicates', 'true').lower() == 'true'
             result = csv_excel_service.batch_import_inventario_from_csv(tmp_path, skip_duplicates)
-
-            # Clean up
-            os.unlink(tmp_path)
 
             flash(f'Import completato: {result["imported"]} importati, '
                   f'{result["skipped"]} saltati, {len(result["errors"])} errori', 'success')
@@ -6036,6 +6042,12 @@ def create_app():
         except Exception as e:
             flash(f'Errore import CSV: {str(e)}', 'error')
             return redirect(url_for('export_page'))
+        finally:
+            if tmp_path and os.path.exists(tmp_path):
+                try:
+                    os.unlink(tmp_path)
+                except OSError:
+                    pass
 
     # ===== Periodizzazione (Datazioni) Routes =====
     @app.route('/periodizzazione')
