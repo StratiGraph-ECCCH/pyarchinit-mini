@@ -329,4 +329,26 @@ THESAURUS_MAPPINGS = {
             'Semplice', 'Complessa', 'A vani multipli'
         ]
     },
+    'fauna_table': {
+        'specie': [
+            'Bos taurus', 'Ovis aries', 'Capra hircus', 'Sus domesticus',
+            'Equus caballus', 'Canis familiaris', 'Cervus elaphus', 'Gallus gallus'
+        ],
+        'parti_scheletriche': [
+            'Cranio', 'Mandibola', 'Costola', 'Vertebra', 'Omero',
+            'Femore', 'Tibia', 'Metapodio', 'Falange'
+        ],
+        'contesto': [
+            'Strato', 'Fossa', 'Focolare', 'Butto', 'Sepoltura', 'Riempimento'
+        ],
+        'stato_conservazione': [
+            'Ottimo', 'Buono', 'Discreto', 'Cattivo', 'Frammentario'
+        ],
+        'metodologia_recupero': [
+            'Raccolta manuale', 'Setacciatura a secco', 'Flottazione', 'Vagliatura'
+        ],
+        'deposizione': [
+            'Primaria', 'Secondaria', 'In connessione', 'Sparsa'
+        ]
+    },
 }
