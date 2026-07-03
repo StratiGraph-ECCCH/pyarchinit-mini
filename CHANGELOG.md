@@ -1,3 +1,12 @@
+## 3.3.0 — 2026-07-03
+
+### Added — AI awareness of the new record types
+- The web AI assistant (`/api/ai/ask`) now builds per-entity context summaries for **tomba, struttura, fauna, and UT** (counts + breakdowns + a sample), injected into the LLM prompt like the existing pottery summary, so the assistant can answer about these records (fauna species are read from the `specie_psi` JSON; UT is summarized project-wide).
+
+### Fixed
+- MCP `pyarchinit_sync` tool: read the services' real return keys (`imported`/`exported` + `errors`) instead of the non-existent `sites_imported`/`us_imported`/`success` — counts and failures now surface correctly instead of always reading 0/success. Wired the missing `inventario` import branch, added `backup_path` to import results, and made the `thesaurus` branch and `inventario` export use the same corrected contract.
+- Fauna export no longer carries a duplicate species column (`specie_display` + flattened `specie_psi`).
+
 ## 3.2.0 — 2026-07-03
 
 ### Added — export for the new record types
