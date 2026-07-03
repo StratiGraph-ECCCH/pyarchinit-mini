@@ -21,6 +21,13 @@
 - Docs: Sphinx autodoc stubs (`docs/fauna.rst`, `docs/fauna_service.rst`) and a new "Schede Fauna" section in the Web Interface Tutorial.
 - i18n: full template extraction — 40 new catalog entries (tab names, field labels, "New/Edit Fauna", list/search/delete strings) added to both the Italian and English catalogs, so the Fauna pages are fully translated instead of leaking raw Italian into the English UI.
 
+### Added — UT (topographic/survey unit) record type
+- New **UT** entity mirroring the classic PyArchInit `ut_table`: project-scoped (via `progetto`, no `sito` column) identification, location, field-survey observations, and potential/risk analysis fields, with `UtService` (list/count/get/create/update/delete, project filtering, free-text search).
+- Web UI: `/ut` list + create/edit form (4 tabs: Anagrafica, Ubicazione, Survey, Analisi), media upload panel (same media pipeline as Sites/US/Inventario/Tomba/Struttura), and a "UT" dashboard tile/nav entry.
+- Thesaurus-backed dropdowns for 5 fields (Definizione UT, Survey Type, GPS Method, Surface Condition, Accessibility) via `GET /api/ut/thesaurus/<field>`.
+- Docs: Sphinx autodoc stubs (`docs/ut.rst`, `docs/ut_service.rst`) and a new "Schede UT" section in the Web Interface Tutorial.
+- i18n: full template extraction — 68 new catalog entries (tab names, field labels, "New/Edit UT", list/search/delete strings) added to both the Italian and English catalogs, so the UT pages are fully translated instead of leaking raw Italian into the English UI.
+
 ## 2.9.1 — 2026-05-19
 
 ### Fixed — Harris Matrix proper rendering (post-2.9.0 feedback)

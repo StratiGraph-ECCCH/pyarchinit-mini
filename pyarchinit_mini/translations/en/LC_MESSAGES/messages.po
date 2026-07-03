@@ -7651,6 +7651,282 @@ msgstr "Delete this Fauna record?"
 msgid "No Fauna records found."
 msgstr "No Fauna records found."
 
+#: pyarchinit_mini/web_interface/templates/ut/form.html:7
+msgid "Edit UT"
+msgstr "Edit UT"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:7
+#: pyarchinit_mini/web_interface/templates/ut/list.html:9
+msgid "New UT"
+msgstr "New UT"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:16
+msgid "Anagrafica"
+msgstr "Identification"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:17
+msgid "Ubicazione"
+msgstr "Location"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:18
+msgid "Survey"
+msgstr "Survey"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:19
+msgid "Analisi"
+msgstr "Analysis"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:29
+msgid "Progetto"
+msgstr "Project"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:33
+#: pyarchinit_mini/web_interface/templates/ut/list.html:44
+msgid "Nr. UT"
+msgstr "UT No."
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:37
+#: pyarchinit_mini/web_interface/templates/ut/list.html:45
+msgid "UT Letterale"
+msgstr "UT Letter Code"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:41
+msgid "Definizione UT"
+msgstr "UT Definition"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:46
+msgid "Interpretazione UT"
+msgstr "UT Interpretation"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:50
+msgid "Descrizione UT"
+msgstr "UT Description"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:59
+msgid "Nazione"
+msgstr "Country"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:63
+msgid "Regione"
+msgstr "Region"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:67
+msgid "Provincia"
+msgstr "Province"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:71
+msgid "Comune"
+msgstr "Municipality"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:75
+msgid "Frazione"
+msgstr "Hamlet"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:79
+#: pyarchinit_mini/web_interface/templates/ut/list.html:47
+msgid "Localita"
+msgstr "Locality"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:83
+msgid "Indirizzo"
+msgstr "Address"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:87
+msgid "Nr. Civico"
+msgstr "Street Number"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:91
+msgid "Carta Topo IGM"
+msgstr "IGM Topographic Map"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:95
+msgid "Carta CTR"
+msgstr "CTR Map"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:99
+msgid "Coordinate Geografiche"
+msgstr "Geographic Coordinates"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:103
+msgid "Coordinate Piane"
+msgstr "Plane Coordinates"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:111
+msgid "Geometria"
+msgstr "Geometry"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:115
+msgid "Foglio Catastale"
+msgstr "Cadastral Sheet"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:124
+msgid "Visibility %"
+msgstr "Visibility %"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:128
+msgid "Vegetation Coverage"
+msgstr "Vegetation Coverage"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:132
+msgid "GPS Method"
+msgstr "GPS Method"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:137
+msgid "Coordinate Precision"
+msgstr "Coordinate Precision"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:141
+msgid "Survey Type"
+msgstr "Survey Type"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:146
+msgid "Surface Condition"
+msgstr "Surface Condition"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:151
+msgid "Accessibility"
+msgstr "Accessibility"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:156
+msgid "Photo Documentation"
+msgstr "Photo Documentation"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:160
+msgid "Weather Conditions"
+msgstr "Weather Conditions"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:164
+msgid "Andamento Terreno / Pendenza"
+msgstr "Terrain Slope"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:168
+msgid "Utilizzo Suolo / Vegetazione"
+msgstr "Land Use / Vegetation"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:172
+msgid "Team Members"
+msgstr "Team Members"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:176
+msgid "Metodo Rilievo e Ricognizione"
+msgstr "Survey Method"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:180
+msgid "Descrizione Empirica Suolo"
+msgstr "Empirical Soil Description"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:184
+msgid "Descrizione Luogo"
+msgstr "Place Description"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:192
+msgid "Ora / Meteo"
+msgstr "Time / Weather"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:200
+msgid "Dimensioni UT"
+msgstr "UT Dimensions"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:204
+msgid "Reperti per mq"
+msgstr "Finds per sqm"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:208
+msgid "Reperti Datanti"
+msgstr "Dating Finds"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:212
+msgid "Bibliografia"
+msgstr "Bibliography"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:216
+msgid "Documentazione"
+msgstr "Documentation"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:220
+msgid "Enti Tutela / Vincoli"
+msgstr "Protection Authorities / Constraints"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:224
+msgid "Indagini Preliminari"
+msgstr "Preliminary Investigations"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:228
+msgid "Periodo I"
+msgstr "Period I"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:232
+msgid "Datazione I"
+msgstr "Dating I"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:236
+msgid "Interpretazione I"
+msgstr "Interpretation I"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:240
+msgid "Periodo II"
+msgstr "Period II"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:244
+msgid "Datazione II"
+msgstr "Dating II"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:248
+msgid "Interpretazione II"
+msgstr "Interpretation II"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:257
+msgid "Potential Score"
+msgstr "Potential Score"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:261
+msgid "Risk Score"
+msgstr "Risk Score"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:265
+msgid "Analysis Date"
+msgstr "Analysis Date"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:269
+msgid "Analysis Method"
+msgstr "Analysis Method"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:273
+msgid "Potential Factors"
+msgstr "Potential Factors"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:277
+msgid "Risk Factors"
+msgstr "Risk Factors"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:286
+msgid "UT Media"
+msgstr "UT Media"
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:18
+msgid "Search by project, ut_letterale, def_ut, localita..."
+msgstr "Search by project, ut_letterale, def_ut, localita..."
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:22
+msgid "All projects"
+msgstr "All projects"
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:43
+msgid "Project"
+msgstr "Project"
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:46
+msgid "Def. UT"
+msgstr "UT Def."
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:66
+msgid "Delete this UT record?"
+msgstr "Delete this UT record?"
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:99
+msgid "No UT records found."
+msgstr "No UT records found."
+
 #~ msgid "OK"
 #~ msgstr "OK"
 

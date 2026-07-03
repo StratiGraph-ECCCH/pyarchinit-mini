@@ -796,6 +796,84 @@ Each of these renders as a text input backed by an HTML ``<datalist>`` of sugges
 .. tip::
    Because Fauna records are linked to a stratigraphic unit, fill in the US, ID US, and Datazione US fields on the Identification tab to keep the faunal remains tied to their originating context — there is no separate relationship editor for this link.
 
+Schede UT (Topographic Unit / Survey Unit Records)
+=====================================================
+
+The UT module manages topographic/survey unit records (mirroring the classic PyArchInit ``ut_table``), covering identification, location, field-survey observations, and potential/risk analysis. Unlike Struttura, Tomba, and Fauna, a UT record is **project-scoped** (via ``progetto``) rather than site-scoped — it has no ``sito`` column.
+
+UT List
+-------
+
+Navigate to **UT** in the top menu (``/ut``) to see the paginated list of topographic unit records.
+
+Features:
+
+* Paginated list (50 records per page)
+* Filter by project (Progetto) and free-text search (matches Progetto, UT Letterale, Definizione UT, Localita, Comune, Descrizione UT)
+* Create new UT button
+* Direct links to each record's edit form
+
+Creating/Editing a UT
+------------------------
+
+The UT form is organized into four tabs (plus a Media tab once the record has been saved): Anagrafica, Ubicazione, Survey, and Analisi.
+
+**Required Fields:**
+
+* Progetto - free-text entry
+
+**Anagrafica:**
+
+* Progetto, Nr. UT, UT Letterale, Definizione UT, Interpretazione UT, Descrizione UT
+
+**Ubicazione:**
+
+* Nazione, Regione, Provincia, Comune, Frazione, Localita, Indirizzo, Nr. Civico, Carta Topo IGM, Carta CTR, Coordinate Geografiche, Coordinate Piane, Quota, Geometria, Foglio Catastale
+
+**Survey:**
+
+* Visibility %, Vegetation Coverage, GPS Method, Coordinate Precision, Survey Type, Surface Condition, Accessibility, Photo Documentation, Weather Conditions, Andamento Terreno / Pendenza, Utilizzo Suolo / Vegetazione, Team Members, Metodo Rilievo e Ricognizione, Descrizione Empirica Suolo, Descrizione Luogo, Data, Ora / Meteo, Responsabile, Dimensioni UT, Reperti per mq, Reperti Datanti, Bibliografia, Documentazione, Enti Tutela / Vincoli, Indagini Preliminari, Periodo I / Datazione I / Interpretazione I, Periodo II / Datazione II / Interpretazione II
+
+**Analisi:**
+
+* Potential Score, Risk Score, Analysis Date, Analysis Method, Potential Factors, Risk Factors
+
+.. tip::
+   Save the record first (Create), then continue editing it to attach media — the media upload panel becomes available once the UT has an ID.
+
+.. note::
+   ``Team Members``, ``Descrizione Empirica Suolo``, ``Descrizione Luogo``, ``Bibliografia``, ``Documentazione``, ``Potential Factors``, and ``Risk Factors`` render as multi-line ``<textarea>`` inputs. ``Quota`` and ``Coordinate Precision`` use decimal (``step="any"``) number inputs; ``Potential Score`` and ``Risk Score`` are also decimal number inputs, matching the model's ``Numeric(5, 2)`` columns.
+
+Potential/Risk Scoring
+-------------------------
+
+The Analisi tab lets you record a quantitative assessment of each survey unit's archaeological potential and preservation risk:
+
+* **Potential Score** / **Risk Score** — decimal scores (e.g. on a 0–100 scale) capturing the unit's estimated archaeological potential and the risk to its preservation
+* **Potential Factors** / **Risk Factors** — free-text notes explaining what drove the score (surface finds, visibility, land use, erosion, development pressure, etc.)
+* **Analysis Date** / **Analysis Method** — when and how the assessment was carried out
+
+Thesaurus Dropdowns
+---------------------
+
+Five fields use ICCD-style controlled vocabulary, populated live from the thesaurus via ``GET /api/ut/thesaurus/<field>``:
+
+* Definizione UT, Survey Type, GPS Method, Surface Condition, Accessibility
+
+Each of these renders as a text input backed by an HTML ``<datalist>`` of suggested values, so you can either pick a standardized term or enter a custom value.
+
+Uploading Media to a UT
+---------------------------
+
+From the UT edit form, use the **UT Media** panel to attach photos, drawings, or documents:
+
+1. Open an existing UT record (``/ut/<id>``)
+2. In the UT Media section, choose a file and upload
+3. The file is linked to the UT entity via the standard media pipeline (same viewers and formats as Sites, US, Inventario, Tomba, and Struttura)
+
+.. note::
+   Media uploaded here appears in the entity's media gallery alongside other archaeological records, keeping documentation centralized per survey unit.
+
 Upload Media
 ============
 
