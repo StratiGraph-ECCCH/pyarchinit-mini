@@ -2,6 +2,7 @@ import datetime
 
 from pyarchinit_mini.models.struttura import Struttura
 from pyarchinit_mini.models.fauna import Fauna
+from pyarchinit_mini.models.ut import Ut
 from pyarchinit_mini.services.coercion import coerce_types
 
 
@@ -60,3 +61,24 @@ def test_text_field_passes_through_unchanged():
 def test_unknown_key_passes_through_unchanged():
     out = coerce_types(Struttura, {"not_a_column": "whatever"})
     assert out["not_a_column"] == "whatever"
+
+
+def test_numeric_string_coerced_to_float():
+    # Ut.potential_score is Numeric(5,2), not Float — Numeric IS-A superclass
+    # of Float in SQLAlchemy, so the coercion must catch it too.
+    out = coerce_types(Ut, {"potential_score": "3.25"})
+    assert out["potential_score"] == 3.25
+    assert isinstance(out["potential_score"], float)
+
+
+def test_numeric_bad_string_is_none():
+    out = coerce_types(Ut, {"potential_score": "bad"})
+    assert out["potential_score"] is None
+
+
+def test_ut_integer_column_still_coerced_to_int_not_float():
+    # Regression guard: Integer is NOT a Numeric subclass in SQLAlchemy, so
+    # widening the numeric branch to Numeric must not affect Integer columns.
+    out = coerce_types(Ut, {"nr_ut": "5"})
+    assert out["nr_ut"] == 5
+    assert isinstance(out["nr_ut"], int)

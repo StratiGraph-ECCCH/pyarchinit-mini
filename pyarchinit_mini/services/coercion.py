@@ -6,17 +6,18 @@ types when called programmatically). SQLite has dynamic typing, so a
 type-mismatched value silently "works" there; Postgres does not, and a
 type-mismatched value fails the whole INSERT/UPDATE. This module coerces
 input to match a model column's declared SQLAlchemy type (Integer,
-Float, Boolean, Date) so writes behave the same across both backends.
-Never raises: unparseable input becomes None instead.
+Float/Numeric, Boolean, Date) so writes behave the same across both
+backends. Never raises: unparseable input becomes None instead.
 
-Used by StrutturaService, TombaService, and FaunaService (and any future
-record-type service with numeric/boolean/date columns fed by form data).
+Used by StrutturaService, TombaService, FaunaService, and UtService (and
+any future record-type service with numeric/boolean/date columns fed by
+form data).
 """
 
 from datetime import date
 from typing import Any, Dict
 
-from sqlalchemy import Boolean, Date as _SADate, Float as _SAFloat, Integer as _SAInteger
+from sqlalchemy import Boolean, Date as _SADate, Integer as _SAInteger, Numeric as _SANumeric
 
 _TRUE_WORDS = {"true", "1", "si", "sì", "on", "yes", "y"}
 _FALSE_WORDS = {"false", "0", "no", "off", "n"}
@@ -82,8 +83,12 @@ def coerce_types(model, data: Dict[str, Any]) -> Dict[str, Any]:
     columns of ``model`` coerced to the matching Python type.
 
     - Integer  -> int(v)
-    - Float    -> float(v) (an already-int value is left as-is; ints are
-      valid for a Float column too)
+    - Float/Numeric -> float(v) (an already-int value is left as-is; ints
+      are valid for a Float/Numeric column too). Numeric is checked so
+      that DECIMAL-typed columns (e.g. Numeric(5,2)) are coerced too —
+      Float IS-A Numeric in SQLAlchemy, so this branch catches both.
+      Integer is NOT a Numeric subclass, so plain Integer columns are
+      unaffected by this branch.
     - Boolean  -> truthy parse of a lowercased/stripped string: words in
       {"true","1","si","sì","on","yes","y"} -> True; words in
       {"false","0","no","off","n"} -> False; empty string -> None;
@@ -113,7 +118,7 @@ def coerce_types(model, data: Dict[str, Any]) -> Dict[str, Any]:
             coerced[key] = _coerce_date(value)
         elif isinstance(col_type, _SAInteger):
             coerced[key] = _coerce_int(value)
-        elif isinstance(col_type, _SAFloat):
+        elif isinstance(col_type, _SANumeric):
             coerced[key] = _coerce_float(value)
         # else: leave value untouched (Text/String/etc.)
     return coerced
