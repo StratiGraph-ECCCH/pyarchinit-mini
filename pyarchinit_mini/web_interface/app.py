@@ -703,6 +703,25 @@ def create_app():
             'thumb_url': media_service.thumb_url(m.id_media),
         } for m in items]
 
+    def _save_uploaded_media(file_storage, entity_key, id_entity, **kwargs):
+        """secure_filename -> unique temp file -> media_service.add_media -> guaranteed cleanup.
+
+        Returns whatever media_service.add_media returns on success; raises on failure
+        (caller is expected to catch and flash/redirect/jsonify as appropriate).
+        """
+        filename = secure_filename(file_storage.filename)
+        fd, tmp_path = tempfile.mkstemp(suffix='_' + filename)
+        try:
+            os.close(fd)
+            file_storage.save(tmp_path)
+            return media_service.add_media(tmp_path, entity_key, id_entity, **kwargs)
+        finally:
+            try:
+                if os.path.exists(tmp_path):
+                    os.unlink(tmp_path)
+            except OSError:
+                pass
+
     # Store services in app for access in routes
     app.db_manager = db_manager
     app.user_service = user_service
@@ -3048,20 +3067,12 @@ def create_app():
 
                 uploaded_file = form.file.data
                 if uploaded_file and uploaded_file.filename:
-                    # Save uploaded file temporarily
-                    filename = secure_filename(uploaded_file.filename)
-                    temp_path = os.path.join(tempfile.gettempdir(), filename)
-                    uploaded_file.save(temp_path)
-
                     # Store + link via the plugin-schema media service
-                    media = media_service.add_media(
-                        temp_path, entity_type, entity_id,
+                    media = _save_uploaded_media(
+                        uploaded_file, entity_type, entity_id,
                         descrizione=form.description.data or "", tags="",
                     )
                     media_id = media.id_media
-
-                    # Clean up temp file
-                    os.remove(temp_path)
 
                     flash(f'File uploaded successfully! (ID: {media_id})', 'success')
                     return redirect(url_for('media_list'))
@@ -3111,17 +3122,9 @@ def create_app():
 
             for uploaded_file in files:
                 if uploaded_file and uploaded_file.filename:
-                    # Save uploaded file temporarily
-                    filename = secure_filename(uploaded_file.filename)
-                    temp_path = os.path.join(tempfile.gettempdir(), filename)
-                    uploaded_file.save(temp_path)
-
                     # Store + link via the plugin-schema media service
-                    media = media_service.add_media(temp_path, entity_type, entity_id)
+                    media = _save_uploaded_media(uploaded_file, entity_type, entity_id)
                     uploaded_ids.append(media.id_media)
-
-                    # Clean up temp file
-                    os.remove(temp_path)
 
             return jsonify({
                 'success': True,
@@ -4955,13 +4958,8 @@ def create_app():
             if not f or not f.filename:
                 flash('Nessun file', 'error')
                 return redirect(url_for('tma_edit', tma_id=tma_id))
-            from werkzeug.utils import secure_filename
-            filename = secure_filename(f.filename)
-            tmp_path = os.path.join(tempfile.gettempdir(), filename)
-            f.save(tmp_path)
-            media_service.add_media(tmp_path, 'tma', tma_id)
+            _save_uploaded_media(f, 'tma', tma_id)
             flash('Media caricato', 'success')
-            os.unlink(tmp_path)
         except Exception as e:
             flash(f'Errore upload: {e}', 'error')
         return redirect(url_for('tma_edit', tma_id=tma_id))
@@ -5095,13 +5093,8 @@ def create_app():
             if not f or not f.filename:
                 flash('Nessun file', 'error')
                 return redirect(url_for('tomba_edit', tomba_id=tomba_id))
-            from werkzeug.utils import secure_filename
-            filename = secure_filename(f.filename)
-            tmp_path = os.path.join(tempfile.gettempdir(), filename)
-            f.save(tmp_path)
-            media_service.add_media(tmp_path, 'tomba', tomba_id)
+            _save_uploaded_media(f, 'tomba', tomba_id)
             flash('Media caricato', 'success')
-            os.unlink(tmp_path)
         except Exception as e:
             flash(f'Errore upload: {e}', 'error')
         return redirect(url_for('tomba_edit', tomba_id=tomba_id))
@@ -5193,13 +5186,8 @@ def create_app():
             if not f or not f.filename:
                 flash('Nessun file', 'error')
                 return redirect(url_for('struttura_edit', struttura_id=struttura_id))
-            from werkzeug.utils import secure_filename
-            filename = secure_filename(f.filename)
-            tmp_path = os.path.join(tempfile.gettempdir(), filename)
-            f.save(tmp_path)
-            media_service.add_media(tmp_path, 'struttura', struttura_id)
+            _save_uploaded_media(f, 'struttura', struttura_id)
             flash('Media caricato', 'success')
-            os.unlink(tmp_path)
         except Exception as e:
             flash(f'Errore upload: {e}', 'error')
         return redirect(url_for('struttura_edit', struttura_id=struttura_id))
@@ -5363,13 +5351,8 @@ def create_app():
             if not f or not f.filename:
                 flash('Nessun file', 'error')
                 return redirect(url_for('ut_edit', ut_id=ut_id))
-            from werkzeug.utils import secure_filename
-            filename = secure_filename(f.filename)
-            tmp_path = os.path.join(tempfile.gettempdir(), filename)
-            f.save(tmp_path)
-            media_service.add_media(tmp_path, 'ut', ut_id)
+            _save_uploaded_media(f, 'ut', ut_id)
             flash('Media caricato', 'success')
-            os.unlink(tmp_path)
         except Exception as e:
             flash(f'Errore upload: {e}', 'error')
         return redirect(url_for('ut_edit', ut_id=ut_id))

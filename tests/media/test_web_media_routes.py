@@ -145,6 +145,21 @@ def flask_app(db_manager, media_service, media_handler, site_service, us_service
         login_user(AuthUser(user_dict))
         return ""
 
+    # ---- _save_uploaded_media (mirrors app.py's shared upload helper) ----
+    def _save_uploaded_media(file_storage, entity_key, id_entity, **kwargs):
+        filename = secure_filename(file_storage.filename)
+        fd, tmp_path = tempfile.mkstemp(suffix='_' + filename)
+        try:
+            os.close(fd)
+            file_storage.save(tmp_path)
+            return media_service.add_media(tmp_path, entity_key, id_entity, **kwargs)
+        finally:
+            try:
+                if os.path.exists(tmp_path):
+                    os.unlink(tmp_path)
+            except OSError:
+                pass
+
     # ---- /media/upload (mirrors app.py's upload_media post-Task-8) ----
     @app.route('/media/upload', methods=['GET', 'POST'])
     @login_required
@@ -198,17 +213,11 @@ def flask_app(db_manager, media_service, media_handler, site_service, us_service
 
                 uploaded_file = form.file.data
                 if uploaded_file and uploaded_file.filename:
-                    filename = secure_filename(uploaded_file.filename)
-                    temp_path = os.path.join(tempfile.gettempdir(), filename)
-                    uploaded_file.save(temp_path)
-
-                    media = media_service.add_media(
-                        temp_path, entity_type, entity_id,
+                    media = _save_uploaded_media(
+                        uploaded_file, entity_type, entity_id,
                         descrizione=form.description.data or "", tags="",
                     )
                     media_id = media.id_media
-
-                    os.remove(temp_path)
 
                     flash(f'File uploaded successfully! (ID: {media_id})', 'success')
                     return redirect(url_for('media_list'))
@@ -470,6 +479,45 @@ def test_upload_list_serve_delete_flow(logged_in_client, us_row, test_image):
     resp = client.get("/media/list")
     assert resp.status_code == 200
     assert b"upload_test.png" not in resp.data
+
+
+def test_upload_cleans_up_temp_file_on_failure(logged_in_client, us_row, test_image,
+                                                media_service, monkeypatch):
+    """If media_service.add_media() raises, the unique mkstemp-created temp
+    file created by _save_uploaded_media must still be removed (guaranteed
+    by its `finally` block) instead of leaking into the OS temp dir."""
+    import glob
+
+    client = logged_in_client
+
+    def _boom(*args, **kwargs):
+        raise RuntimeError("simulated storage failure")
+
+    monkeypatch.setattr(media_service, "add_media", _boom)
+
+    pattern = os.path.join(tempfile.gettempdir(), "*_upload_test.png")
+    before = set(glob.glob(pattern))
+
+    with open(test_image, "rb") as fh:
+        resp = client.post(
+            "/media/upload",
+            data={
+                "entity_type": "us",
+                "us_site": "Test Site",
+                "us_area": "1",
+                "us_number": "1",
+                "description": "A test photo",
+                "file": (fh, "upload_test.png"),
+            },
+            content_type="multipart/form-data",
+            follow_redirects=False,
+        )
+
+    # The route's except-block catches the failure and re-renders the form.
+    assert resp.status_code == 200
+
+    after = set(glob.glob(pattern))
+    assert after == before, f"leaked temp file(s) after add_media failure: {after - before}"
 
 
 def test_media_serve_rejects_sibling_path_sharing_root_prefix(logged_in_client, media_handler):
