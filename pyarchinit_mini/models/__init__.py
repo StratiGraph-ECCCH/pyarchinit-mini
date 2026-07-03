@@ -19,6 +19,7 @@ from .storage_config import StorageConfig
 from .tomba import Tomba
 from .struttura import Struttura
 from .fauna import Fauna
+from .ut import Ut
 
 __all__ = [
     "BaseModel",
@@ -48,4 +49,5 @@ __all__ = [
     "Tomba",
     "Struttura",
     "Fauna",
+    "Ut",
 ]
