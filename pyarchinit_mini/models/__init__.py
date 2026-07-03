@@ -18,6 +18,7 @@ from .ai_chat import AIConversation, AIMessage
 from .storage_config import StorageConfig
 from .tomba import Tomba
 from .struttura import Struttura
+from .fauna import Fauna
 
 __all__ = [
     "BaseModel",
@@ -46,4 +47,5 @@ __all__ = [
     "StorageConfig",
     "Tomba",
     "Struttura",
+    "Fauna",
 ]
