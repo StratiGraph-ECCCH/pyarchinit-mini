@@ -1,4 +1,6 @@
-## Unreleased
+## 3.0.0 — 2026-07-03
+
+Major release: **four new archaeological record types** — Tomba, Struttura, Fauna, and UT (Unità Topografica) — added to the web interface, each mapping the classic PyArchInit plugin schema for shared-DB interop, with full CRUD, thesaurus-backed dropdowns, media (all except Fauna), dashboard tiles, AI + MCP integration, Sphinx docs + tutorial sections, and full IT/EN i18n. Internals: a shared `services/coercion.py` (int/float/bool/date/numeric) helper, a `BaseModel.writable_columns()` mass-assignment allowlist, and Postgres-safe search (ILIKE restricted to text columns) applied across the new entities.
 
 ### Added — Tomba (burial) record type
 - New **Tomba** entity mirroring the classic PyArchInit `tomba_table`: ritual, structure, grave-goods (corredo), and chronology fields, with `TombaService` (list/count/get/create/update/delete, site filtering, free-text search).
