@@ -351,4 +351,21 @@ THESAURUS_MAPPINGS = {
             'Primaria', 'Secondaria', 'In connessione', 'Sparsa'
         ]
     },
+    'ut_table': {
+        'def_ut': [
+            'Area', 'Struttura', 'Affioramento', 'Dispersione di materiale', 'Traccia'
+        ],
+        'survey_type': [
+            'Sistematica', 'Non sistematica', 'Intensiva', 'Estensiva', 'Campionaria'
+        ],
+        'gps_method': [
+            'RTK', 'DGPS', 'Navigazione', 'Punto singolo'
+        ],
+        'surface_condition': [
+            'Arato', 'Incolto', 'Boscato', 'Urbanizzato', 'Prato'
+        ],
+        'accessibility': [
+            'Alta', 'Media', 'Bassa', 'Non accessibile'
+        ]
+    },
 }
