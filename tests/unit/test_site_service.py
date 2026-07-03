@@ -66,9 +66,10 @@ def test_delete_site(site_service, sample_site_data):
     """Test deleting a site"""
     created_site = site_service.create_site(sample_site_data)
     
-    success = site_service.delete_site(created_site.id_sito)
-    assert success is True
-    
+    result = site_service.delete_site(created_site.id_sito)
+    # delete_site does a cascade delete and returns per-table deletion counts
+    assert result['site'] == 1
+
     # Verify site is deleted
     deleted_site = site_service.get_site_by_id(created_site.id_sito)
     assert deleted_site is None
