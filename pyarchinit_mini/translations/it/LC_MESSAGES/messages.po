@@ -6517,6 +6517,12 @@ msgstr "Aggiungi Media"
 msgid "No media attached yet."
 msgstr "Nessun media allegato ancora."
 
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:26
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:26
+#: pyarchinit_mini/web_interface/templates/ut/form.html:26
+msgid "Save the record to enable the Media tab and attach files."
+msgstr "Salva la scheda per abilitare la tab Media e allegare file."
+
 #: pyarchinit_mini/web_interface/templates/tma/form.html:232
 #, fuzzy
 msgid "Upload media"
