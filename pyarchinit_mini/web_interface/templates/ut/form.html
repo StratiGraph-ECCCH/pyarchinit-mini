@@ -17,15 +17,8 @@
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-ubicazione">{{ _('Ubicazione') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-survey">{{ _('Survey') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-analisi">{{ _('Analisi') }}</a></li>
-        {% if ut and ut.id_ut %}
-        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-media">{{ _('Media') }} ({{ media|length }})</a></li>
-        {% endif %}
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-media">{{ _('Media') }} ({{ media|length if media else 0 }})</a></li>
     </ul>
-    {% if not ut or not ut.id_ut %}
-    <div class="alert alert-info py-2 mb-3">
-      <i class="fas fa-info-circle"></i> {{ _('Save the record to enable the Media tab and attach files.') }}
-    </div>
-    {% endif %}
     <div class="tab-content border border-top-0 p-3">
         <!-- Anagrafica -->
         <div class="tab-pane fade show active" id="tab-anagrafica">
@@ -44,8 +37,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Definizione UT') }}</label>
-                    <input type="text" name="def_ut" class="form-control" value="{{ ut.def_ut or '' }}" list="thes-def_ut">
-                    <datalist id="thes-def_ut"></datalist>
+                    <select name="def_ut" id="sel-def_ut" class="form-select" data-current="{{ ut.def_ut or '' }}"><option value="{{ ut.def_ut or '' }}" selected>{{ ut.def_ut or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Interpretazione UT') }}</label>
@@ -131,13 +123,11 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Vegetation Coverage') }}</label>
-                    <input type="text" name="vegetation_coverage" class="form-control" value="{{ ut.vegetation_coverage or '' }}" list="thes-vegetation_coverage">
-                    <datalist id="thes-vegetation_coverage"></datalist>
+                    <select name="vegetation_coverage" id="sel-vegetation_coverage" class="form-select" data-current="{{ ut.vegetation_coverage or '' }}"><option value="{{ ut.vegetation_coverage or '' }}" selected>{{ ut.vegetation_coverage or '—' }}</option></select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('GPS Method') }}</label>
-                    <input type="text" name="gps_method" class="form-control" value="{{ ut.gps_method or '' }}" list="thes-gps_method">
-                    <datalist id="thes-gps_method"></datalist>
+                    <select name="gps_method" id="sel-gps_method" class="form-select" data-current="{{ ut.gps_method or '' }}"><option value="{{ ut.gps_method or '' }}" selected>{{ ut.gps_method or '—' }}</option></select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Coordinate Precision') }}</label>
@@ -145,18 +135,15 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Survey Type') }}</label>
-                    <input type="text" name="survey_type" class="form-control" value="{{ ut.survey_type or '' }}" list="thes-survey_type">
-                    <datalist id="thes-survey_type"></datalist>
+                    <select name="survey_type" id="sel-survey_type" class="form-select" data-current="{{ ut.survey_type or '' }}"><option value="{{ ut.survey_type or '' }}" selected>{{ ut.survey_type or '—' }}</option></select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Surface Condition') }}</label>
-                    <input type="text" name="surface_condition" class="form-control" value="{{ ut.surface_condition or '' }}" list="thes-surface_condition">
-                    <datalist id="thes-surface_condition"></datalist>
+                    <select name="surface_condition" id="sel-surface_condition" class="form-select" data-current="{{ ut.surface_condition or '' }}"><option value="{{ ut.surface_condition or '' }}" selected>{{ ut.surface_condition or '—' }}</option></select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Accessibility') }}</label>
-                    <input type="text" name="accessibility" class="form-control" value="{{ ut.accessibility or '' }}" list="thes-accessibility">
-                    <datalist id="thes-accessibility"></datalist>
+                    <select name="accessibility" id="sel-accessibility" class="form-select" data-current="{{ ut.accessibility or '' }}"><option value="{{ ut.accessibility or '' }}" selected>{{ ut.accessibility or '—' }}</option></select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Photo Documentation') }}</label>
@@ -164,8 +151,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Weather Conditions') }}</label>
-                    <input type="text" name="weather_conditions" class="form-control" value="{{ ut.weather_conditions or '' }}" list="thes-weather_conditions">
-                    <datalist id="thes-weather_conditions"></datalist>
+                    <select name="weather_conditions" id="sel-weather_conditions" class="form-select" data-current="{{ ut.weather_conditions or '' }}"><option value="{{ ut.weather_conditions or '' }}" selected>{{ ut.weather_conditions or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Andamento Terreno / Pendenza') }}</label>
@@ -287,10 +273,10 @@
             </div>
         </div>
 
-        {% if ut and ut.id_ut %}
         <!-- Media -->
         <div class="tab-pane fade" id="tab-media">
             <h5>{{ _('UT Media') }}</h5>
+            {% if ut and ut.id_ut %}
             {% if media %}
             <div class="row g-2">
                 {% for m in media %}
@@ -317,8 +303,12 @@
                 <div class="col-md-8"><input type="file" name="file" class="form-control" required></div>
                 <div class="col-md-4"><button type="submit" class="btn btn-primary w-100">{{ _('Upload') }}</button></div>
             </form>
+            {% else %}
+            <div class="alert alert-info py-2 mb-3">
+              <i class="fas fa-info-circle"></i> {{ _('Save the record to enable the Media tab and attach files.') }}
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 
     <div class="mt-3">
@@ -336,15 +326,21 @@ UT_THES_FIELDS.forEach(function(field) {
         .then(function(r) { return r.json(); })
         .then(function(values) {
             if (!Array.isArray(values)) return;
-            const dl = document.getElementById('thes-' + field);
-            if (!dl) return;
-            dl.innerHTML = '';
-            values.forEach(function(v) {
-                const opt = document.createElement('option');
-                opt.value = v.value || '';
-                if (v.code) opt.label = v.code;
-                dl.appendChild(opt);
+            const sel = document.getElementById('sel-' + field);
+            if (!sel) return;
+            const current = sel.getAttribute('data-current') || '';
+            sel.innerHTML = '<option value="">—</option>';
+            let found = false;
+            (values || []).forEach(function(v){
+                const o = document.createElement('option');
+                o.value = v.value; o.textContent = v.value;
+                if (v.value === current) { o.selected = true; found = true; }
+                sel.appendChild(o);
             });
+            if (current && !found) {   // preserve a stored value not in the current vocab
+                const o = document.createElement('option');
+                o.value = current; o.textContent = current; o.selected = true; sel.appendChild(o);
+            }
         })
         .catch(function() { /* silent */ });
 });

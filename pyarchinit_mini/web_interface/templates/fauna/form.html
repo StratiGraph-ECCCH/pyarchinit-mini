@@ -66,18 +66,15 @@
             <div class="row g-2">
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Metodologia Recupero') }}</label>
-                    <input type="text" name="metodologia_recupero" class="form-control" value="{{ fauna.metodologia_recupero or '' }}" list="thes-metodologia_recupero">
-                    <datalist id="thes-metodologia_recupero"></datalist>
+                    <select name="metodologia_recupero" id="sel-metodologia_recupero" class="form-select" data-current="{{ fauna.metodologia_recupero or '' }}"><option value="{{ fauna.metodologia_recupero or '' }}" selected>{{ fauna.metodologia_recupero or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Contesto') }}</label>
-                    <input type="text" name="contesto" class="form-control" value="{{ fauna.contesto or '' }}" list="thes-contesto">
-                    <datalist id="thes-contesto"></datalist>
+                    <select name="contesto" id="sel-contesto" class="form-select" data-current="{{ fauna.contesto or '' }}"><option value="{{ fauna.contesto or '' }}" selected>{{ fauna.contesto or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Deposizione') }}</label>
-                    <input type="text" name="deposizione" class="form-control" value="{{ fauna.deposizione or '' }}" list="thes-deposizione">
-                    <datalist id="thes-deposizione"></datalist>
+                    <select name="deposizione" id="sel-deposizione" class="form-select" data-current="{{ fauna.deposizione or '' }}"><option value="{{ fauna.deposizione or '' }}" selected>{{ fauna.deposizione or '—' }}</option></select>
                 </div>
                 <div class="col-md-12">
                     <label class="form-label">{{ _('Descrizione Contesto') }}</label>
@@ -85,13 +82,11 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Resti in Connessione Anatomica') }}</label>
-                    <input type="text" name="resti_connessione_anatomica" class="form-control" value="{{ fauna.resti_connessione_anatomica or '' }}" list="thes-resti_connessione_anatomica">
-                    <datalist id="thes-resti_connessione_anatomica"></datalist>
+                    <select name="resti_connessione_anatomica" id="sel-resti_connessione_anatomica" class="form-select" data-current="{{ fauna.resti_connessione_anatomica or '' }}"><option value="{{ fauna.resti_connessione_anatomica or '' }}" selected>{{ fauna.resti_connessione_anatomica or '—' }}</option></select>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Tipologia Accumulo') }}</label>
-                    <input type="text" name="tipologia_accumulo" class="form-control" value="{{ fauna.tipologia_accumulo or '' }}" list="thes-tipologia_accumulo">
-                    <datalist id="thes-tipologia_accumulo"></datalist>
+                    <select name="tipologia_accumulo" id="sel-tipologia_accumulo" class="form-select" data-current="{{ fauna.tipologia_accumulo or '' }}"><option value="{{ fauna.tipologia_accumulo or '' }}" selected>{{ fauna.tipologia_accumulo or '—' }}</option></select>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Note Terreno / Giacitura') }}</label>
@@ -99,8 +94,7 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Affidabilità Stratigrafica') }}</label>
-                    <input type="text" name="affidabilita_stratigrafica" class="form-control" value="{{ fauna.affidabilita_stratigrafica or '' }}" list="thes-affidabilita_stratigrafica">
-                    <datalist id="thes-affidabilita_stratigrafica"></datalist>
+                    <select name="affidabilita_stratigrafica" id="sel-affidabilita_stratigrafica" class="form-select" data-current="{{ fauna.affidabilita_stratigrafica or '' }}"><option value="{{ fauna.affidabilita_stratigrafica or '' }}" selected>{{ fauna.affidabilita_stratigrafica or '—' }}</option></select>
                 </div>
             </div>
         </div>
@@ -109,8 +103,7 @@
             <div class="row g-2">
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Numero Stimato Resti') }}</label>
-                    <input type="text" name="numero_stimato_resti" class="form-control" value="{{ fauna.numero_stimato_resti or '' }}" list="thes-numero_stimato_resti">
-                    <datalist id="thes-numero_stimato_resti"></datalist>
+                    <select name="numero_stimato_resti" id="sel-numero_stimato_resti" class="form-select" data-current="{{ fauna.numero_stimato_resti or '' }}"><option value="{{ fauna.numero_stimato_resti or '' }}" selected>{{ fauna.numero_stimato_resti or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Numero Minimo Individui') }}</label>
@@ -118,8 +111,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Stato Frammentazione') }}</label>
-                    <input type="text" name="stato_frammentazione" class="form-control" value="{{ fauna.stato_frammentazione or '' }}" list="thes-stato_frammentazione">
-                    <datalist id="thes-stato_frammentazione"></datalist>
+                    <select name="stato_frammentazione" id="sel-stato_frammentazione" class="form-select" data-current="{{ fauna.stato_frammentazione or '' }}"><option value="{{ fauna.stato_frammentazione or '' }}" selected>{{ fauna.stato_frammentazione or '—' }}</option></select>
                 </div>
                 <div class="col-md-12">
                     <label class="form-label">{{ _('Specie / PSI') }}</label>
@@ -169,8 +161,7 @@
             <div class="row g-2">
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Tracce Combustione') }}</label>
-                    <input type="text" name="tracce_combustione" class="form-control" value="{{ fauna.tracce_combustione or '' }}" list="thes-tracce_combustione">
-                    <datalist id="thes-tracce_combustione"></datalist>
+                    <select name="tracce_combustione" id="sel-tracce_combustione" class="form-select" data-current="{{ fauna.tracce_combustione or '' }}"><option value="{{ fauna.tracce_combustione or '' }}" selected>{{ fauna.tracce_combustione or '—' }}</option></select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Combustione Altri Materiali US') }}</label>
@@ -182,23 +173,19 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Tipo Combustione') }}</label>
-                    <input type="text" name="tipo_combustione" class="form-control" value="{{ fauna.tipo_combustione or '' }}" list="thes-tipo_combustione">
-                    <datalist id="thes-tipo_combustione"></datalist>
+                    <select name="tipo_combustione" id="sel-tipo_combustione" class="form-select" data-current="{{ fauna.tipo_combustione or '' }}"><option value="{{ fauna.tipo_combustione or '' }}" selected>{{ fauna.tipo_combustione or '—' }}</option></select>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Segni Tafonomici Evidenti') }}</label>
-                    <input type="text" name="segni_tafonomici_evidenti" class="form-control" value="{{ fauna.segni_tafonomici_evidenti or '' }}" list="thes-segni_tafonomici_evidenti">
-                    <datalist id="thes-segni_tafonomici_evidenti"></datalist>
+                    <select name="segni_tafonomici_evidenti" id="sel-segni_tafonomici_evidenti" class="form-select" data-current="{{ fauna.segni_tafonomici_evidenti or '' }}"><option value="{{ fauna.segni_tafonomici_evidenti or '' }}" selected>{{ fauna.segni_tafonomici_evidenti or '—' }}</option></select>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Caratterizzazione Segni Tafonomici') }}</label>
-                    <input type="text" name="caratterizzazione_segni_tafonomici" class="form-control" value="{{ fauna.caratterizzazione_segni_tafonomici or '' }}" list="thes-caratterizzazione_segni_tafonomici">
-                    <datalist id="thes-caratterizzazione_segni_tafonomici"></datalist>
+                    <select name="caratterizzazione_segni_tafonomici" id="sel-caratterizzazione_segni_tafonomici" class="form-select" data-current="{{ fauna.caratterizzazione_segni_tafonomici or '' }}"><option value="{{ fauna.caratterizzazione_segni_tafonomici or '' }}" selected>{{ fauna.caratterizzazione_segni_tafonomici or '—' }}</option></select>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Stato di Conservazione') }}</label>
-                    <input type="text" name="stato_conservazione" class="form-control" value="{{ fauna.stato_conservazione or '' }}" list="thes-stato_conservazione">
-                    <datalist id="thes-stato_conservazione"></datalist>
+                    <select name="stato_conservazione" id="sel-stato_conservazione" class="form-select" data-current="{{ fauna.stato_conservazione or '' }}"><option value="{{ fauna.stato_conservazione or '' }}" selected>{{ fauna.stato_conservazione or '—' }}</option></select>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Alterazioni Morfologiche') }}</label>
@@ -246,20 +233,42 @@ window.MISURE_OSSA = {{ (fauna.misure_ossa or "[]") | tojson }};
 // specie_psi widget's per-cell datalists below); elemento_anatomico is new
 // (13.13, used by the misure_ossa widget's Elemento Anatomico cell).
 const THES_FIELDS = ['contesto','metodologia_recupero','tipologia_accumulo','deposizione','stato_frammentazione','stato_conservazione','affidabilita_stratigrafica','tracce_combustione','tipo_combustione','resti_connessione_anatomica','specie','parti_scheletriche','elemento_anatomico','segni_tafonomici_evidenti','caratterizzazione_segni_tafonomici','numero_stimato_resti'];
+// specie / parti_scheletriche / elemento_anatomico back only the per-cell
+// datalists used by the specie_psi and misure_ossa widgets below — they
+// never had a flat <select>, so they keep the datalist-population path.
+const FAUNA_WIDGET_ONLY_THES_FIELDS = ['specie', 'parti_scheletriche', 'elemento_anatomico'];
 THES_FIELDS.forEach(function(field) {
     fetch('/api/fauna/thesaurus/' + field)
         .then(function(r) { return r.json(); })
         .then(function(values) {
             if (!Array.isArray(values)) return;
-            const dl = document.getElementById('thes-' + field);
-            if (!dl) return;
-            dl.innerHTML = '';
-            values.forEach(function(v) {
-                const opt = document.createElement('option');
-                opt.value = v.value || '';
-                if (v.code) opt.label = v.code;
-                dl.appendChild(opt);
+            if (FAUNA_WIDGET_ONLY_THES_FIELDS.indexOf(field) !== -1) {
+                const dl = document.getElementById('thes-' + field);
+                if (!dl) return;
+                dl.innerHTML = '';
+                values.forEach(function(v) {
+                    const opt = document.createElement('option');
+                    opt.value = v.value || '';
+                    if (v.code) opt.label = v.code;
+                    dl.appendChild(opt);
+                });
+                return;
+            }
+            const sel = document.getElementById('sel-' + field);
+            if (!sel) return;
+            const current = sel.getAttribute('data-current') || '';
+            sel.innerHTML = '<option value="">—</option>';
+            let found = false;
+            (values || []).forEach(function(v){
+                const o = document.createElement('option');
+                o.value = v.value; o.textContent = v.value;
+                if (v.value === current) { o.selected = true; found = true; }
+                sel.appendChild(o);
             });
+            if (current && !found) {   // preserve a stored value not in the current vocab
+                const o = document.createElement('option');
+                o.value = current; o.textContent = current; o.selected = true; sel.appendChild(o);
+            }
         })
         .catch(function() { /* silent */ });
 });

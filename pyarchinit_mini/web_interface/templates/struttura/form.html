@@ -18,15 +18,8 @@
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-articolazione">{{ _('Articolazione') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-subtables">{{ _('Sotto-tabelle') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-crono">{{ _('Chronology') }}</a></li>
-        {% if struttura and struttura.id_struttura %}
-        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-media">{{ _('Media') }} ({{ media|length }})</a></li>
-        {% endif %}
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-media">{{ _('Media') }} ({{ media|length if media else 0 }})</a></li>
     </ul>
-    {% if not struttura or not struttura.id_struttura %}
-    <div class="alert alert-info py-2 mb-3">
-      <i class="fas fa-info-circle"></i> {{ _('Save the record to enable the Media tab and attach files.') }}
-    </div>
-    {% endif %}
     <div class="tab-content border border-top-0 p-3">
         <!-- Identification -->
         <div class="tab-pane fade show active" id="tab-basic">
@@ -37,8 +30,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Sigla Struttura') }}</label>
-                    <input type="text" name="sigla_struttura" class="form-control" value="{{ struttura.sigla_struttura or '' }}" list="thes-sigla_struttura">
-                    <datalist id="thes-sigla_struttura"></datalist>
+                    <select name="sigla_struttura" id="sel-sigla_struttura" class="form-select" data-current="{{ struttura.sigla_struttura or '' }}"><option value="{{ struttura.sigla_struttura or '' }}" selected>{{ struttura.sigla_struttura or '—' }}</option></select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Numero Struttura') }}</label>
@@ -46,18 +38,15 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Categoria Struttura') }}</label>
-                    <input type="text" name="categoria_struttura" class="form-control" value="{{ struttura.categoria_struttura or '' }}" list="thes-categoria_struttura">
-                    <datalist id="thes-categoria_struttura"></datalist>
+                    <select name="categoria_struttura" id="sel-categoria_struttura" class="form-select" data-current="{{ struttura.categoria_struttura or '' }}"><option value="{{ struttura.categoria_struttura or '' }}" selected>{{ struttura.categoria_struttura or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Tipologia Struttura') }}</label>
-                    <input type="text" name="tipologia_struttura" class="form-control" value="{{ struttura.tipologia_struttura or '' }}" list="thes-tipologia_struttura">
-                    <datalist id="thes-tipologia_struttura"></datalist>
+                    <select name="tipologia_struttura" id="sel-tipologia_struttura" class="form-select" data-current="{{ struttura.tipologia_struttura or '' }}"><option value="{{ struttura.tipologia_struttura or '' }}" selected>{{ struttura.tipologia_struttura or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Definizione Struttura') }}</label>
-                    <input type="text" name="definizione_struttura" class="form-control" value="{{ struttura.definizione_struttura or '' }}" list="thes-definizione_struttura">
-                    <datalist id="thes-definizione_struttura"></datalist>
+                    <select name="definizione_struttura" id="sel-definizione_struttura" class="form-select" data-current="{{ struttura.definizione_struttura or '' }}"><option value="{{ struttura.definizione_struttura or '' }}" selected>{{ struttura.definizione_struttura or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Data Compilazione') }}</label>
@@ -121,8 +110,7 @@
                 </div>
                 <div class="col-md-9">
                     <label class="form-label">{{ _('Sviluppo Planimetrico') }}</label>
-                    <input type="text" name="sviluppo_planimetrico" class="form-control" value="{{ struttura.sviluppo_planimetrico or '' }}" list="thes-sviluppo_planimetrico">
-                    <datalist id="thes-sviluppo_planimetrico"></datalist>
+                    <select name="sviluppo_planimetrico" id="sel-sviluppo_planimetrico" class="form-select" data-current="{{ struttura.sviluppo_planimetrico or '' }}"><option value="{{ struttura.sviluppo_planimetrico or '' }}" selected>{{ struttura.sviluppo_planimetrico or '—' }}</option></select>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Motivo Decorativo') }}</label>
@@ -285,10 +273,10 @@
             </div>
         </div>
 
-        {% if struttura and struttura.id_struttura %}
         <!-- Media -->
         <div class="tab-pane fade" id="tab-media">
             <h5>{{ _('Struttura Media') }}</h5>
+            {% if struttura and struttura.id_struttura %}
             {% if media %}
             <div class="row g-2">
                 {% for m in media %}
@@ -315,8 +303,12 @@
                 <div class="col-md-8"><input type="file" name="file" class="form-control" required></div>
                 <div class="col-md-4"><button type="submit" class="btn btn-primary w-100">{{ _('Upload') }}</button></div>
             </form>
+            {% else %}
+            <div class="alert alert-info py-2 mb-3">
+              <i class="fas fa-info-circle"></i> {{ _('Save the record to enable the Media tab and attach files.') }}
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 
     <div class="mt-3">
@@ -336,7 +328,34 @@ window.STRUTTURA_SUBTABLES_DATA = {{ subtables | tojson }};
 // share the same fetch-and-fill logic, just different datalist ids.
 const STRUTTURA_THES_FIELDS = ['sigla_struttura','categoria_struttura','tipologia_struttura','definizione_struttura','sviluppo_planimetrico'];
 const STRUTTURA_SUBTABLE_THES_FIELDS = ['materiali_impiegati','elementi_strutturali','rapporti_sigla','misure_elementi_arch','misure_tipo','misure_unita','stato_fattori','prospetto_ingresso','elementi_costitutivi','manufatti','fasi_definizione'];
-STRUTTURA_THES_FIELDS.concat(STRUTTURA_SUBTABLE_THES_FIELDS).forEach(function(field) {
+// Flat fields render as <select> dropdowns; populate them, preserving the
+// server-rendered current value if it isn't present in the fetched vocab.
+STRUTTURA_THES_FIELDS.forEach(function(field) {
+    fetch('/api/struttura/thesaurus/' + field)
+        .then(function(r) { return r.json(); })
+        .then(function(values) {
+            if (!Array.isArray(values)) return;
+            const sel = document.getElementById('sel-' + field);
+            if (!sel) return;
+            const current = sel.getAttribute('data-current') || '';
+            sel.innerHTML = '<option value="">—</option>';
+            let found = false;
+            (values || []).forEach(function(v){
+                const o = document.createElement('option');
+                o.value = v.value; o.textContent = v.value;
+                if (v.value === current) { o.selected = true; found = true; }
+                sel.appendChild(o);
+            });
+            if (current && !found) {   // preserve a stored value not in the current vocab
+                const o = document.createElement('option');
+                o.value = current; o.textContent = current; o.selected = true; sel.appendChild(o);
+            }
+        })
+        .catch(function() { /* silent */ });
+});
+// Sub-table fields still back per-cell <datalist>s used by the repeatable-row
+// widgets below — unchanged.
+STRUTTURA_SUBTABLE_THES_FIELDS.forEach(function(field) {
     fetch('/api/struttura/thesaurus/' + field)
         .then(function(r) { return r.json(); })
         .then(function(values) {

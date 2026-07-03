@@ -17,15 +17,8 @@
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-rito">{{ _('Rito e Sepoltura') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-corredo">{{ _('Corredo') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-crono">{{ _('Chronology') }}</a></li>
-        {% if tomba and tomba.id_tomba %}
-        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-media">{{ _('Media') }} ({{ media|length }})</a></li>
-        {% endif %}
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-media">{{ _('Media') }} ({{ media|length if media else 0 }})</a></li>
     </ul>
-    {% if not tomba or not tomba.id_tomba %}
-    <div class="alert alert-info py-2 mb-3">
-      <i class="fas fa-info-circle"></i> {{ _('Save the record to enable the Media tab and attach files.') }}
-    </div>
-    {% endif %}
     <div class="tab-content border border-top-0 p-3">
         <!-- Identification -->
         <div class="tab-pane fade show active" id="tab-basic">
@@ -61,43 +54,35 @@
             <div class="row g-2">
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Rito') }}</label>
-                    <input type="text" name="rito" class="form-control" value="{{ tomba.rito or '' }}" list="thes-rito">
-                    <datalist id="thes-rito"></datalist>
+                    <select name="rito" id="sel-rito" class="form-select" data-current="{{ tomba.rito or '' }}"><option value="{{ tomba.rito or '' }}" selected>{{ tomba.rito or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Tipo Sepoltura') }}</label>
-                    <input type="text" name="tipo_sepoltura" class="form-control" value="{{ tomba.tipo_sepoltura or '' }}" list="thes-tipo_sepoltura">
-                    <datalist id="thes-tipo_sepoltura"></datalist>
+                    <select name="tipo_sepoltura" id="sel-tipo_sepoltura" class="form-select" data-current="{{ tomba.tipo_sepoltura or '' }}"><option value="{{ tomba.tipo_sepoltura or '' }}" selected>{{ tomba.tipo_sepoltura or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Tipo Deposizione') }}</label>
-                    <input type="text" name="tipo_deposizione" class="form-control" value="{{ tomba.tipo_deposizione or '' }}" list="thes-tipo_deposizione">
-                    <datalist id="thes-tipo_deposizione"></datalist>
+                    <select name="tipo_deposizione" id="sel-tipo_deposizione" class="form-select" data-current="{{ tomba.tipo_deposizione or '' }}"><option value="{{ tomba.tipo_deposizione or '' }}" selected>{{ tomba.tipo_deposizione or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Copertura Tipo') }}</label>
-                    <input type="text" name="copertura_tipo" class="form-control" value="{{ tomba.copertura_tipo or '' }}" list="thes-copertura_tipo">
-                    <datalist id="thes-copertura_tipo"></datalist>
+                    <select name="copertura_tipo" id="sel-copertura_tipo" class="form-select" data-current="{{ tomba.copertura_tipo or '' }}"><option value="{{ tomba.copertura_tipo or '' }}" selected>{{ tomba.copertura_tipo or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Tipo Contenitore Resti') }}</label>
-                    <input type="text" name="tipo_contenitore_resti" class="form-control" value="{{ tomba.tipo_contenitore_resti or '' }}" list="thes-tipo_contenitore_resti">
-                    <datalist id="thes-tipo_contenitore_resti"></datalist>
+                    <select name="tipo_contenitore_resti" id="sel-tipo_contenitore_resti" class="form-select" data-current="{{ tomba.tipo_contenitore_resti or '' }}"><option value="{{ tomba.tipo_contenitore_resti or '' }}" selected>{{ tomba.tipo_contenitore_resti or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Stato di Conservazione') }}</label>
-                    <input type="text" name="stato_di_conservazione" class="form-control" value="{{ tomba.stato_di_conservazione or '' }}" list="thes-stato_di_conservazione">
-                    <datalist id="thes-stato_di_conservazione"></datalist>
+                    <select name="stato_di_conservazione" id="sel-stato_di_conservazione" class="form-select" data-current="{{ tomba.stato_di_conservazione or '' }}"><option value="{{ tomba.stato_di_conservazione or '' }}" selected>{{ tomba.stato_di_conservazione or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Segnacoli') }}</label>
-                    <input type="text" name="segnacoli" class="form-control" value="{{ tomba.segnacoli or '' }}" list="thes-segnacoli">
-                    <datalist id="thes-segnacoli"></datalist>
+                    <select name="segnacoli" id="sel-segnacoli" class="form-select" data-current="{{ tomba.segnacoli or '' }}"><option value="{{ tomba.segnacoli or '' }}" selected>{{ tomba.segnacoli or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Canale Libatorio (Sì/No)') }}</label>
-                    <input type="text" name="canale_libatorio_si_no" class="form-control" value="{{ tomba.canale_libatorio_si_no or '' }}" list="thes-canale_libatorio_si_no">
-                    <datalist id="thes-canale_libatorio_si_no"></datalist>
+                    <select name="canale_libatorio_si_no" id="sel-canale_libatorio_si_no" class="form-select" data-current="{{ tomba.canale_libatorio_si_no or '' }}"><option value="{{ tomba.canale_libatorio_si_no or '' }}" selected>{{ tomba.canale_libatorio_si_no or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Oggetti Rinvenuti Esterno') }}</label>
@@ -118,8 +103,7 @@
             <div class="row g-2">
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Corredo Presenza') }}</label>
-                    <input type="text" name="corredo_presenza" class="form-control" value="{{ tomba.corredo_presenza or '' }}" list="thes-corredo_presenza">
-                    <datalist id="thes-corredo_presenza"></datalist>
+                    <select name="corredo_presenza" id="sel-corredo_presenza" class="form-select" data-current="{{ tomba.corredo_presenza or '' }}"><option value="{{ tomba.corredo_presenza or '' }}" selected>{{ tomba.corredo_presenza or '—' }}</option></select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Corredo Tipo') }}</label>
@@ -157,10 +141,10 @@
             </div>
         </div>
 
-        {% if tomba and tomba.id_tomba %}
         <!-- Media -->
         <div class="tab-pane fade" id="tab-media">
             <h5>{{ _('Tomba Media') }}</h5>
+            {% if tomba and tomba.id_tomba %}
             {% if media %}
             <div class="row g-2">
                 {% for m in media %}
@@ -187,8 +171,12 @@
                 <div class="col-md-8"><input type="file" name="file" class="form-control" required></div>
                 <div class="col-md-4"><button type="submit" class="btn btn-primary w-100">{{ _('Upload') }}</button></div>
             </form>
+            {% else %}
+            <div class="alert alert-info py-2 mb-3">
+              <i class="fas fa-info-circle"></i> {{ _('Save the record to enable the Media tab and attach files.') }}
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 
     <div class="mt-3">
@@ -206,15 +194,21 @@ TOMBA_THES_FIELDS.forEach(function(field) {
         .then(function(r) { return r.json(); })
         .then(function(values) {
             if (!Array.isArray(values)) return;
-            const dl = document.getElementById('thes-' + field);
-            if (!dl) return;
-            dl.innerHTML = '';
-            values.forEach(function(v) {
-                const opt = document.createElement('option');
-                opt.value = v.value || '';
-                if (v.code) opt.label = v.code;
-                dl.appendChild(opt);
+            const sel = document.getElementById('sel-' + field);
+            if (!sel) return;
+            const current = sel.getAttribute('data-current') || '';
+            sel.innerHTML = '<option value="">—</option>';
+            let found = false;
+            (values || []).forEach(function(v){
+                const o = document.createElement('option');
+                o.value = v.value; o.textContent = v.value;
+                if (v.value === current) { o.selected = true; found = true; }
+                sel.appendChild(o);
             });
+            if (current && !found) {   // preserve a stored value not in the current vocab
+                const o = document.createElement('option');
+                o.value = current; o.textContent = current; o.selected = true; sel.appendChild(o);
+            }
         })
         .catch(function() { /* silent */ });
 });
