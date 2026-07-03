@@ -5,43 +5,11 @@ Tomba Service — manages tomba_table (burial) records.
 import logging
 from typing import Dict, Any, List, Optional
 from sqlalchemy import or_
-from sqlalchemy import Integer as _SAInteger
 
 from pyarchinit_mini.models.tomba import Tomba
+from .coercion import coerce_types
 
 logger = logging.getLogger(__name__)
-
-
-def _coerce_types(model, data: Dict[str, Any]) -> Dict[str, Any]:
-    """Coerce string values destined for Integer columns to int.
-
-    Text form inputs feed Integer columns (area, nr_scheda_taf, ...);
-    non-numeric input saves fine on SQLite (dynamic typing) but fails the
-    whole INSERT/UPDATE on Postgres. Convert non-empty strings to int();
-    if unparseable, fall back to None instead of raising. Generic over the
-    model's Integer columns so other record types can reuse this helper.
-    """
-    integer_cols = {
-        c.name for c in model.__table__.columns
-        if isinstance(c.type, _SAInteger)
-    }
-    coerced = dict(data)
-    for key in integer_cols:
-        if key not in coerced:
-            continue
-        value = coerced[key]
-        if value is None or isinstance(value, int):
-            continue
-        if isinstance(value, str):
-            value = value.strip()
-        if value == '':
-            coerced[key] = None
-            continue
-        try:
-            coerced[key] = int(value)
-        except (TypeError, ValueError):
-            coerced[key] = None
-    return coerced
 
 
 class TombaService:
@@ -107,7 +75,7 @@ class TombaService:
             with self.db_manager.connection.get_session() as session:
                 valid_keys = Tomba.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys and v is not None and v != ''}
-                clean = _coerce_types(Tomba, clean)
+                clean = coerce_types(Tomba, clean)
                 row = Tomba(**clean)
                 session.add(row)
                 session.flush()
@@ -127,7 +95,7 @@ class TombaService:
                     return False
                 valid_keys = Tomba.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys}
-                clean = _coerce_types(Tomba, clean)
+                clean = coerce_types(Tomba, clean)
                 for k, v in clean.items():
                     setattr(row, k, v if v != '' else None)
                 session.commit()

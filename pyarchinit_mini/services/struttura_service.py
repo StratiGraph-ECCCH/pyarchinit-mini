@@ -5,49 +5,11 @@ Struttura Service — manages struttura_table (structure) records.
 import logging
 from typing import Dict, Any, List, Optional
 from sqlalchemy import or_
-from sqlalchemy import Integer as _SAInteger
-from sqlalchemy import Float as _SAFloat
 
 from pyarchinit_mini.models.struttura import Struttura
+from .coercion import coerce_types
 
 logger = logging.getLogger(__name__)
-
-
-def _coerce_types(model, data: Dict[str, Any]) -> Dict[str, Any]:
-    """Coerce string values destined for Integer/Float columns to int/float.
-
-    Text form inputs feed numeric columns (numero_struttura, quota, ...);
-    non-numeric input saves fine on SQLite (dynamic typing) but fails the
-    whole INSERT/UPDATE on Postgres. Convert non-empty strings using the
-    target column's Python type; if unparseable, fall back to None instead
-    of raising. Generic over the model's Integer/Float columns so other
-    record types can reuse this helper.
-    """
-    numeric_cols = {
-        c.name: (int if isinstance(c.type, _SAInteger) else float)
-        for c in model.__table__.columns
-        if isinstance(c.type, (_SAInteger, _SAFloat))
-    }
-    coerced = dict(data)
-    for key, caster in numeric_cols.items():
-        if key not in coerced:
-            continue
-        value = coerced[key]
-        if value is None or isinstance(value, caster):
-            continue
-        if caster is float and isinstance(value, int):
-            # int is fine for a float column too
-            continue
-        if isinstance(value, str):
-            value = value.strip()
-        if value == '':
-            coerced[key] = None
-            continue
-        try:
-            coerced[key] = caster(value)
-        except (TypeError, ValueError):
-            coerced[key] = None
-    return coerced
 
 
 class StrutturaService:
@@ -115,7 +77,7 @@ class StrutturaService:
             with self.db_manager.connection.get_session() as session:
                 valid_keys = Struttura.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys and v is not None and v != ''}
-                clean = _coerce_types(Struttura, clean)
+                clean = coerce_types(Struttura, clean)
                 row = Struttura(**clean)
                 session.add(row)
                 session.flush()
@@ -135,7 +97,7 @@ class StrutturaService:
                     return False
                 valid_keys = Struttura.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys}
-                clean = _coerce_types(Struttura, clean)
+                clean = coerce_types(Struttura, clean)
                 for k, v in clean.items():
                     setattr(row, k, v if v != '' else None)
                 session.commit()

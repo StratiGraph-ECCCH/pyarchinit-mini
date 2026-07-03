@@ -1,0 +1,186 @@
+"""
+Fauna Service — manages fauna_table (faunal remains) records.
+"""
+
+import logging
+import time
+from typing import Dict, Any, List, Optional
+from sqlalchemy import or_, func
+from sqlalchemy.exc import IntegrityError
+
+from pyarchinit_mini.models.fauna import Fauna
+from .coercion import coerce_types
+
+logger = logging.getLogger(__name__)
+
+
+class FaunaService:
+    """Service for Fauna (faunal remains) records.
+
+    fauna_table is a plugin-shared table (see
+    tests/fauna/test_fauna_migration.py): it can pre-exist on a shared DB,
+    populated by the pyarchinit_fauna plugin. Its id_fauna is BigInteger —
+    Postgres allocates it via BIGSERIAL, but SQLite has no native
+    autoincrement for a BigInteger PK (only for a bare "INTEGER PRIMARY
+    KEY" rowid alias), so id_fauna would come back NULL there. Allocate it
+    explicitly via max(id)+1, mirroring MediaService._next_id, with a short
+    retry loop so a same-value collision from a concurrent writer (plugin
+    or mini) self-heals instead of failing the whole create.
+    """
+
+    _MAX_INSERT_ATTEMPTS = 6
+
+    def __init__(self, db_manager):
+        self.db_manager = db_manager
+
+    def _next_id(self, session) -> int:
+        cur = session.query(func.max(Fauna.id_fauna)).scalar()
+        return (cur or 0) + 1
+
+    def list_fauna(self, page: int = 1, size: int = 50, search: str = '',
+                    sito: str = '') -> List[Dict[str, Any]]:
+        """List Fauna records with optional filters."""
+        try:
+            with self.db_manager.connection.get_session() as session:
+                q = session.query(Fauna)
+                if sito:
+                    q = q.filter(Fauna.sito == sito)
+                if search:
+                    pat = f"%{search}%"
+                    q = q.filter(or_(
+                        Fauna.sito.ilike(pat),
+                        Fauna.area.ilike(pat),
+                        Fauna.us.ilike(pat),
+                        Fauna.saggio.ilike(pat),
+                        Fauna.specie.ilike(pat),
+                        Fauna.contesto.ilike(pat),
+                    ))
+                q = q.order_by(Fauna.id_fauna.desc())
+                offset = (page - 1) * size
+                rows = q.offset(offset).limit(size).all()
+                return [r.to_dict() for r in rows]
+        except Exception as e:
+            logger.error(f"list_fauna failed: {e}")
+            return []
+
+    def count_fauna(self, search: str = '', sito: str = '') -> int:
+        try:
+            with self.db_manager.connection.get_session() as session:
+                q = session.query(Fauna)
+                if sito:
+                    q = q.filter(Fauna.sito == sito)
+                if search:
+                    pat = f"%{search}%"
+                    q = q.filter(or_(
+                        Fauna.sito.ilike(pat),
+                        Fauna.area.ilike(pat),
+                        Fauna.us.ilike(pat),
+                        Fauna.saggio.ilike(pat),
+                        Fauna.specie.ilike(pat),
+                        Fauna.contesto.ilike(pat),
+                    ))
+                return q.count()
+        except Exception:
+            return 0
+
+    def get_fauna(self, fauna_id: int) -> Optional[Dict[str, Any]]:
+        try:
+            with self.db_manager.connection.get_session() as session:
+                row = session.query(Fauna).filter(
+                    Fauna.id_fauna == fauna_id).first()
+                return row.to_dict() if row else None
+        except Exception as e:
+            logger.error(f"get_fauna failed: {e}")
+            return None
+
+    def create_fauna(self, data: Dict[str, Any]) -> Optional[int]:
+        valid_keys = Fauna.writable_columns()
+        clean = {k: v for k, v in data.items() if k in valid_keys and v is not None and v != ''}
+        clean = coerce_types(Fauna, clean)
+        last = self._MAX_INSERT_ATTEMPTS - 1
+        for attempt in range(self._MAX_INSERT_ATTEMPTS):
+            try:
+                with self.db_manager.connection.get_session() as session:
+                    row = Fauna(id_fauna=self._next_id(session), **clean)
+                    session.add(row)
+                    session.flush()
+                    fauna_id = row.id_fauna
+                    session.commit()
+                    return fauna_id
+            except IntegrityError as e:
+                if attempt == last:
+                    logger.error(f"create_fauna failed: {e}")
+                    return None
+                time.sleep(0.02 * (attempt + 1))
+                continue
+            except Exception as e:
+                logger.error(f"create_fauna failed: {e}")
+                return None
+
+    def update_fauna(self, fauna_id: int, data: Dict[str, Any]) -> bool:
+        try:
+            with self.db_manager.connection.get_session() as session:
+                row = session.query(Fauna).filter(
+                    Fauna.id_fauna == fauna_id).first()
+                if not row:
+                    return False
+                valid_keys = Fauna.writable_columns()
+                clean = {k: v for k, v in data.items() if k in valid_keys}
+                clean = coerce_types(Fauna, clean)
+                for k, v in clean.items():
+                    setattr(row, k, v if v != '' else None)
+                session.commit()
+                return True
+        except Exception as e:
+            logger.error(f"update_fauna failed: {e}")
+            return False
+
+    def delete_fauna(self, fauna_id: int) -> bool:
+        try:
+            with self.db_manager.connection.get_session() as session:
+                row = session.query(Fauna).filter(
+                    Fauna.id_fauna == fauna_id).first()
+                if row:
+                    session.delete(row)
+                    session.commit()
+                    return True
+                return False
+        except Exception as e:
+            logger.error(f"delete_fauna failed: {e}")
+            return False
+
+    # ---------------- Thesaurus integration ----------------
+
+    THESAURUS_TABLE = 'fauna_table'
+
+    def get_thesaurus_values(self, field: str) -> List[Dict[str, str]]:
+        """Return thesaurus values for a Fauna field as [{value, code}, ...].
+        Queries Mini's thesaurus_field table keyed by field_name. Returns []
+        for unknown/unmapped fields or on error."""
+        from sqlalchemy import text
+
+        results = []
+        try:
+            with self.db_manager.connection.get_session() as session:
+                try:
+                    rows = session.execute(text(
+                        "SELECT value, label FROM thesaurus_field "
+                        "WHERE table_name = :t AND field_name = :f "
+                        "ORDER BY value"
+                    ), {'t': self.THESAURUS_TABLE, 'f': field}).fetchall()
+                    for r in rows:
+                        results.append({'value': r[0], 'code': r[1] or ''})
+                except Exception:
+                    pass
+        except Exception as e:
+            logger.warning(f"get_thesaurus_values({field}): {e}")
+        return results
+
+    def get_distinct_sites(self) -> List[str]:
+        try:
+            with self.db_manager.connection.get_session() as session:
+                rows = session.query(Fauna.sito).filter(
+                    Fauna.sito.isnot(None)).distinct().all()
+                return sorted([r[0] for r in rows if r[0]])
+        except Exception:
+            return []
