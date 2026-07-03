@@ -66,11 +66,22 @@ def test_get_thesaurus_values_truly_unknown_field_returns_empty(svc):
     assert svc.get_thesaurus_values("this_field_does_not_exist_anywhere") == []
 
 def test_search_matches_text_fields(svc):
-    svc.create_fauna({"sito": "Volterra", "specie": "Bos taurus", "contesto": "strato"})
-    svc.create_fauna({"sito": "Cerveteri", "specie": "Ovis aries"})
+    # species now live in specie_psi JSON (flat specie column is deprecated/empty),
+    # so search targets specie_psi.
+    svc.create_fauna({"sito": "Volterra", "specie_psi": '[["Bos taurus", "femore"]]', "contesto": "strato"})
+    svc.create_fauna({"sito": "Cerveteri", "specie_psi": '[["Ovis aries", "omero"]]'})
     assert len(svc.list_fauna(search="Bos")) == 1
     assert svc.count_fauna(search="Bos") == 1
     assert svc.list_fauna(search="zzz") == []
+
+
+def test_list_fauna_derives_specie_display_from_specie_psi(svc):
+    svc.create_fauna({"sito": "S", "specie_psi": '[["Bos taurus", "femore"], ["Bos taurus", "tibia"], ["Ovis aries", "omero"]]'})
+    row = svc.list_fauna()[0]
+    # deduped, in order, joined — derived from the JSON, not the deprecated flat column
+    assert row["specie_display"] == "Bos taurus, Ovis aries"
+    svc.create_fauna({"sito": "S2"})  # no specie_psi
+    assert svc.list_fauna(sito="S2")[0]["specie_display"] == ""
 
 
 def test_create_fauna_ignores_mass_assignment_of_managed_fields(svc):

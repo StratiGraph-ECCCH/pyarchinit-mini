@@ -53,7 +53,7 @@
                 <td>{{ fauna.id_fauna }}</td>
                 <td>{{ fauna.sito or '-' }}</td>
                 <td>{{ fauna.us or '-' }}</td>
-                <td>{{ fauna.specie or '-' }}</td>
+                <td>{{ fauna.specie_display or fauna.specie or '-' }}</td>
                 <td>{{ fauna.numero_minimo_individui if fauna.numero_minimo_individui is not none else '-' }}</td>
                 <td>
                     <div class="btn-group btn-group-sm">

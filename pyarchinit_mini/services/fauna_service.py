@@ -69,16 +69,34 @@ class FaunaService:
                         Fauna.area.ilike(pat),
                         Fauna.us.ilike(pat),
                         Fauna.saggio.ilike(pat),
-                        Fauna.specie.ilike(pat),
+                        Fauna.specie_psi.ilike(pat),
                         Fauna.contesto.ilike(pat),
                     ))
                 q = q.order_by(Fauna.id_fauna.desc())
                 offset = (page - 1) * size
                 rows = q.offset(offset).limit(size).all()
-                return [r.to_dict() for r in rows]
+                result = []
+                for r in rows:
+                    d = r.to_dict()
+                    d['specie_display'] = self._species_summary(d.get('specie_psi'))
+                    result.append(d)
+                return result
         except Exception as e:
             logger.error(f"list_fauna failed: {e}")
             return []
+
+    @staticmethod
+    def _species_summary(specie_psi) -> str:
+        """Comma-joined species names from the specie_psi JSON (col0 of each row)."""
+        if not specie_psi:
+            return ''
+        try:
+            data = json.loads(specie_psi) if isinstance(specie_psi, str) else specie_psi
+            names = [str(row[0]) for row in data
+                     if isinstance(row, (list, tuple)) and row and row[0]]
+            return ', '.join(dict.fromkeys(names))
+        except Exception:
+            return ''
 
     def count_fauna(self, search: str = '', sito: str = '') -> int:
         try:
@@ -93,7 +111,7 @@ class FaunaService:
                         Fauna.area.ilike(pat),
                         Fauna.us.ilike(pat),
                         Fauna.saggio.ilike(pat),
-                        Fauna.specie.ilike(pat),
+                        Fauna.specie_psi.ilike(pat),
                         Fauna.contesto.ilike(pat),
                     ))
                 return q.count()
