@@ -5,6 +5,7 @@ Flask Web Interface for PyArchInit-Mini
 
 import os
 import io
+import json
 import mimetypes
 from pathlib import Path
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_file, abort, current_app
@@ -5015,6 +5016,268 @@ def create_app():
         except Exception as e:
             flash(f'Errore: {e}', 'error')
             return redirect(url_for('tma_list'))
+
+    # ===== SP4 export helpers: tomba/struttura/fauna/ut =====
+    # Flatten the JSON/Python-repr sub-table columns of struttura and fauna
+    # records into readable strings before handing rows to Excel/CSV/PDF
+    # export (a raw to_dict() would otherwise dump e.g. "[['buono','medio']]"
+    # straight into a cell). tomba and ut have no such columns, so no
+    # flatten helper is needed for them — export routes use the record dict
+    # as-is (list_tomba/list_ut already return plain dicts via to_dict()).
+
+    def _flatten_struttura_row(d):
+        """Return a copy of a struttura record dict with the 10
+        StrutturaService.SUBTABLE_COLS (stored as Python-repr
+        list-of-lists) replaced by a human-readable string, e.g.
+        "buono / medio; scarso / pessimo" for two sub-table rows."""
+        out = dict(d)
+        for col in StrutturaService.SUBTABLE_COLS:
+            parsed = struttura_parse_pylist(out.get(col))
+            out[col] = '; '.join(
+                ' / '.join(str(cell) for cell in row) for row in parsed
+            ) if parsed else ''
+        return out
+
+    def _flatten_fauna_row(d):
+        """Return a copy of a fauna record dict with specie_psi
+        ([[specie, psi], ...] JSON) and misure_ossa ([[elemento, specie,
+        GL, GB, Bd, Bp], ...] JSON) replaced by human-readable strings."""
+        out = dict(d)
+
+        specie_psi = out.get('specie_psi')
+        try:
+            specie_rows = json.loads(specie_psi) if specie_psi else []
+        except (TypeError, ValueError):
+            specie_rows = []
+        parts = []
+        for row in specie_rows if isinstance(specie_rows, list) else []:
+            if not isinstance(row, (list, tuple)) or not row:
+                continue
+            specie = row[0]
+            psi = row[1] if len(row) > 1 else None
+            parts.append(f"{specie} ({psi})" if psi else str(specie))
+        out['specie_psi'] = '; '.join(parts)
+
+        misure_ossa = out.get('misure_ossa')
+        try:
+            misure_rows = json.loads(misure_ossa) if misure_ossa else []
+        except (TypeError, ValueError):
+            misure_rows = []
+        mparts = []
+        for row in misure_rows if isinstance(misure_rows, list) else []:
+            if isinstance(row, (list, tuple)) and row:
+                mparts.append(' / '.join(str(cell) for cell in row))
+        out['misure_ossa'] = '; '.join(mparts)
+
+        return out
+
+    def _export_tmp_send(build_fn, suffix, download_name, mimetype):
+        """Build a temp file via build_fn(tmp_path), send it, then remove
+        the temp file (finally-guarded — mirrors the upload/import temp
+        file cleanup pattern used elsewhere in this file, e.g.
+        _save_uploaded_media and the CSV import routes below)."""
+        fd, tmp_path = tempfile.mkstemp(suffix=suffix)
+        os.close(fd)
+        try:
+            build_fn(tmp_path)
+            return send_file(tmp_path, as_attachment=True,
+                            download_name=download_name, mimetype=mimetype)
+        finally:
+            if tmp_path and os.path.exists(tmp_path):
+                try:
+                    os.unlink(tmp_path)
+                except OSError:
+                    pass
+
+    ALL_RECORDS_SIZE = 1_000_000  # effectively "no pagination" for exports
+
+    # ----- Tomba export -----
+    @app.route('/export/tomba/excel')
+    @login_required
+    def export_tomba_excel():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = tomba_service.list_tomba(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [dict(r) for r in rows]
+            filename = f'tomba_{sito}.xlsx' if sito else 'tomba.xlsx'
+            return _export_tmp_send(
+                lambda tmp: csv_excel_service.export_to_excel(data, tmp, sheet_name='Tomba'),
+                '.xlsx', filename,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        except Exception as e:
+            flash(f'Errore export Excel: {str(e)}', 'error')
+            return redirect(url_for('tomba_list'))
+
+    @app.route('/export/tomba/csv')
+    @login_required
+    def export_tomba_csv():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = tomba_service.list_tomba(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [dict(r) for r in rows]
+            filename = f'tomba_{sito}.csv' if sito else 'tomba.csv'
+            return _export_tmp_send(
+                lambda tmp: csv_excel_service.export_to_csv(data, tmp),
+                '.csv', filename, 'text/csv')
+        except Exception as e:
+            flash(f'Errore export CSV: {str(e)}', 'error')
+            return redirect(url_for('tomba_list'))
+
+    @app.route('/export/tomba/pdf')
+    @login_required
+    def export_tomba_pdf():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = tomba_service.list_tomba(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [dict(r) for r in rows]
+            filename = f'tomba_{sito}.pdf' if sito else 'tomba.pdf'
+            return _export_tmp_send(
+                lambda tmp: pdf_generator.generate_records_pdf('Tomba', data, tmp),
+                '.pdf', filename, 'application/pdf')
+        except Exception as e:
+            flash(f'Errore export PDF: {str(e)}', 'error')
+            return redirect(url_for('tomba_list'))
+
+    # ----- Struttura export -----
+    @app.route('/export/struttura/excel')
+    @login_required
+    def export_struttura_excel():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = struttura_service.list_struttura(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [_flatten_struttura_row(r) for r in rows]
+            filename = f'struttura_{sito}.xlsx' if sito else 'struttura.xlsx'
+            return _export_tmp_send(
+                lambda tmp: csv_excel_service.export_to_excel(data, tmp, sheet_name='Struttura'),
+                '.xlsx', filename,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        except Exception as e:
+            flash(f'Errore export Excel: {str(e)}', 'error')
+            return redirect(url_for('struttura_list'))
+
+    @app.route('/export/struttura/csv')
+    @login_required
+    def export_struttura_csv():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = struttura_service.list_struttura(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [_flatten_struttura_row(r) for r in rows]
+            filename = f'struttura_{sito}.csv' if sito else 'struttura.csv'
+            return _export_tmp_send(
+                lambda tmp: csv_excel_service.export_to_csv(data, tmp),
+                '.csv', filename, 'text/csv')
+        except Exception as e:
+            flash(f'Errore export CSV: {str(e)}', 'error')
+            return redirect(url_for('struttura_list'))
+
+    @app.route('/export/struttura/pdf')
+    @login_required
+    def export_struttura_pdf():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = struttura_service.list_struttura(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [_flatten_struttura_row(r) for r in rows]
+            filename = f'struttura_{sito}.pdf' if sito else 'struttura.pdf'
+            return _export_tmp_send(
+                lambda tmp: pdf_generator.generate_records_pdf('Struttura', data, tmp),
+                '.pdf', filename, 'application/pdf')
+        except Exception as e:
+            flash(f'Errore export PDF: {str(e)}', 'error')
+            return redirect(url_for('struttura_list'))
+
+    # ----- Fauna export -----
+    @app.route('/export/fauna/excel')
+    @login_required
+    def export_fauna_excel():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = fauna_service.list_fauna(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [_flatten_fauna_row(r) for r in rows]
+            filename = f'fauna_{sito}.xlsx' if sito else 'fauna.xlsx'
+            return _export_tmp_send(
+                lambda tmp: csv_excel_service.export_to_excel(data, tmp, sheet_name='Fauna'),
+                '.xlsx', filename,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        except Exception as e:
+            flash(f'Errore export Excel: {str(e)}', 'error')
+            return redirect(url_for('fauna_list'))
+
+    @app.route('/export/fauna/csv')
+    @login_required
+    def export_fauna_csv():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = fauna_service.list_fauna(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [_flatten_fauna_row(r) for r in rows]
+            filename = f'fauna_{sito}.csv' if sito else 'fauna.csv'
+            return _export_tmp_send(
+                lambda tmp: csv_excel_service.export_to_csv(data, tmp),
+                '.csv', filename, 'text/csv')
+        except Exception as e:
+            flash(f'Errore export CSV: {str(e)}', 'error')
+            return redirect(url_for('fauna_list'))
+
+    @app.route('/export/fauna/pdf')
+    @login_required
+    def export_fauna_pdf():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = fauna_service.list_fauna(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [_flatten_fauna_row(r) for r in rows]
+            filename = f'fauna_{sito}.pdf' if sito else 'fauna.pdf'
+            return _export_tmp_send(
+                lambda tmp: pdf_generator.generate_records_pdf('Fauna', data, tmp),
+                '.pdf', filename, 'application/pdf')
+        except Exception as e:
+            flash(f'Errore export PDF: {str(e)}', 'error')
+            return redirect(url_for('fauna_list'))
+
+    # ----- UT export (project-scoped: filter is ?progetto=, not ?sito=) -----
+    @app.route('/export/ut/excel')
+    @login_required
+    def export_ut_excel():
+        try:
+            progetto = request.args.get('progetto', '').strip()
+            rows = ut_service.list_ut(page=1, size=ALL_RECORDS_SIZE, progetto=progetto)
+            data = [dict(r) for r in rows]
+            filename = f'ut_{progetto}.xlsx' if progetto else 'ut.xlsx'
+            return _export_tmp_send(
+                lambda tmp: csv_excel_service.export_to_excel(data, tmp, sheet_name='UT'),
+                '.xlsx', filename,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        except Exception as e:
+            flash(f'Errore export Excel: {str(e)}', 'error')
+            return redirect(url_for('ut_list'))
+
+    @app.route('/export/ut/csv')
+    @login_required
+    def export_ut_csv():
+        try:
+            progetto = request.args.get('progetto', '').strip()
+            rows = ut_service.list_ut(page=1, size=ALL_RECORDS_SIZE, progetto=progetto)
+            data = [dict(r) for r in rows]
+            filename = f'ut_{progetto}.csv' if progetto else 'ut.csv'
+            return _export_tmp_send(
+                lambda tmp: csv_excel_service.export_to_csv(data, tmp),
+                '.csv', filename, 'text/csv')
+        except Exception as e:
+            flash(f'Errore export CSV: {str(e)}', 'error')
+            return redirect(url_for('ut_list'))
+
+    @app.route('/export/ut/pdf')
+    @login_required
+    def export_ut_pdf():
+        try:
+            progetto = request.args.get('progetto', '').strip()
+            rows = ut_service.list_ut(page=1, size=ALL_RECORDS_SIZE, progetto=progetto)
+            data = [dict(r) for r in rows]
+            filename = f'ut_{progetto}.pdf' if progetto else 'ut.pdf'
+            return _export_tmp_send(
+                lambda tmp: pdf_generator.generate_records_pdf('UT', data, tmp),
+                '.pdf', filename, 'application/pdf')
+        except Exception as e:
+            flash(f'Errore export PDF: {str(e)}', 'error')
+            return redirect(url_for('ut_list'))
 
     # ===== Tomba - Sepolture =====
     @app.route('/tomba')

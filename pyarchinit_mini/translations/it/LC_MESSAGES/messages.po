@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2026-06-27 09:20+0200\n"
+"POT-Creation-Date: 2026-07-03 20:43+0200\n"
 "PO-Revision-Date: 2025-10-21 11:18+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -34,11 +34,11 @@ msgstr "OK"
 #: pyarchinit_mini/desktop_gui/pyarchinit_import_export_dialog.py:561
 #: pyarchinit_mini/desktop_gui/us_dialog_extended.py:94
 #: pyarchinit_mini/web_interface/templates/harris_matrix/viewer_3d_integrated.html:398
-#: pyarchinit_mini/web_interface/templates/inventario/form.html:471
+#: pyarchinit_mini/web_interface/templates/inventario/form.html:468
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:690
 #: pyarchinit_mini/web_interface/templates/sites/form.html:49
 #: pyarchinit_mini/web_interface/templates/sites/list.html:234
-#: pyarchinit_mini/web_interface/templates/us/form.html:632
+#: pyarchinit_mini/web_interface/templates/us/form.html:629
 #: pyarchinit_mini/web_interface/templates/yed_import/preview.html:60
 msgid "Cancel"
 msgstr "Annulla"
@@ -48,7 +48,7 @@ msgstr "Annulla"
 #: pyarchinit_mini/desktop_gui/main_window.py:238
 #: pyarchinit_mini/desktop_gui/main_window.py:356
 #: pyarchinit_mini/web_interface/templates/base.html:166
-#: pyarchinit_mini/web_interface/templates/dashboard.html:151
+#: pyarchinit_mini/web_interface/templates/dashboard.html:187
 #: pyarchinit_mini/web_interface/templates/sites/list.html:13
 msgid "New Site"
 msgstr "Nuovo Sito"
@@ -62,8 +62,13 @@ msgstr "Modifica Sito"
 #: pyarchinit_mini/desktop_gui/dialogs.py:536
 #: pyarchinit_mini/desktop_gui/dialogs.py:707
 #: pyarchinit_mini/desktop_gui/us_dialog_extended.py:93
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:234
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:82
 #: pyarchinit_mini/web_interface/templates/sites/form.html:48
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:324
 #: pyarchinit_mini/web_interface/templates/tma/form.html:243
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:196
+#: pyarchinit_mini/web_interface/templates/ut/form.html:326
 msgid "Save"
 msgstr "Salva"
 
@@ -115,6 +120,7 @@ msgstr "Definizione Sito:"
 #: pyarchinit_mini/web_interface/templates/sites/detail.html:37
 #: pyarchinit_mini/web_interface/templates/sites/detail.html:60
 #: pyarchinit_mini/web_interface/templates/sites/form.html:43
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:17
 #: pyarchinit_mini/web_interface/templates/us/list.html:108
 msgid "Description"
 msgstr "Descrizione"
@@ -127,7 +133,10 @@ msgstr "Descrizione sito:"
 #: pyarchinit_mini/desktop_gui/us_dialog_extended.py:478
 #: pyarchinit_mini/web_interface/templates/base.html:91
 #: pyarchinit_mini/web_interface/templates/pottery/detail.html:24
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:22
 #: pyarchinit_mini/web_interface/templates/tma/form.html:22
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:21
+#: pyarchinit_mini/web_interface/templates/ut/form.html:21
 msgid "Media"
 msgstr "Multimedia"
 
@@ -258,7 +267,7 @@ msgstr "Errore nell'aggiornamento US"
 #: pyarchinit_mini/desktop_gui/main_window.py:403
 #: pyarchinit_mini/desktop_gui/us_dialog_extended.py:54
 #: pyarchinit_mini/web_interface/templates/base.html:168
-#: pyarchinit_mini/web_interface/templates/dashboard.html:154
+#: pyarchinit_mini/web_interface/templates/dashboard.html:190
 #: pyarchinit_mini/web_interface/templates/sites/detail.html:49
 #: pyarchinit_mini/web_interface/templates/us/list.html:23
 msgid "New US"
@@ -349,7 +358,7 @@ msgstr "creato con successo"
 #: pyarchinit_mini/desktop_gui/main_window.py:149
 #: pyarchinit_mini/desktop_gui/main_window.py:463
 #: pyarchinit_mini/web_interface/templates/base.html:171
-#: pyarchinit_mini/web_interface/templates/dashboard.html:157
+#: pyarchinit_mini/web_interface/templates/dashboard.html:193
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:13
 #: pyarchinit_mini/web_interface/templates/sites/detail.html:90
 msgid "New Artifact"
@@ -555,6 +564,7 @@ msgstr "Sì"
 #: pyarchinit_mini/desktop_gui/dialogs.py:1018
 #: pyarchinit_mini/desktop_gui/us_dialog_extended.py:197
 #: pyarchinit_mini/pdf_export/pdf_generator.py:410
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:180
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:67
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:108
 msgid "No"
@@ -661,10 +671,18 @@ msgstr "Errore nell'aggiornamento del sito"
 #: pyarchinit_mini/desktop_gui/main_window.py:406
 #: pyarchinit_mini/desktop_gui/main_window.py:466
 #: pyarchinit_mini/desktop_gui/us_dialog_extended.py:98
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:15
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:16
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:11
 #: pyarchinit_mini/web_interface/templates/sites/detail.html:10
 #: pyarchinit_mini/web_interface/templates/sites/list.html:155
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:15
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:16
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:15
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:16
 #: pyarchinit_mini/web_interface/templates/us/list.html:10
+#: pyarchinit_mini/web_interface/templates/ut/list.html:15
+#: pyarchinit_mini/web_interface/templates/ut/list.html:16
 msgid "Export PDF"
 msgstr "Esporta PDF"
 
@@ -1053,7 +1071,7 @@ msgstr "Errore caricamento file"
 
 #: pyarchinit_mini/desktop_gui/dialogs.py:1858
 #: pyarchinit_mini/desktop_gui/main_window.py:295
-#: pyarchinit_mini/web_interface/templates/base.html:181
+#: pyarchinit_mini/web_interface/templates/base.html:185
 #: pyarchinit_mini/web_interface/templates/dashboard.html:61
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:70
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:336
@@ -1183,7 +1201,9 @@ msgstr "Errore caricamento analytics"
 #: pyarchinit_mini/desktop_gui/pyarchinit_import_export_dialog.py:472
 #: pyarchinit_mini/pdf_export/pdf_generator.py:234
 #: pyarchinit_mini/pdf_export/pdf_generator.py:271
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1322
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1442
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:39
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:55
 #: pyarchinit_mini/web_interface/templates/harris_matrix/viewer_3d_integrated.html:850
 #: pyarchinit_mini/web_interface/templates/matrix_import/preview.html:33
 #: pyarchinit_mini/web_interface/templates/matrix_tools/index.html:67
@@ -1294,11 +1314,11 @@ msgid "Exit"
 msgstr "Esci"
 
 #: pyarchinit_mini/desktop_gui/main_window.py:162
-#: pyarchinit_mini/web_interface/templates/dashboard.html:104
-#: pyarchinit_mini/web_interface/templates/inventario/form.html:431
-#: pyarchinit_mini/web_interface/templates/sites/form.html:153
+#: pyarchinit_mini/web_interface/templates/dashboard.html:140
+#: pyarchinit_mini/web_interface/templates/inventario/form.html:428
+#: pyarchinit_mini/web_interface/templates/sites/form.html:150
 #: pyarchinit_mini/web_interface/templates/sites/map.html:198
-#: pyarchinit_mini/web_interface/templates/us/form.html:592
+#: pyarchinit_mini/web_interface/templates/us/form.html:589
 msgid "View"
 msgstr "Visualizza"
 
@@ -1346,7 +1366,7 @@ msgstr "property"
 
 #: pyarchinit_mini/desktop_gui/main_window.py:171
 #: pyarchinit_mini/web_interface/templates/base.html:85
-#: pyarchinit_mini/web_interface/templates/base.html:178
+#: pyarchinit_mini/web_interface/templates/base.html:182
 msgid "Tools"
 msgstr "Strumenti"
 
@@ -1454,8 +1474,8 @@ msgstr "Attività Recente"
 #: pyarchinit_mini/desktop_gui/main_window.py:500
 #: pyarchinit_mini/pdf_export/pdf_generator.py:304
 #: pyarchinit_mini/pdf_export/pdf_generator.py:353
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1274
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1321
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1394
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1441
 #: pyarchinit_mini/web_interface/templates/admin/database.html:24
 #: pyarchinit_mini/web_interface/templates/admin/database.html:541
 #: pyarchinit_mini/web_interface/templates/harris_matrix/stratigraph_viewer.html:404
@@ -1488,10 +1508,14 @@ msgstr "Data"
 #: pyarchinit_mini/desktop_gui/main_window.py:404
 #: pyarchinit_mini/desktop_gui/main_window.py:464
 #: pyarchinit_mini/web_interface/templates/datazioni/list.html:36
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:71
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:72
 #: pyarchinit_mini/web_interface/templates/sites/list.html:61
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:71
 #: pyarchinit_mini/web_interface/templates/tma/list.html:66
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:71
 #: pyarchinit_mini/web_interface/templates/us/list.html:123
+#: pyarchinit_mini/web_interface/templates/ut/list.html:73
 msgid "Edit"
 msgstr "Modifica"
 
@@ -1502,11 +1526,15 @@ msgstr "Modifica"
 #: pyarchinit_mini/web_interface/templates/admin/database.html:594
 #: pyarchinit_mini/web_interface/templates/ai/assistant.html:258
 #: pyarchinit_mini/web_interface/templates/datazioni/list.html:41
-#: pyarchinit_mini/web_interface/templates/inventario/form.html:442
-#: pyarchinit_mini/web_interface/templates/sites/form.html:164
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:76
+#: pyarchinit_mini/web_interface/templates/inventario/form.html:439
+#: pyarchinit_mini/web_interface/templates/sites/form.html:161
 #: pyarchinit_mini/web_interface/templates/sites/list.html:107
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:76
 #: pyarchinit_mini/web_interface/templates/tma/list.html:74
-#: pyarchinit_mini/web_interface/templates/us/form.html:603
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:76
+#: pyarchinit_mini/web_interface/templates/us/form.html:600
+#: pyarchinit_mini/web_interface/templates/ut/list.html:78
 msgid "Delete"
 msgstr "Elimina"
 
@@ -1518,14 +1546,14 @@ msgstr "Cerca:"
 
 #: pyarchinit_mini/desktop_gui/main_window.py:375
 #: pyarchinit_mini/pdf_export/pdf_generator.py:199
-#: pyarchinit_mini/web_interface/templates/dashboard.html:83
+#: pyarchinit_mini/web_interface/templates/dashboard.html:119
 #: pyarchinit_mini/web_interface/templates/excel_import/index.html:64
 msgid "Site Name"
 msgstr "Sito"
 
 #: pyarchinit_mini/desktop_gui/main_window.py:376
 #: pyarchinit_mini/pdf_export/pdf_generator.py:200
-#: pyarchinit_mini/web_interface/templates/dashboard.html:84
+#: pyarchinit_mini/web_interface/templates/dashboard.html:120
 #: pyarchinit_mini/web_interface/templates/search/results.html:80
 #: pyarchinit_mini/web_interface/templates/sites/detail.html:31
 #: pyarchinit_mini/web_interface/templates/sites/form.html:28
@@ -1536,7 +1564,7 @@ msgstr "Comune"
 
 #: pyarchinit_mini/desktop_gui/main_window.py:377
 #: pyarchinit_mini/pdf_export/pdf_generator.py:201
-#: pyarchinit_mini/web_interface/templates/dashboard.html:85
+#: pyarchinit_mini/web_interface/templates/dashboard.html:121
 #: pyarchinit_mini/web_interface/templates/sites/detail.html:28
 #: pyarchinit_mini/web_interface/templates/sites/form.html:33
 msgid "Province"
@@ -1570,6 +1598,8 @@ msgstr "Sito:"
 #: pyarchinit_mini/desktop_gui/main_window.py:498
 #: pyarchinit_mini/web_interface/templates/3d_viewer/viewer.html:139
 #: pyarchinit_mini/web_interface/templates/ai/assistant.html:133
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:27
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:54
 #: pyarchinit_mini/web_interface/templates/harris_matrix/viewer_3d_integrated.html:383
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:81
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:45
@@ -1581,8 +1611,12 @@ msgstr "Sito:"
 #: pyarchinit_mini/web_interface/templates/sites/form.html:13
 #: pyarchinit_mini/web_interface/templates/stats/targeted.html:106
 #: pyarchinit_mini/web_interface/templates/stats/targeted.html:322
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:35
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:54
 #: pyarchinit_mini/web_interface/templates/tma/form.html:30
 #: pyarchinit_mini/web_interface/templates/tma/list.html:43
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:34
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:54
 #: pyarchinit_mini/web_interface/templates/us/form.html:116
 #: pyarchinit_mini/web_interface/templates/us/list.html:36
 #: pyarchinit_mini/web_interface/templates/us/list.html:106
@@ -1592,8 +1626,9 @@ msgstr "Sito"
 #: pyarchinit_mini/desktop_gui/main_window.py:434
 #: pyarchinit_mini/pdf_export/pdf_generator.py:234
 #: pyarchinit_mini/pdf_export/pdf_generator.py:271
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1274
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1322
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1394
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1442
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:31
 #: pyarchinit_mini/web_interface/templates/harris_creator/editor.html:180
 #: pyarchinit_mini/web_interface/templates/harris_matrix/viewer_3d_integrated.html:265
 #: pyarchinit_mini/web_interface/templates/harris_matrix/viewer_3d_integrated.html:852
@@ -1607,6 +1642,7 @@ msgstr "Sito"
 #: pyarchinit_mini/web_interface/templates/sites/detail.html:59
 #: pyarchinit_mini/web_interface/templates/tma/form.html:39
 #: pyarchinit_mini/web_interface/templates/tma/list.html:45
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:38
 #: pyarchinit_mini/web_interface/templates/us/form.html:123
 #: pyarchinit_mini/web_interface/templates/us/list.html:45
 #: pyarchinit_mini/web_interface/templates/us/list.html:107
@@ -1615,7 +1651,7 @@ msgid "Area"
 msgstr "Area"
 
 #: pyarchinit_mini/desktop_gui/main_window.py:437
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1275
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1395
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:112
 #: pyarchinit_mini/web_interface/templates/stats/targeted.html:422
 #: pyarchinit_mini/web_interface/templates/us/list.html:109
@@ -1634,7 +1670,7 @@ msgstr "N. Inv."
 
 #: pyarchinit_mini/desktop_gui/main_window.py:501
 #: pyarchinit_mini/pdf_export/pdf_generator.py:304
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1321
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1441
 #: pyarchinit_mini/web_interface/templates/harris_matrix/viewer_3d_integrated.html:854
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:133
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:47
@@ -1821,8 +1857,11 @@ msgstr "US (Optional)"
 # Analytics Dashboard translations
 #: pyarchinit_mini/desktop_gui/pyarchinit_import_export_dialog.py:178
 #: pyarchinit_mini/desktop_gui/pyarchinit_import_export_dialog.py:351
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:33
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:22
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:33
 #: pyarchinit_mini/web_interface/templates/tma/list.html:22
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:33
 #: pyarchinit_mini/web_interface/templates/us/list.html:38
 msgid "All sites"
 msgstr "Tutti i siti"
@@ -1933,7 +1972,9 @@ msgstr "Connessione PostgreSQL fallita"
 
 #: pyarchinit_mini/desktop_gui/pyarchinit_import_export_dialog.py:313
 msgid "Failed to connect to database. Please check your connection settings."
-msgstr "Connessione al database non riuscita. Controlla le impostazioni di connessione."
+msgstr ""
+"Connessione al database non riuscita. Controlla le impostazioni di "
+"connessione."
 
 #: pyarchinit_mini/desktop_gui/pyarchinit_import_export_dialog.py:327
 #, fuzzy
@@ -1988,6 +2029,7 @@ msgstr "Importazione Periodizzazione..."
 
 #: pyarchinit_mini/desktop_gui/pyarchinit_import_export_dialog.py:411
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:153
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:254
 #, fuzzy
 msgid "Periodizzazione"
 msgstr "Periodizzazione"
@@ -2089,8 +2131,11 @@ msgid "Edit US {}"
 msgstr "Modifica US {}"
 
 #: pyarchinit_mini/desktop_gui/us_dialog_extended.py:122
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:16
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:29
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:16
 #: pyarchinit_mini/web_interface/templates/tma/form.html:16
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:16
 #: pyarchinit_mini/web_interface/templates/us/form.html:111
 msgid "Identification"
 msgstr "Identificazione"
@@ -2191,7 +2236,9 @@ msgid "Physical Characteristics"
 msgstr "Caratteristiche Fisiche"
 
 #: pyarchinit_mini/desktop_gui/us_dialog_extended.py:354
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:20
 #: pyarchinit_mini/web_interface/templates/tma/list.html:49
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:19
 #: pyarchinit_mini/web_interface/templates/us/form.html:83
 msgid "Chronology"
 msgstr "Cronologia"
@@ -2202,8 +2249,8 @@ msgid "Stratigraphic Relationships"
 msgstr "Relazioni Stratigrafiche"
 
 #: pyarchinit_mini/desktop_gui/us_dialog_extended.py:556
-#: pyarchinit_mini/web_interface/templates/dashboard.html:177
-#: pyarchinit_mini/web_interface/templates/dashboard.html:185
+#: pyarchinit_mini/web_interface/templates/dashboard.html:213
+#: pyarchinit_mini/web_interface/templates/dashboard.html:221
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:64
 #: pyarchinit_mini/web_interface/templates/tma/form.html:19
 #: pyarchinit_mini/web_interface/templates/us/form.html:93
@@ -2236,7 +2283,7 @@ msgid "Archaeological Report"
 msgstr "Siti archeologici"
 
 #: pyarchinit_mini/pdf_export/pdf_generator.py:155
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1097
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1217
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:26
 msgid "Archaeological Site"
 msgstr "Siti archeologici"
@@ -2246,7 +2293,7 @@ msgid "Date:"
 msgstr "Data:"
 
 #: pyarchinit_mini/pdf_export/pdf_generator.py:185
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1119
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1239
 msgid "Generated by PyArchInit-Mini"
 msgstr "Generato da PyArchInit-Mini"
 
@@ -2649,8 +2696,12 @@ msgid "RESPONSIBLE ENTITY"
 msgstr "ENTE RESPONSABILE"
 
 #: pyarchinit_mini/pdf_export/pdf_generator.py:670
-msgid "IDENTIFICATION NUMBER/CODE OF STRATIGRAPHIC TRENCH/BUILDING/STRUCTURE/BURIAL REFERENCE"
-msgstr "NUMERO/CODICE IDENTIFICATIVO DEL SAGGIO/EDIFICIO/STRUTTURA/SEPOLTURA STRATIGRAFICA DI RIFERIMENTO"
+msgid ""
+"IDENTIFICATION NUMBER/CODE OF STRATIGRAPHIC "
+"TRENCH/BUILDING/STRUCTURE/BURIAL REFERENCE"
+msgstr ""
+"NUMERO/CODICE IDENTIFICATIVO DEL SAGGIO/EDIFICIO/STRUTTURA/SEPOLTURA "
+"STRATIGRAFICA DI RIFERIMENTO"
 
 #: pyarchinit_mini/pdf_export/pdf_generator.py:671
 msgid "COMPETENT SUPERINTENDENCE FOR PROTECTION"
@@ -2685,178 +2736,207 @@ msgid "USM sheet generation to be implemented"
 msgstr "Generazione schede USM da implementare"
 
 #: pyarchinit_mini/pdf_export/pdf_generator.py:1108
+#: pyarchinit_mini/web_interface/templates/periodizzazione/list.html:71
+#: pyarchinit_mini/web_interface/templates/periodizzazione/periods.html:71
+#, fuzzy
+msgid "Total records"
+msgstr "Frammenti Totali"
+
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1108
+msgid "Generated"
+msgstr "Generato il"
+
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1115
+msgid "No records to display."
+msgstr "Nessun record da visualizzare."
+
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1137
+#: pyarchinit_mini/web_interface/templates/us/form.html:15
+#, fuzzy
+msgid "Record"
+msgstr "Recorder"
+
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1165
+msgid "(no data)"
+msgstr "(nessun dato)"
+
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1228
 msgid "Site Dossier"
 msgstr "Dossier del sito"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1117
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1237
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:90
 #: pyarchinit_mini/web_interface/templates/sites/list.html:169
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:90
 #: pyarchinit_mini/web_interface/templates/tma/list.html:88
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:90
+#: pyarchinit_mini/web_interface/templates/ut/list.html:92
 msgid "Page"
 msgstr "Pagina"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1196
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1316
 #, fuzzy
 msgid "Site type"
 msgstr "Tipo Unità"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1208
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1328
 #, fuzzy
 msgid "Report generated on"
 msgstr "Esporta PDF"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1216
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1336
 #, fuzzy
 msgid "SUMMARY STATISTICS"
 msgstr "Statistiche Matrix"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1226
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1346
 #, fuzzy
 msgid "Metric"
 msgstr "Meters"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1226
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1346
 #, fuzzy
 msgid "Value"
 msgstr "Valida"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1227
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1347
 #, fuzzy
 msgid "Stratigraphic Units (US)"
 msgstr "Unità Stratigrafiche"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1228
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1348
 #, fuzzy
 msgid "Catalogued Materials"
 msgstr "ha creato reperto"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1229
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1349
 #, fuzzy
 msgid "Excavation Years"
 msgstr "Anno Scavo"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1230
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1350
 msgid "Number of Excavators"
 msgstr "Numero di scavatori"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1231
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1351
 #, fuzzy
 msgid "Areas"
 msgstr "Area"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1253
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1373
 #, fuzzy
 msgid "SITE DESCRIPTION"
 msgstr "Descrizione sito:"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1261
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1381
 #, fuzzy
 msgid "No description available for this site."
 msgstr "Nessuna matrice disponibile per questo sito."
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1269
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1389
 #, fuzzy
 msgid "STRATIGRAPHIC UNITS SUMMARY"
 msgstr "Unità Stratigrafiche"
 
 # Unit Type translations for Extended Matrix
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1274
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1394
 #, fuzzy
 msgid "US #"
 msgstr "US"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1274
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1394
 #, fuzzy
 msgid "Strat. Def."
 msgstr "Stato"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1275
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1395
 #: pyarchinit_mini/web_interface/templates/search/results.html:118
 #: pyarchinit_mini/web_interface/templates/us/form.html:402
 msgid "Dating"
 msgstr "Datazione"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1275
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1395
 #: pyarchinit_mini/web_interface/templates/search/results.html:119
 #, fuzzy
 msgid "Excavator"
 msgstr "Scavato"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1308
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1428
 #: pyarchinit_mini/web_interface/templates/sites/detail.html:80
 #, fuzzy
 msgid "No stratigraphic units recorded."
 msgstr "Unità Stratigrafiche"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1316
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1436
 #, fuzzy
 msgid "MATERIAL INVENTORY"
 msgstr "Inventario Materiali"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1321
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1441
 #, fuzzy
 msgid "Inv. #"
 msgstr "Inv."
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1322
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1442
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:49
 msgid "Conservation"
 msgstr "Conservazione"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1353
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1473
 #, fuzzy
 msgid "No inventory items recorded."
 msgstr "Il numero inventario è obbligatorio"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1361
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1481
 #, fuzzy
 msgid "HARRIS MATRIX"
 msgstr "Harris Matrix"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1382
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1502
 #: pyarchinit_mini/web_interface/templates/analytics/dashboard.html:69
 #: pyarchinit_mini/web_interface/templates/stats/targeted.html:153
 #, fuzzy
 msgid "Total US"
 msgstr "US Totali"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1383
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1503
 #: pyarchinit_mini/web_interface/templates/excel_import/index.html:327
 #: pyarchinit_mini/web_interface/templates/harris_matrix/view.html:44
 #: pyarchinit_mini/web_interface/templates/yed_import/preview.html:36
 msgid "Relationships"
 msgstr "Relazioni"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1384
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1504
 #: pyarchinit_mini/web_interface/templates/harris_matrix/view.html:60
 msgid "Levels"
 msgstr "Livelli"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1385
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1505
 #, fuzzy
 msgid "Isolated US"
 msgstr "US Isolate:"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1396
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1516
 #, fuzzy
 msgid "No Harris Matrix image available."
 msgstr "Harris Matrix"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1404
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1524
 #, fuzzy
 msgid "CHRONOLOGICAL SUMMARY"
 msgstr "Cronologia"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1429
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1549
 #, fuzzy
 msgid "No chronological data available."
 msgstr "Nessuna Tabella"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1437
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1557
 #, fuzzy
 msgid "MEDIA GALLERY"
 msgstr "Media Manager"
 
-#: pyarchinit_mini/pdf_export/pdf_generator.py:1493
+#: pyarchinit_mini/pdf_export/pdf_generator.py:1613
 #, fuzzy
 msgid "No media files available for this site."
 msgstr "Nessuna matrice disponibile per questo sito."
@@ -3079,13 +3159,13 @@ msgid "Artifacts"
 msgstr "reperti"
 
 #: pyarchinit_mini/web_interface/templates/base.html:86
-#: pyarchinit_mini/web_interface/templates/base.html:182
+#: pyarchinit_mini/web_interface/templates/base.html:186
 #, fuzzy
 msgid "Harris Matrix Creator"
 msgstr "Harris Matrix"
 
 #: pyarchinit_mini/web_interface/templates/base.html:87
-#: pyarchinit_mini/web_interface/templates/base.html:183
+#: pyarchinit_mini/web_interface/templates/base.html:187
 #: pyarchinit_mini/web_interface/templates/paradata/index.html:2
 #: pyarchinit_mini/web_interface/templates/paradata/index.html:5
 #, fuzzy
@@ -3093,7 +3173,7 @@ msgid "Paradata"
 msgstr "Database"
 
 #: pyarchinit_mini/web_interface/templates/base.html:88
-#: pyarchinit_mini/web_interface/templates/base.html:184
+#: pyarchinit_mini/web_interface/templates/base.html:188
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:100
 #: pyarchinit_mini/web_interface/templates/yed_import/index.html:2
 #, fuzzy
@@ -3101,7 +3181,7 @@ msgid "Import GraphML"
 msgstr "Export GraphML"
 
 #: pyarchinit_mini/web_interface/templates/base.html:89
-#: pyarchinit_mini/web_interface/templates/base.html:185
+#: pyarchinit_mini/web_interface/templates/base.html:189
 #: pyarchinit_mini/web_interface/templates/matrix_import/upload.html:2
 #: pyarchinit_mini/web_interface/templates/matrix_import/upload.html:5
 #, fuzzy
@@ -3127,7 +3207,7 @@ msgid "PyArchInit Import"
 msgstr "Esporta/Importa"
 
 #: pyarchinit_mini/web_interface/templates/base.html:96
-#: pyarchinit_mini/web_interface/templates/base.html:191
+#: pyarchinit_mini/web_interface/templates/base.html:195
 msgid "Configuration"
 msgstr "Configurazione"
 
@@ -3137,7 +3217,7 @@ msgid "EM Node Types"
 msgstr "Nuovo Sito"
 
 #: pyarchinit_mini/web_interface/templates/base.html:98
-#: pyarchinit_mini/web_interface/templates/base.html:193
+#: pyarchinit_mini/web_interface/templates/base.html:197
 #: pyarchinit_mini/web_interface/templates/datazioni/list.html:3
 #: pyarchinit_mini/web_interface/templates/datazioni/list.html:8
 #, fuzzy
@@ -3145,7 +3225,7 @@ msgid "Dating Periods"
 msgstr "Periodo Finale"
 
 #: pyarchinit_mini/web_interface/templates/base.html:99
-#: pyarchinit_mini/web_interface/templates/base.html:194
+#: pyarchinit_mini/web_interface/templates/base.html:198
 #: pyarchinit_mini/web_interface/templates/periodizzazione/list.html:3
 #: pyarchinit_mini/web_interface/templates/periodizzazione/list.html:8
 #: pyarchinit_mini/web_interface/templates/periodizzazione/periods.html:3
@@ -3155,12 +3235,12 @@ msgid "Periodization Records"
 msgstr "Periodizzazione"
 
 #: pyarchinit_mini/web_interface/templates/base.html:100
-#: pyarchinit_mini/web_interface/templates/base.html:195
+#: pyarchinit_mini/web_interface/templates/base.html:199
 msgid "Thesaurus ICCD"
 msgstr "Thesaurus ICCD"
 
 #: pyarchinit_mini/web_interface/templates/base.html:105
-#: pyarchinit_mini/web_interface/templates/dashboard.html:176
+#: pyarchinit_mini/web_interface/templates/dashboard.html:212
 msgid "Database"
 msgstr "Database"
 
@@ -3219,15 +3299,44 @@ msgstr "TMA - Cassette"
 msgid "New Pottery"
 msgstr "Nuovo Sito"
 
-#: pyarchinit_mini/web_interface/templates/base.html:180
-#: pyarchinit_mini/web_interface/templates/dashboard.html:160
+#: pyarchinit_mini/web_interface/templates/base.html:174
+#: pyarchinit_mini/web_interface/templates/dashboard.html:70
+msgid "Tombe"
+msgstr "Tombe"
+
+#: pyarchinit_mini/web_interface/templates/base.html:175
+#: pyarchinit_mini/web_interface/templates/dashboard.html:79
+#: pyarchinit_mini/web_interface/templates/harris_creator/editor.html:184
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:2
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:6
+msgid "Strutture"
+msgstr "Strutture"
+
+#: pyarchinit_mini/web_interface/templates/base.html:176
+#: pyarchinit_mini/web_interface/templates/dashboard.html:88
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:2
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:2
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:6
+msgid "Fauna"
+msgstr "Fauna"
+
+#: pyarchinit_mini/web_interface/templates/base.html:177
+#: pyarchinit_mini/web_interface/templates/dashboard.html:97
+#: pyarchinit_mini/web_interface/templates/ut/form.html:2
+#: pyarchinit_mini/web_interface/templates/ut/list.html:2
+#: pyarchinit_mini/web_interface/templates/ut/list.html:6
+msgid "UT"
+msgstr "UT"
+
+#: pyarchinit_mini/web_interface/templates/base.html:184
+#: pyarchinit_mini/web_interface/templates/dashboard.html:196
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:340
 #: pyarchinit_mini/web_interface/templates/sites/form.html:62
 #: pyarchinit_mini/web_interface/templates/us/form.html:501
 msgid "Upload Media"
 msgstr "Carica Media"
 
-#: pyarchinit_mini/web_interface/templates/base.html:186
+#: pyarchinit_mini/web_interface/templates/base.html:190
 #, fuzzy
 msgid "Harris Export"
 msgstr "Esporta"
@@ -3235,69 +3344,73 @@ msgstr "Esporta"
 #: pyarchinit_mini/web_interface/templates/admin/database.html:3
 #: pyarchinit_mini/web_interface/templates/admin/database.html:8
 #: pyarchinit_mini/web_interface/templates/admin/database_info.html:154
-#: pyarchinit_mini/web_interface/templates/base.html:196
+#: pyarchinit_mini/web_interface/templates/base.html:200
 msgid "Database Management"
 msgstr "Gestione Database"
 
-#: pyarchinit_mini/web_interface/templates/base.html:197
+#: pyarchinit_mini/web_interface/templates/base.html:201
 #, fuzzy
 msgid "AI Settings"
 msgstr "Impostazioni"
 
-#: pyarchinit_mini/web_interface/templates/base.html:198
+#: pyarchinit_mini/web_interface/templates/base.html:202
+msgid "Media Storage"
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/base.html:203
 #, fuzzy
 msgid "Backups"
 msgstr "Indietro"
 
-#: pyarchinit_mini/web_interface/templates/base.html:303
+#: pyarchinit_mini/web_interface/templates/base.html:308
 msgid "has connected"
 msgstr "si è collegato"
 
-#: pyarchinit_mini/web_interface/templates/base.html:304
+#: pyarchinit_mini/web_interface/templates/base.html:309
 msgid "has disconnected"
 msgstr "si è disconnesso"
 
-#: pyarchinit_mini/web_interface/templates/base.html:305
+#: pyarchinit_mini/web_interface/templates/base.html:310
 msgid "created site"
 msgstr "ha creato il sito"
 
-#: pyarchinit_mini/web_interface/templates/base.html:306
+#: pyarchinit_mini/web_interface/templates/base.html:311
 msgid "modified site"
 msgstr "ha modificato il sito"
 
-#: pyarchinit_mini/web_interface/templates/base.html:307
+#: pyarchinit_mini/web_interface/templates/base.html:312
 msgid "deleted site"
 msgstr "Dettagli Siti"
 
-#: pyarchinit_mini/web_interface/templates/base.html:308
+#: pyarchinit_mini/web_interface/templates/base.html:313
 msgid "created US"
 msgstr "ha creato US"
 
-#: pyarchinit_mini/web_interface/templates/base.html:309
+#: pyarchinit_mini/web_interface/templates/base.html:314
 msgid "modified US"
 msgstr "ha modificato US"
 
-#: pyarchinit_mini/web_interface/templates/base.html:310
+#: pyarchinit_mini/web_interface/templates/base.html:315
 msgid "deleted US"
 msgstr "ha eliminato US"
 
-#: pyarchinit_mini/web_interface/templates/base.html:311
+#: pyarchinit_mini/web_interface/templates/base.html:316
 msgid "created artifact"
 msgstr "ha creato reperto"
 
-#: pyarchinit_mini/web_interface/templates/base.html:312
+#: pyarchinit_mini/web_interface/templates/base.html:317
 msgid "modified artifact"
 msgstr "ha modificato reperto"
 
-#: pyarchinit_mini/web_interface/templates/base.html:313
+#: pyarchinit_mini/web_interface/templates/base.html:318
 msgid "deleted artifact"
 msgstr "ha eliminato reperto"
 
-#: pyarchinit_mini/web_interface/templates/base.html:314
+#: pyarchinit_mini/web_interface/templates/base.html:319
 msgid "Notification"
 msgstr "Notifica"
 
-#: pyarchinit_mini/web_interface/templates/base.html:315
+#: pyarchinit_mini/web_interface/templates/base.html:320
 msgid "Now"
 msgstr "Ora"
 
@@ -3309,59 +3422,63 @@ msgstr "Siti archeologici"
 msgid "Pottery / Ceramica"
 msgstr "Ceramica"
 
-#: pyarchinit_mini/web_interface/templates/dashboard.html:74
+#: pyarchinit_mini/web_interface/templates/dashboard.html:110
 msgid "Recent Sites"
 msgstr "Siti Recenti"
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:544
 #: pyarchinit_mini/web_interface/templates/admin/database_info.html:149
-#: pyarchinit_mini/web_interface/templates/dashboard.html:86
+#: pyarchinit_mini/web_interface/templates/dashboard.html:122
 #: pyarchinit_mini/web_interface/templates/datazioni/list.html:25
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:58
 #: pyarchinit_mini/web_interface/templates/harris_matrix/viewer_3d_integrated.html:293
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:51
 #: pyarchinit_mini/web_interface/templates/sites/list.html:42
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:58
 #: pyarchinit_mini/web_interface/templates/tma/list.html:50
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:58
 #: pyarchinit_mini/web_interface/templates/us/list.html:110
+#: pyarchinit_mini/web_interface/templates/ut/list.html:59
 msgid "Actions"
 msgstr "Azioni"
 
-#: pyarchinit_mini/web_interface/templates/dashboard.html:123
+#: pyarchinit_mini/web_interface/templates/dashboard.html:159
 msgid "View All Sites"
 msgstr "Visualizza Siti"
 
-#: pyarchinit_mini/web_interface/templates/dashboard.html:129
+#: pyarchinit_mini/web_interface/templates/dashboard.html:165
 msgid "No sites found"
 msgstr "tabelle trovate"
 
-#: pyarchinit_mini/web_interface/templates/dashboard.html:130
+#: pyarchinit_mini/web_interface/templates/dashboard.html:166
 msgid "Start by creating your first archaeological site"
 msgstr "Inizia creando il tuo primo sito archeologico"
 
-#: pyarchinit_mini/web_interface/templates/dashboard.html:132
+#: pyarchinit_mini/web_interface/templates/dashboard.html:168
 msgid "Create First Site"
 msgstr "ha creato il sito"
 
-#: pyarchinit_mini/web_interface/templates/dashboard.html:145
+#: pyarchinit_mini/web_interface/templates/dashboard.html:181
 msgid "Quick Actions"
 msgstr "Azioni"
 
-#: pyarchinit_mini/web_interface/templates/dashboard.html:170
+#: pyarchinit_mini/web_interface/templates/dashboard.html:206
 msgid "System"
 msgstr "Info"
 
-#: pyarchinit_mini/web_interface/templates/dashboard.html:175
+#: pyarchinit_mini/web_interface/templates/dashboard.html:211
 msgid "Version"
 msgstr "Versione"
 
-#: pyarchinit_mini/web_interface/templates/dashboard.html:178
+#: pyarchinit_mini/web_interface/templates/dashboard.html:214
 msgid "Interface"
 msgstr "Interfaccia"
 
-#: pyarchinit_mini/web_interface/templates/dashboard.html:202
+#: pyarchinit_mini/web_interface/templates/dashboard.html:238
 msgid "Statistics by Type"
 msgstr "Reperti per Tipologia"
 
-#: pyarchinit_mini/web_interface/templates/dashboard.html:209
+#: pyarchinit_mini/web_interface/templates/dashboard.html:245
 msgid "Statistics charts available in full version"
 msgstr "Grafici statistiche disponibili nella versione completa"
 
@@ -3501,8 +3618,12 @@ msgid "Data Migration (SQLite ↔ PostgreSQL)"
 msgstr "Migrazione dati (SQLite ↔ PostgreSQL)"
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:262
-msgid "Migrate all data from source database to target database. Supports bidirectional migration between SQLite and PostgreSQL."
-msgstr "Migra tutti i dati dal database di origine al database di destinazione. Supporta la migrazione bidirezionale tra SQLite e PostgreSQL."
+msgid ""
+"Migrate all data from source database to target database. Supports "
+"bidirectional migration between SQLite and PostgreSQL."
+msgstr ""
+"Migra tutti i dati dal database di origine al database di destinazione. "
+"Supporta la migrazione bidirezionale tra SQLite e PostgreSQL."
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:268
 #, fuzzy
@@ -3574,8 +3695,12 @@ msgid "Conflict Resolution Strategy"
 msgstr "Stato di Conservazione"
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:453
-msgid "Choose how to handle records with duplicate IDs between source and target databases."
-msgstr "Scegli come gestire i record con ID duplicati tra i database di origine e destinazione."
+msgid ""
+"Choose how to handle records with duplicate IDs between source and target"
+" databases."
+msgstr ""
+"Scegli come gestire i record con ID duplicati tra i database di origine e"
+" destinazione."
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:465
 msgid "Skip"
@@ -3587,16 +3712,24 @@ msgid "Default"
 msgstr "Elimina"
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:469
-msgid "Skip records with conflicting IDs. Target data is preserved, only new records are added."
-msgstr "Salta i record con ID in conflitto. I dati di destinazione vengono mantenuti, vengono aggiunti solo i nuovi record."
+msgid ""
+"Skip records with conflicting IDs. Target data is preserved, only new "
+"records are added."
+msgstr ""
+"Salta i record con ID in conflitto. I dati di destinazione vengono "
+"mantenuti, vengono aggiunti solo i nuovi record."
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:482
 msgid "Overwrite"
 msgstr "Sovrascrivi"
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:486
-msgid "Update existing records with source data. Use when source has the latest information."
-msgstr "Aggiorna i record esistenti con i dati di origine. Usa quando l'origine ha le informazioni più recenti."
+msgid ""
+"Update existing records with source data. Use when source has the latest "
+"information."
+msgstr ""
+"Aggiorna i record esistenti con i dati di origine. Usa quando l'origine "
+"ha le informazioni più recenti."
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:499
 #, fuzzy
@@ -3604,8 +3737,12 @@ msgid "Renumber"
 msgstr "Numero US"
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:503
-msgid "Generate new IDs for conflicting records. Keeps all data from both databases."
-msgstr "Genera nuovi ID per i record in conflitto. Mantiene tutti i dati di entrambi i database."
+msgid ""
+"Generate new IDs for conflicting records. Keeps all data from both "
+"databases."
+msgstr ""
+"Genera nuovi ID per i record in conflitto. Mantiene tutti i dati di "
+"entrambi i database."
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:514
 msgid "Preview Conflicts"
@@ -3661,20 +3798,32 @@ msgid "This action cannot be undone"
 msgstr "Questa azione non può essere annullata"
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:622
-msgid "Upload an existing .db file from PyArchInit desktop or other sources. The file is validated and saved in the databases folder."
-msgstr "Carica un file .db esistente da PyArchInit desktop o altre fonti. Il file viene validato e salvato nella cartella databases."
+msgid ""
+"Upload an existing .db file from PyArchInit desktop or other sources. The"
+" file is validated and saved in the databases folder."
+msgstr ""
+"Carica un file .db esistente da PyArchInit desktop o altre fonti. Il file"
+" viene validato e salvato nella cartella databases."
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:628
-msgid "Connect to a remote PostgreSQL database or a local SQLite file. The connection is tested before being saved."
-msgstr "Connetti a un database PostgreSQL remoto o a un file SQLite locale. La connessione viene testata prima di essere salvata."
+msgid ""
+"Connect to a remote PostgreSQL database or a local SQLite file. The "
+"connection is tested before being saved."
+msgstr ""
+"Connetti a un database PostgreSQL remoto o a un file SQLite locale. La "
+"connessione viene testata prima di essere salvata."
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:632
 msgid "Security"
 msgstr "Sicurezza"
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:634
-msgid "Connection credentials are stored only in session. For permanent connections, use environment variables."
-msgstr "Le credenziali di connessione vengono memorizzate solo nella sessione. Per connessioni permanenti, usa le variabili d'ambiente."
+msgid ""
+"Connection credentials are stored only in session. For permanent "
+"connections, use environment variables."
+msgstr ""
+"Le credenziali di connessione vengono memorizzate solo nella sessione. "
+"Per connessioni permanenti, usa le variabili d'ambiente."
 
 #: pyarchinit_mini/web_interface/templates/admin/database.html:650
 msgid "Migration Conflict Analysis"
@@ -3695,10 +3844,14 @@ msgid "Database Information"
 msgstr "Informazioni di Base"
 
 #: pyarchinit_mini/web_interface/templates/admin/database_info.html:10
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:10
 #: pyarchinit_mini/web_interface/templates/harris_matrix/view.html:14
 #: pyarchinit_mini/web_interface/templates/harris_matrix/viewer_3d_integrated.html:361
 #: pyarchinit_mini/web_interface/templates/sites/detail.html:13
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:10
 #: pyarchinit_mini/web_interface/templates/tma/form.html:10
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:10
+#: pyarchinit_mini/web_interface/templates/ut/form.html:10
 msgid "Back"
 msgstr "Indietro"
 
@@ -3872,8 +4025,16 @@ msgid "Assistant"
 msgstr "Assistente"
 
 #: pyarchinit_mini/web_interface/templates/ai/assistant.html:184
-msgid "Hello! I am the AI Archaeological Assistant for PyArchInit. You can ask me questions about your sites, stratigraphic units, materials, and chronology. Select a site from the dropdown above to provide context, or use one of the quick action buttons."
-msgstr "Ciao! Sono l'Assistente Archeologico AI di PyArchInit. Puoi farmi domande sui tuoi siti, unità stratigrafiche, materiali e cronologia. Seleziona un sito dal menu a tendina qui sopra per fornire il contesto, oppure usa uno dei pulsanti di azione rapida."
+msgid ""
+"Hello! I am the AI Archaeological Assistant for PyArchInit. You can ask "
+"me questions about your sites, stratigraphic units, materials, and "
+"chronology. Select a site from the dropdown above to provide context, or "
+"use one of the quick action buttons."
+msgstr ""
+"Ciao! Sono l'Assistente Archeologico AI di PyArchInit. Puoi farmi domande"
+" sui tuoi siti, unità stratigrafiche, materiali e cronologia. Seleziona "
+"un sito dal menu a tendina qui sopra per fornire il contesto, oppure usa "
+"uno dei pulsanti di azione rapida."
 
 #: pyarchinit_mini/web_interface/templates/ai/assistant.html:200
 msgid "Type your question..."
@@ -4045,7 +4206,11 @@ msgid "No dating periods found."
 msgstr "tabelle trovate"
 
 #: pyarchinit_mini/web_interface/templates/datazioni/list.html:58
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:109
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:109
 #: pyarchinit_mini/web_interface/templates/tma/list.html:132
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:109
+#: pyarchinit_mini/web_interface/templates/ut/list.html:111
 msgid "Create the first one"
 msgstr "Crea il primo"
 
@@ -4156,8 +4321,12 @@ msgid "Define connections"
 msgstr "Connessione Attiva"
 
 #: pyarchinit_mini/web_interface/templates/excel_import/index.html:146
-msgid "Supports all Extended Matrix node types: US, USM, USVA, USVB, USVC, TU, USD, SF, VSF, CON, DOC, Extractor, Combiner, property"
-msgstr "Supporta tutti i tipi di nodo Extended Matrix: US, USM, USVA, USVB, USVC, TU, USD, SF, VSF, CON, DOC, Extractor, Combiner, property"
+msgid ""
+"Supports all Extended Matrix node types: US, USM, USVA, USVB, USVC, TU, "
+"USD, SF, VSF, CON, DOC, Extractor, Combiner, property"
+msgstr ""
+"Supporta tutti i tipi di nodo Extended Matrix: US, USM, USVA, USVB, USVC,"
+" TU, USD, SF, VSF, CON, DOC, Extractor, Combiner, property"
 
 #: pyarchinit_mini/web_interface/templates/excel_import/index.html:153
 msgid "Single sheet with inline relationships:"
@@ -4266,6 +4435,308 @@ msgstr "Relazioni"
 msgid "Template download failed"
 msgstr "Carica Media"
 
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:2
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:2
+#: pyarchinit_mini/web_interface/templates/tma/form.html:2
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:2
+#: pyarchinit_mini/web_interface/templates/ut/form.html:2
+msgid "New"
+msgstr "Nuovo"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:7
+msgid "Edit Fauna"
+msgstr "Modifica Fauna"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:7
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:20
+msgid "New Fauna"
+msgstr "Nuova Fauna"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:17
+#: pyarchinit_mini/web_interface/templates/inventario/form.html:39
+msgid "Context"
+msgstr "Context"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:18
+msgid "Fauna Data"
+msgstr "Dati Fauna"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:19
+msgid "Combustion & Conservation"
+msgstr "Combustione e Conservazione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:20
+msgid "Notes"
+msgstr "Note"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:35
+msgid "Saggio"
+msgstr "Saggio"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:43
+msgid "ID US"
+msgstr "ID US"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:47
+msgid "Datazione US"
+msgstr "Datazione US"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:51
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:63
+msgid "Data Compilazione"
+msgstr "Data Compilazione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:55
+msgid "Responsabile Scheda"
+msgstr "Responsabile Scheda"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:59
+msgid "Documentazione Fotografica"
+msgstr "Documentazione Fotografica"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:68
+msgid "Metodologia Recupero"
+msgstr "Metodologia Recupero"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:73
+msgid "Contesto"
+msgstr "Contesto"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:78
+msgid "Deposizione"
+msgstr "Deposizione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:83
+msgid "Descrizione Contesto"
+msgstr "Descrizione Contesto"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:87
+msgid "Resti in Connessione Anatomica"
+msgstr "Resti in Connessione Anatomica"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:92
+msgid "Tipologia Accumulo"
+msgstr "Tipologia Accumulo"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:97
+msgid "Note Terreno / Giacitura"
+msgstr "Note Terreno / Giacitura"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:101
+msgid "Affidabilità Stratigrafica"
+msgstr "Affidabilità Stratigrafica"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:111
+msgid "Numero Stimato Resti"
+msgstr "Numero Stimato Resti"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:116
+msgid "Numero Minimo Individui"
+msgstr "Numero Minimo Individui"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:120
+msgid "Stato Frammentazione"
+msgstr "Stato Frammentazione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:125
+msgid "Specie / PSI"
+msgstr "Specie / PSI"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:129
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:149
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:56
+msgid "Specie"
+msgstr "Specie"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:130
+msgid "PSI (Parti Scheletriche)"
+msgstr "PSI (Parti Scheletriche)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:137
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:160
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:157
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:168
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:179
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:190
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:203
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:214
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:225
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:235
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:246
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:257
+msgid "Aggiungi riga"
+msgstr "Aggiungi riga"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:144
+msgid "Misure Ossa"
+msgstr "Misure Ossa"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:148
+msgid "Elemento Anatomico"
+msgstr "Elemento Anatomico"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:150
+msgid "GL (mm)"
+msgstr "GL (mm)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:151
+msgid "GB (mm)"
+msgstr "GB (mm)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:152
+msgid "Bp (mm)"
+msgstr "Bp (mm)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:153
+msgid "Bd (mm)"
+msgstr "Bd (mm)"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:171
+msgid "Tracce Combustione"
+msgstr "Tracce Combustione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:176
+msgid "Combustione Altri Materiali US"
+msgstr "Combustione Altri Materiali US"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:178
+msgid "— —"
+msgstr "— —"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:179
+msgid "Sì"
+msgstr "Sì"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:184
+msgid "Tipo Combustione"
+msgstr "Tipo Combustione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:189
+msgid "Segni Tafonomici Evidenti"
+msgstr "Segni Tafonomici Evidenti"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:194
+msgid "Caratterizzazione Segni Tafonomici"
+msgstr "Caratterizzazione Segni Tafonomici"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:199
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:198
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:88
+msgid "Stato di Conservazione"
+msgstr "Stato di Conservazione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:204
+msgid "Alterazioni Morfologiche"
+msgstr "Alterazioni Morfologiche"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:213
+msgid "Campionature Effettuate"
+msgstr "Campionature Effettuate"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:217
+msgid "Classi Reperti in Associazione"
+msgstr "Classi Reperti in Associazione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:221
+msgid "Osservazioni"
+msgstr "Osservazioni"
+
+#: pyarchinit_mini/web_interface/templates/fauna/form.html:225
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:80
+msgid "Interpretazione"
+msgstr "Interpretazione"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:9
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:10
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:9
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:10
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:9
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:10
+#: pyarchinit_mini/web_interface/templates/ut/list.html:9
+#: pyarchinit_mini/web_interface/templates/ut/list.html:10
+msgid "Export Excel"
+msgstr "Esporta Excel"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:12
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:13
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:12
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:13
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:12
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:13
+#: pyarchinit_mini/web_interface/templates/ut/list.html:12
+#: pyarchinit_mini/web_interface/templates/ut/list.html:13
+msgid "Export CSV"
+msgstr "Esporta CSV"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:29
+msgid "Search by site, area, us, saggio, specie, contesto..."
+msgstr "Cerca per sito, area, us, saggio, specie, contesto..."
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:40
+#: pyarchinit_mini/web_interface/templates/inventario/list.html:32
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:40
+#: pyarchinit_mini/web_interface/templates/tma/list.html:29
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:40
+#: pyarchinit_mini/web_interface/templates/ut/list.html:40
+msgid "Filter"
+msgstr "Filtra"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:43
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:43
+#: pyarchinit_mini/web_interface/templates/tma/list.html:32
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:43
+#: pyarchinit_mini/web_interface/templates/ut/list.html:43
+msgid "records"
+msgstr "record"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:57
+msgid "N. Minimo Individui"
+msgstr "N. Minimo Individui"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:75
+msgid "Delete this Fauna record?"
+msgstr "Eliminare questo record Fauna?"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:90
+#: pyarchinit_mini/web_interface/templates/inventario/list.html:120
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:90
+#: pyarchinit_mini/web_interface/templates/tma/list.html:88
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:90
+#: pyarchinit_mini/web_interface/templates/us/list.html:159
+#: pyarchinit_mini/web_interface/templates/ut/list.html:92
+msgid "Total"
+msgstr "Totale"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:95
+#: pyarchinit_mini/web_interface/templates/periodizzazione/list.html:78
+#: pyarchinit_mini/web_interface/templates/periodizzazione/periods.html:78
+#: pyarchinit_mini/web_interface/templates/sites/list.html:174
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:95
+#: pyarchinit_mini/web_interface/templates/tma/list.html:93
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:95
+#: pyarchinit_mini/web_interface/templates/us/form.html:23
+#: pyarchinit_mini/web_interface/templates/us/form.html:27
+#: pyarchinit_mini/web_interface/templates/ut/list.html:97
+msgid "Previous"
+msgstr "Precedente"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:99
+#: pyarchinit_mini/web_interface/templates/periodizzazione/list.html:88
+#: pyarchinit_mini/web_interface/templates/periodizzazione/periods.html:88
+#: pyarchinit_mini/web_interface/templates/sites/list.html:192
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:99
+#: pyarchinit_mini/web_interface/templates/tma/list.html:97
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:99
+#: pyarchinit_mini/web_interface/templates/us/form.html:37
+#: pyarchinit_mini/web_interface/templates/us/form.html:41
+#: pyarchinit_mini/web_interface/templates/ut/list.html:101
+msgid "Next"
+msgstr "Successivo"
+
+#: pyarchinit_mini/web_interface/templates/fauna/list.html:108
+msgid "No Fauna records found."
+msgstr "Nessun record Fauna trovato."
+
 #: pyarchinit_mini/web_interface/templates/harris_creator/editor.html:178
 msgid "Raggruppa per (cambia re-layout del canvas)"
 msgstr ""
@@ -4288,21 +4759,6 @@ msgstr "UGUALE A"
 #, fuzzy
 msgid "Attività"
 msgstr "Activity"
-
-#: pyarchinit_mini/web_interface/templates/harris_creator/editor.html:184
-#: pyarchinit_mini/web_interface/templates/base.html:175
-#: pyarchinit_mini/web_interface/templates/dashboard.html:79
-msgid "Strutture"
-msgstr "Strutture"
-
-#: pyarchinit_mini/web_interface/templates/base.html:176
-#: pyarchinit_mini/web_interface/templates/dashboard.html:88
-msgid "Fauna"
-msgstr "Fauna"
-
-#: pyarchinit_mini/web_interface/templates/dashboard.html:97
-msgid "UT"
-msgstr "UT"
 
 #: pyarchinit_mini/web_interface/templates/harris_creator/editor.html:191
 #, fuzzy
@@ -4346,8 +4802,14 @@ msgid "GraphML Export"
 msgstr "Esportazione GraphML"
 
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:12
-msgid "Export the Harris Matrix in GraphML format compatible with yEd Graph Editor. This format preserves the structure of archaeological periods and allows advanced diagram editing."
-msgstr "Esporta il Matrix di Harris in formato GraphML compatibile con yEd Graph Editor. Questo formato preserva la struttura dei periodi archeologici e permette la modifica avanzata del diagramma."
+msgid ""
+"Export the Harris Matrix in GraphML format compatible with yEd Graph "
+"Editor. This format preserves the structure of archaeological periods and"
+" allows advanced diagram editing."
+msgstr ""
+"Esporta il Matrix di Harris in formato GraphML compatibile con yEd Graph "
+"Editor. Questo formato preserva la struttura dei periodi archeologici e "
+"permette la modifica avanzata del diagramma."
 
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:18
 msgid "Export Parameters"
@@ -4382,8 +4844,12 @@ msgid "Reverse period order"
 msgstr "Reverse period order"
 
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:51
-msgid "If selected, Period 1 will correspond to the last excavated epoch (reverse order)"
-msgstr "Se selezionato, il Periodo 1 corrisponderà all'ultima epoca scavata (ordine inverso)"
+msgid ""
+"If selected, Period 1 will correspond to the last excavated epoch "
+"(reverse order)"
+msgstr ""
+"Se selezionato, il Periodo 1 corrisponderà all'ultima epoca scavata "
+"(ordine inverso)"
 
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:57
 msgid "Export to GraphML"
@@ -4398,8 +4864,14 @@ msgid "Advanced Export with s3Dgraphy"
 msgstr "Advanced Export with s3Dgraphy"
 
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:73
-msgid "Export the stratigraphy in s3Dgraphy format compatible with Extended Matrix Framework. Includes complete metadata, 3D model support, and advanced analysis."
-msgstr "Esporta la stratigrafia in formato s3Dgraphy compatibile con Extended Matrix Framework. Include metadati completi, supporto ai modelli 3D e analisi avanzate."
+msgid ""
+"Export the stratigraphy in s3Dgraphy format compatible with Extended "
+"Matrix Framework. Includes complete metadata, 3D model support, and "
+"advanced analysis."
+msgstr ""
+"Esporta la stratigrafia in formato s3Dgraphy compatibile con Extended "
+"Matrix Framework. Include metadati completi, supporto ai modelli 3D e "
+"analisi avanzate."
 
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:78
 msgid "Select Site for s3Dgraphy Export"
@@ -4487,8 +4959,12 @@ msgid "2. Open the GraphML File"
 msgstr "2. Open the GraphML File"
 
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:162
-msgid "Once the .graphml file is exported, open it with yEd Graph Editor. The diagram will appear with all nodes (SU) and stratigraphic relationships."
-msgstr "Una volta esportato il file .graphml, aprilo con yEd Graph Editor. Il diagramma apparirà con tutti i nodi (US) e i rapporti stratigrafici."
+msgid ""
+"Once the .graphml file is exported, open it with yEd Graph Editor. The "
+"diagram will appear with all nodes (SU) and stratigraphic relationships."
+msgstr ""
+"Una volta esportato il file .graphml, aprilo con yEd Graph Editor. Il "
+"diagramma apparirà con tutti i nodi (US) e i rapporti stratigrafici."
 
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:165
 msgid "3. Edit and Layout"
@@ -4575,8 +5051,12 @@ msgid "JSON file created from GraphML. You can now use the Interactive Viewer."
 msgstr "File JSON creato da GraphML. Ora puoi usare il Visualizzatore Interattivo."
 
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:283
-msgid "Heriverse export from GraphML is not yet supported. Please use database export."
-msgstr "L'esportazione Heriverse da GraphML non è ancora supportata. Usa l'esportazione dal database."
+msgid ""
+"Heriverse export from GraphML is not yet supported. Please use database "
+"export."
+msgstr ""
+"L'esportazione Heriverse da GraphML non è ancora supportata. Usa "
+"l'esportazione dal database."
 
 #: pyarchinit_mini/web_interface/templates/harris_matrix/graphml_export.html:294
 msgid "Select a site to view"
@@ -4806,7 +5286,10 @@ msgid "Leave empty for site-level model"
 msgstr "Leave empty for site-level model"
 
 #: pyarchinit_mini/web_interface/templates/harris_matrix/viewer_3d_integrated.html:400
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:316
 #: pyarchinit_mini/web_interface/templates/tma/form.html:235
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:188
+#: pyarchinit_mini/web_interface/templates/ut/form.html:318
 msgid "Upload"
 msgstr "Carica"
 
@@ -4849,10 +5332,6 @@ msgstr "Errori nel form:"
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:34
 msgid "Classification"
 msgstr "Classificazione"
-
-#: pyarchinit_mini/web_interface/templates/inventario/form.html:39
-msgid "Context"
-msgstr "Context"
 
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:59
 #: pyarchinit_mini/web_interface/templates/us/form.html:320
@@ -5103,50 +5582,41 @@ msgstr "Photo Negative"
 msgid "Slide"
 msgstr "Diapositiva"
 
-#: pyarchinit_mini/web_interface/templates/inventario/form.html:426
-#: pyarchinit_mini/web_interface/templates/sites/form.html:148
-#: pyarchinit_mini/web_interface/templates/us/form.html:587
-msgid "Primary"
-msgstr "Principale"
-
-#: pyarchinit_mini/web_interface/templates/inventario/form.html:434
-#: pyarchinit_mini/web_interface/templates/sites/form.html:156
-#: pyarchinit_mini/web_interface/templates/us/form.html:595
+#: pyarchinit_mini/web_interface/templates/inventario/form.html:431
+#: pyarchinit_mini/web_interface/templates/sites/form.html:153
+#: pyarchinit_mini/web_interface/templates/us/form.html:592
 #, fuzzy
 msgid "Download"
 msgstr "Download Model"
 
-#: pyarchinit_mini/web_interface/templates/inventario/form.html:440
-#: pyarchinit_mini/web_interface/templates/sites/form.html:162
-#: pyarchinit_mini/web_interface/templates/us/form.html:601
+#: pyarchinit_mini/web_interface/templates/inventario/form.html:437
+#: pyarchinit_mini/web_interface/templates/sites/form.html:159
+#: pyarchinit_mini/web_interface/templates/us/form.html:598
 #, fuzzy
-msgid "Are you sure you want to delete this media file? This action cannot be undone."
+msgid ""
+"Are you sure you want to delete this media file? This action cannot be "
+"undone."
 msgstr "Sei sicuro di voler eliminare il reperto selezionato?"
 
-#: pyarchinit_mini/web_interface/templates/inventario/form.html:455
+#: pyarchinit_mini/web_interface/templates/inventario/form.html:452
 msgid "No media files have been uploaded for this artifact yet."
 msgstr "Nessun file multimediale è stato ancora caricato per questo reperto."
 
 # Document file upload
-#: pyarchinit_mini/web_interface/templates/inventario/form.html:457
-#: pyarchinit_mini/web_interface/templates/sites/form.html:179
-#: pyarchinit_mini/web_interface/templates/us/form.html:618
+#: pyarchinit_mini/web_interface/templates/inventario/form.html:454
+#: pyarchinit_mini/web_interface/templates/sites/form.html:176
+#: pyarchinit_mini/web_interface/templates/us/form.html:615
 #, fuzzy
 msgid "Upload your first file"
 msgstr "Carica File Documento"
 
-#: pyarchinit_mini/web_interface/templates/inventario/form.html:468
+#: pyarchinit_mini/web_interface/templates/inventario/form.html:465
 msgid "Save Artifact"
 msgstr "Salva Reperto"
 
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:29
 msgid "Artifact type"
 msgstr "Reperto"
-
-#: pyarchinit_mini/web_interface/templates/inventario/list.html:32
-#: pyarchinit_mini/web_interface/templates/tma/list.html:29
-msgid "Filter"
-msgstr "Filtra"
 
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:44
 msgid "Inventory No."
@@ -5172,12 +5642,6 @@ msgid "Weight"
 msgstr "Peso"
 
 #: pyarchinit_mini/web_interface/templates/inventario/list.html:120
-#: pyarchinit_mini/web_interface/templates/tma/list.html:88
-#: pyarchinit_mini/web_interface/templates/us/list.html:159
-msgid "Total"
-msgstr "Totale"
-
-#: pyarchinit_mini/web_interface/templates/inventario/list.html:120
 msgid "artifacts"
 msgstr "reperti"
 
@@ -5192,7 +5656,9 @@ msgid "Preview AI Matrix Import"
 msgstr "Errore generazione Harris Matrix"
 
 #: pyarchinit_mini/web_interface/templates/matrix_import/preview.html:7
-msgid "Rivedi le US e le relazioni estratte. Modifica i campi se necessario, deseleziona le righe che non vuoi importare, poi clicca Importa."
+msgid ""
+"Rivedi le US e le relazioni estratte. Modifica i campi se necessario, "
+"deseleziona le righe che non vuoi importare, poi clicca Importa."
 msgstr ""
 
 #: pyarchinit_mini/web_interface/templates/matrix_import/preview.html:13
@@ -5200,12 +5666,15 @@ msgid "Nome sito non rilevato."
 msgstr ""
 
 #: pyarchinit_mini/web_interface/templates/matrix_import/preview.html:14
-msgid "L'AI non l'ha letto dall'immagine e non l'hai inserito nel form. Inseriscilo qui sotto per continuare."
+msgid ""
+"L'AI non l'ha letto dall'immagine e non l'hai inserito nel form. "
+"Inseriscilo qui sotto per continuare."
 msgstr ""
 
 #: pyarchinit_mini/web_interface/templates/matrix_import/preview.html:23
 #: pyarchinit_mini/web_interface/templates/matrix_import/upload.html:20
 #: pyarchinit_mini/web_interface/templates/matrix_tools/index.html:11
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:176
 #, fuzzy
 msgid "Sito"
 msgstr "Sito"
@@ -5221,6 +5690,7 @@ msgid "Unità tipo"
 msgstr "Tipo Unità"
 
 #: pyarchinit_mini/web_interface/templates/matrix_import/preview.html:36
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:76
 #, fuzzy
 msgid "Descrizione"
 msgstr "Descrizione"
@@ -5281,7 +5751,9 @@ msgid "Confidence:"
 msgstr "Consistency"
 
 #: pyarchinit_mini/web_interface/templates/matrix_import/rejected.html:14
-msgid "L'immagine caricata non è stata riconosciuta come un Harris matrix stratigrafico. Niente è stato salvato nel database."
+msgid ""
+"L'immagine caricata non è stata riconosciuta come un Harris matrix "
+"stratigrafico. Niente è stato salvato nel database."
 msgstr ""
 
 #: pyarchinit_mini/web_interface/templates/matrix_import/rejected.html:19
@@ -5289,7 +5761,10 @@ msgid "Torna al modulo di upload"
 msgstr ""
 
 #: pyarchinit_mini/web_interface/templates/matrix_import/upload.html:7
-msgid "Carica un'immagine di un Harris Matrix (foto, scan o schizzo) e l'AI estrarrà le US e le relazioni stratigrafiche. L'immagine viene validata prima di qualsiasi inserimento in DB."
+msgid ""
+"Carica un'immagine di un Harris Matrix (foto, scan o schizzo) e l'AI "
+"estrarrà le US e le relazioni stratigrafiche. L'immagine viene validata "
+"prima di qualsiasi inserimento in DB."
 msgstr ""
 
 #: pyarchinit_mini/web_interface/templates/matrix_import/upload.html:14
@@ -5307,7 +5782,9 @@ msgid "+ Nuovo sito"
 msgstr ""
 
 #: pyarchinit_mini/web_interface/templates/matrix_import/upload.html:28
-msgid "Se vuoto e l'AI non riesce a leggerlo dall'immagine, te lo chiederà nella preview."
+msgid ""
+"Se vuoto e l'AI non riesce a leggerlo dall'immagine, te lo chiederà nella"
+" preview."
 msgstr ""
 
 #: pyarchinit_mini/web_interface/templates/matrix_import/upload.html:32
@@ -5336,7 +5813,9 @@ msgid "Matrix Tools"
 msgstr "Strumenti Matrix"
 
 #: pyarchinit_mini/web_interface/templates/matrix_tools/index.html:5
-msgid "Importa o esporta la stratigrafia di un sito in formato GraphML (yEd) o Heriverse/ATON JSON."
+msgid ""
+"Importa o esporta la stratigrafia di un sito in formato GraphML (yEd) o "
+"Heriverse/ATON JSON."
 msgstr ""
 
 #: pyarchinit_mini/web_interface/templates/matrix_tools/index.html:22
@@ -5454,24 +5933,36 @@ msgid "sites"
 msgstr "Siti"
 
 #: pyarchinit_mini/web_interface/templates/messaging/contacts.html:118
-msgid "No contacts found. Users will appear here when they have contact information (email, Telegram, phone) or have excavation activity."
-msgstr "Nessun contatto trovato. Gli utenti appariranno qui quando avranno informazioni di contatto (email, Telegram, telefono) o attività di scavo."
+msgid ""
+"No contacts found. Users will appear here when they have contact "
+"information (email, Telegram, phone) or have excavation activity."
+msgstr ""
+"Nessun contatto trovato. Gli utenti appariranno qui quando avranno "
+"informazioni di contatto (email, Telegram, telefono) o attività di scavo."
 
 #: pyarchinit_mini/web_interface/templates/messaging/contacts.html:123
 msgid "Setup Telegram"
 msgstr "Configura Telegram"
 
 #: pyarchinit_mini/web_interface/templates/messaging/contacts.html:125
-msgid "To enable Telegram messaging and calls, each user needs to set their Telegram username in their profile."
-msgstr "Per abilitare messaggi e chiamate Telegram, ogni utente deve impostare il proprio nome utente Telegram nel profilo."
+msgid ""
+"To enable Telegram messaging and calls, each user needs to set their "
+"Telegram username in their profile."
+msgstr ""
+"Per abilitare messaggi e chiamate Telegram, ogni utente deve impostare il"
+" proprio nome utente Telegram nel profilo."
 
 #: pyarchinit_mini/web_interface/templates/messaging/contacts.html:126
 msgid "Admin can set it in User Management, or users can set it themselves."
-msgstr "L'amministratore può impostarlo in Gestione utenti, oppure gli utenti possono farlo da soli."
+msgstr ""
+"L'amministratore può impostarlo in Gestione utenti, oppure gli utenti "
+"possono farlo da soli."
 
 #: pyarchinit_mini/web_interface/templates/messaging/contacts.html:127
 msgid "WhatsApp links are generated automatically from the phone number field."
-msgstr "I link WhatsApp vengono generati automaticamente dal campo del numero di telefono."
+msgstr ""
+"I link WhatsApp vengono generati automaticamente dal campo del numero di "
+"telefono."
 
 #: pyarchinit_mini/web_interface/templates/operators/directory.html:3
 #: pyarchinit_mini/web_interface/templates/operators/directory.html:147
@@ -5554,8 +6045,12 @@ msgid "No operators found"
 msgstr "tabelle trovate"
 
 #: pyarchinit_mini/web_interface/templates/operators/directory.html:327
-msgid "Operator data is extracted from the schedatore, direttore, and responsabile fields in stratigraphic units."
-msgstr "I dati degli operatori sono estratti dai campi schedatore, direttore e responsabile delle unità stratigrafiche."
+msgid ""
+"Operator data is extracted from the schedatore, direttore, and "
+"responsabile fields in stratigraphic units."
+msgstr ""
+"I dati degli operatori sono estratti dai campi schedatore, direttore e "
+"responsabile delle unità stratigrafiche."
 
 #: pyarchinit_mini/web_interface/templates/operators/directory.html:335
 msgid "No operators match your filters"
@@ -5566,8 +6061,13 @@ msgid "Try adjusting your search criteria."
 msgstr "Prova a modificare i criteri di ricerca."
 
 #: pyarchinit_mini/web_interface/templates/paradata/index.html:7
-msgid "Per-site paradata sidecar: authors, licenses, embargoes, documents, epochs. Stored as JSON next to the auto-regenerated stratigraphy graph."
-msgstr "Sidecar di paradata per sito: autori, licenze, embarghi, documenti, epoche. Memorizzato come JSON accanto al grafo stratigrafico rigenerato automaticamente."
+msgid ""
+"Per-site paradata sidecar: authors, licenses, embargoes, documents, "
+"epochs. Stored as JSON next to the auto-regenerated stratigraphy graph."
+msgstr ""
+"Sidecar di paradata per sito: autori, licenze, embarghi, documenti, "
+"epoche. Memorizzato come JSON accanto al grafo stratigrafico rigenerato "
+"automaticamente."
 
 #: pyarchinit_mini/web_interface/templates/paradata/index.html:11
 #, fuzzy
@@ -5650,30 +6150,6 @@ msgstr "Extended Matrix Palette"
 msgid "Reliability"
 msgstr "Reliability"
 
-#: pyarchinit_mini/web_interface/templates/periodizzazione/list.html:71
-#: pyarchinit_mini/web_interface/templates/periodizzazione/periods.html:71
-#, fuzzy
-msgid "Total records"
-msgstr "Frammenti Totali"
-
-#: pyarchinit_mini/web_interface/templates/periodizzazione/list.html:78
-#: pyarchinit_mini/web_interface/templates/periodizzazione/periods.html:78
-#: pyarchinit_mini/web_interface/templates/sites/list.html:174
-#: pyarchinit_mini/web_interface/templates/tma/list.html:93
-#: pyarchinit_mini/web_interface/templates/us/form.html:23
-#: pyarchinit_mini/web_interface/templates/us/form.html:27
-msgid "Previous"
-msgstr "Precedente"
-
-#: pyarchinit_mini/web_interface/templates/periodizzazione/list.html:88
-#: pyarchinit_mini/web_interface/templates/periodizzazione/periods.html:88
-#: pyarchinit_mini/web_interface/templates/sites/list.html:192
-#: pyarchinit_mini/web_interface/templates/tma/list.html:97
-#: pyarchinit_mini/web_interface/templates/us/form.html:37
-#: pyarchinit_mini/web_interface/templates/us/form.html:41
-msgid "Next"
-msgstr "Successivo"
-
 #: pyarchinit_mini/web_interface/templates/periodizzazione/list.html:98
 #: pyarchinit_mini/web_interface/templates/periodizzazione/periods.html:98
 #, fuzzy
@@ -5681,8 +6157,12 @@ msgid "No periodization records found."
 msgstr "tabelle trovate"
 
 #: pyarchinit_mini/web_interface/templates/periodizzazione/periods.html:101
-msgid "Periodization records are automatically imported from PyArchInit databases that contain the periodizzazione_table."
-msgstr "I record di periodizzazione vengono importati automaticamente dai database PyArchInit che contengono la periodizzazione_table."
+msgid ""
+"Periodization records are automatically imported from PyArchInit "
+"databases that contain the periodizzazione_table."
+msgstr ""
+"I record di periodizzazione vengono importati automaticamente dai "
+"database PyArchInit che contengono la periodizzazione_table."
 
 #: pyarchinit_mini/web_interface/templates/pottery/detail.html:26
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:679
@@ -5700,8 +6180,12 @@ msgid "Import/Export PyArchInit"
 msgstr "Importa/Esporta PyArchInit"
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:14
-msgid "Import data from PyArchInit (full version) or export data to PyArchInit database"
-msgstr "Importa dati da PyArchInit (versione completa) o esporta dati nel database PyArchInit"
+msgid ""
+"Import data from PyArchInit (full version) or export data to PyArchInit "
+"database"
+msgstr ""
+"Importa dati da PyArchInit (versione completa) o esporta dati nel "
+"database PyArchInit"
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:67
 #, fuzzy
@@ -5768,7 +6252,9 @@ msgstr "US (Optional)"
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:174
 msgid "Select specific sites to import, or leave unselected to import all"
-msgstr "Seleziona siti specifici da importare, o lascia deselezionato per importarli tutti"
+msgstr ""
+"Seleziona siti specifici da importare, o lascia deselezionato per "
+"importarli tutti"
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:191
 msgid "Test connection first to load available sites"
@@ -5795,16 +6281,25 @@ msgid "Datazione Sync"
 msgstr "Sincronizza datazione"
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:236
-msgid "If you already imported periodizzazione data, use this button to manually synchronize datazioni table and US datazione fields."
-msgstr "Se hai già importato i dati di periodizzazione, usa questo pulsante per sincronizzare manualmente la tabella datazioni e i campi datazione delle US."
+msgid ""
+"If you already imported periodizzazione data, use this button to manually"
+" synchronize datazioni table and US datazione fields."
+msgstr ""
+"Se hai già importato i dati di periodizzazione, usa questo pulsante per "
+"sincronizzare manualmente la tabella datazioni e i campi datazione delle "
+"US."
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:239
 msgid "Sync Datazioni from Periodizzazione"
 msgstr "Sincronizza Datazioni da Periodizzazione"
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:280
-msgid "The SQLite database will be exported and downloaded to your computer automatically."
-msgstr "Il database SQLite verrà esportato e scaricato automaticamente sul tuo computer."
+msgid ""
+"The SQLite database will be exported and downloaded to your computer "
+"automatically."
+msgstr ""
+"Il database SQLite verrà esportato e scaricato automaticamente sul tuo "
+"computer."
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:339
 msgid "Export US Relationships (to rapporti field)"
@@ -5812,7 +6307,9 @@ msgstr "Esporta rapporti US (al campo rapporti)"
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:344
 msgid "Note: Only Sites and US can be exported to PyArchInit full version"
-msgstr "Nota: solo Siti e US possono essere esportati nella versione completa di PyArchInit"
+msgstr ""
+"Nota: solo Siti e US possono essere esportati nella versione completa di "
+"PyArchInit"
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:363
 #, fuzzy
@@ -5825,12 +6322,15 @@ msgid "Export Results:"
 msgstr "Export Parameters"
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:429
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:108
 msgid "Testing..."
 msgstr "Test in corso..."
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:479
 msgid "Start importing data from PyArchInit? This may take several minutes."
-msgstr "Avviare l'importazione dei dati da PyArchInit? L'operazione può richiedere alcuni minuti."
+msgstr ""
+"Avviare l'importazione dei dati da PyArchInit? L'operazione può "
+"richiedere alcuni minuti."
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:526
 #, fuzzy
@@ -5857,7 +6357,9 @@ msgstr "Nessuna Tabella"
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:574
 msgid "Start exporting data to PyArchInit? Existing data may be updated."
-msgstr "Avviare l'esportazione dei dati in PyArchInit? I dati esistenti potrebbero essere aggiornati."
+msgstr ""
+"Avviare l'esportazione dei dati in PyArchInit? I dati esistenti "
+"potrebbero essere aggiornati."
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:595
 #, fuzzy
@@ -5895,8 +6397,12 @@ msgid "No directories or SQLite databases found"
 msgstr "Crea nuovo database SQLite"
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:909
-msgid "Synchronize datazioni from periodizzazione data? This will update datazioni_table and us_table.datazione fields."
-msgstr "Sincronizzare le datazioni dai dati di periodizzazione? Questo aggiornerà datazioni_table e i campi us_table.datazione."
+msgid ""
+"Synchronize datazioni from periodizzazione data? This will update "
+"datazioni_table and us_table.datazione fields."
+msgstr ""
+"Sincronizzare le datazioni dai dati di periodizzazione? Questo aggiornerà"
+" datazioni_table e i campi us_table.datazione."
 
 #: pyarchinit_mini/web_interface/templates/pyarchinit_import_export/index.html:915
 msgid "Synchronizing..."
@@ -6024,6 +6530,59 @@ msgstr "tabelle trovate"
 msgid "Try a different search term or check the spelling."
 msgstr "Prova un termine di ricerca diverso o controlla l'ortografia."
 
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:2
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:5
+msgid "Media Storage Settings"
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:7
+msgid ""
+"Credentials are stored encrypted at rest and are never shown again after "
+"saving. Leave a field blank to keep its current value."
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:15
+msgid "Paths"
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:17
+msgid "Media root"
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:21
+msgid ""
+"Local path or scheme-prefixed URI (s3://, r2://, unibo://, webdav://, "
+"gdrive://, dropbox://, cloudinary://, http(s)://)."
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:24
+msgid "Thumbnail path"
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:29
+msgid "Resized thumbnail path"
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:42
+msgid "Configured"
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:56
+msgid "Enabled"
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:63
+msgid "Leave blank to keep existing"
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:70
+msgid "Test connection"
+msgstr ""
+
+#: pyarchinit_mini/web_interface/templates/settings/storage.html:74
+msgid "Test as R2"
+msgstr ""
+
 #: pyarchinit_mini/web_interface/templates/sites/detail.html:21
 #, fuzzy
 msgid "Site Details"
@@ -6059,7 +6618,7 @@ msgstr "Harris Matrix"
 msgid "Site Definition"
 msgstr "Siti per Regione"
 
-#: pyarchinit_mini/web_interface/templates/sites/form.html:177
+#: pyarchinit_mini/web_interface/templates/sites/form.html:174
 #, fuzzy
 msgid "No media files have been uploaded for this site yet."
 msgstr "Nessuna matrice disponibile per questo sito."
@@ -6346,14 +6905,272 @@ msgstr "Attività Recente"
 msgid "Count"
 msgstr "Nazione"
 
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:2
+msgid "Struttura"
+msgstr "Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:7
+msgid "Edit Struttura"
+msgstr "Modifica Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:7
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:20
+msgid "New Struttura"
+msgstr "Nuova Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:18
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:111
+msgid "Articolazione"
+msgstr "Articolazione"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:19
+msgid "Sotto-tabelle"
+msgstr "Sotto-tabelle"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:27
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:26
+#: pyarchinit_mini/web_interface/templates/ut/form.html:26
+msgid "Save the record to enable the Media tab and attach files."
+msgstr "Salva la scheda per abilitare la tab Media e allegare file."
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:39
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:55
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:46
+msgid "Sigla Struttura"
+msgstr "Sigla Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:44
+msgid "Numero Struttura"
+msgstr "Numero Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:48
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:56
+msgid "Categoria Struttura"
+msgstr "Categoria Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:53
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:57
+msgid "Tipologia Struttura"
+msgstr "Tipologia Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:58
+msgid "Definizione Struttura"
+msgstr "Definizione Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:67
+msgid "Nome Compilatore"
+msgstr "Nome Compilatore"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:84
+#: pyarchinit_mini/web_interface/templates/ut/form.html:112
+msgid "Quota"
+msgstr "Quota"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:88
+msgid "Relazione Topografica"
+msgstr "Relazione Topografica"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:97
+msgid "Orientamento Ingresso"
+msgstr "Orientamento Ingresso"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:119
+msgid "N. Ambienti"
+msgstr "N. Ambienti"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:123
+msgid "Sviluppo Planimetrico"
+msgstr "Sviluppo Planimetrico"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:128
+msgid "Motivo Decorativo"
+msgstr "Motivo Decorativo"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:132
+msgid "Potenzialità Archeologica"
+msgstr "Potenzialità Archeologica"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:142
+msgid "Elementi Datanti"
+msgstr "Elementi Datanti"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:152
+msgid "Materiali Impiegati"
+msgstr "Materiali Impiegati"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:154
+msgid "Materiali"
+msgstr "Materiali"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:163
+msgid "Elementi Strutturali"
+msgstr "Elementi Strutturali"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:165
+msgid "Tipologia elemento"
+msgstr "Tipologia elemento"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:165
+msgid "Quantità"
+msgstr "Quantità"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:174
+msgid "Rapporti Struttura"
+msgstr "Rapporti Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:176
+msgid "Tipo di rapporto"
+msgstr "Tipo di rapporto"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:176
+msgid "Sigla"
+msgstr "Sigla"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:176
+msgid "Numero"
+msgstr "Numero"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:185
+msgid "Misure Struttura"
+msgstr "Misure Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
+#: pyarchinit_mini/web_interface/templates/ut/form.html:17
+msgid "Ubicazione"
+msgstr "Ubicazione"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
+msgid "Elementi architettonici"
+msgstr "Elementi architettonici"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
+msgid "Tipo misura"
+msgstr "Tipo misura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
+msgid "Unità di misura"
+msgstr "Unità di misura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
+msgid "Valore"
+msgstr "Valore"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:200
+msgid "Stato"
+msgstr "Stato"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:200
+msgid "Grado"
+msgstr "Grado"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:200
+msgid "Fattori agenti"
+msgstr "Fattori agenti"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:209
+msgid "Prospetto Ingresso"
+msgstr "Prospetto Ingresso"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:211
+msgid "Prospetto"
+msgstr "Prospetto"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:220
+msgid "Orientamento Ambienti"
+msgstr "Orientamento Ambienti"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:222
+msgid "Orientamento"
+msgstr "Orientamento"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:230
+msgid "Elementi Costitutivi"
+msgstr "Elementi Costitutivi"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:232
+msgid "Elemento"
+msgstr "Elemento"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:241
+msgid "Manufatti"
+msgstr "Manufatti"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:243
+msgid "Manufatto"
+msgstr "Manufatto"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:252
+msgid "Fasi Funzionali"
+msgstr "Fasi Funzionali"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:254
+msgid "Ambiente"
+msgstr "Ambiente"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:254
+msgid "Definizione e fasi funzionali"
+msgstr "Definizione e fasi funzionali"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:266
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:138
+msgid "Periodo Iniziale"
+msgstr "Periodo Iniziale"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:270
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:142
+msgid "Fase Iniziale"
+msgstr "Fase Iniziale"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:274
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:146
+msgid "Periodo Finale"
+msgstr "Periodo Finale"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:278
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:150
+msgid "Fase Finale"
+msgstr "Fase Finale"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:282
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:154
+msgid "Datazione Estesa"
+msgstr "Datazione Estesa"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:291
+msgid "Struttura Media"
+msgstr "Media Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:310
+#: pyarchinit_mini/web_interface/templates/tma/form.html:229
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:182
+#: pyarchinit_mini/web_interface/templates/ut/form.html:312
+msgid "No media attached yet."
+msgstr "Nessun media allegato ancora."
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:313
+#: pyarchinit_mini/web_interface/templates/tma/form.html:232
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:185
+#: pyarchinit_mini/web_interface/templates/ut/form.html:315
+#, fuzzy
+msgid "Upload media"
+msgstr "Carica Media"
+
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:29
+msgid "Search by site, sigla, categoria, tipologia..."
+msgstr "Cerca per sito, sigla, categoria, tipologia..."
+
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:75
+msgid "Delete this Struttura record?"
+msgstr "Eliminare questo record Struttura?"
+
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:108
+msgid "No Struttura records found."
+msgstr "Nessun record Struttura trovato."
+
 #: pyarchinit_mini/web_interface/templates/tma/form.html:2
 #, fuzzy
 msgid "TMA"
 msgstr "max"
-
-#: pyarchinit_mini/web_interface/templates/tma/form.html:2
-msgid "New"
-msgstr "Nuovo"
 
 #: pyarchinit_mini/web_interface/templates/tma/form.html:7
 #, fuzzy
@@ -6513,21 +7330,6 @@ msgstr "Aggiungi"
 msgid "TMA Media"
 msgstr "Aggiungi Media"
 
-#: pyarchinit_mini/web_interface/templates/tma/form.html:229
-msgid "No media attached yet."
-msgstr "Nessun media allegato ancora."
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:26
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:26
-#: pyarchinit_mini/web_interface/templates/ut/form.html:26
-msgid "Save the record to enable the Media tab and attach files."
-msgstr "Salva la scheda per abilitare la tab Media e allegare file."
-
-#: pyarchinit_mini/web_interface/templates/tma/form.html:232
-#, fuzzy
-msgid "Upload media"
-msgstr "Carica Media"
-
 #: pyarchinit_mini/web_interface/templates/tma/form.html:248
 #: pyarchinit_mini/web_interface/templates/tma/list.html:113
 #, fuzzy
@@ -6550,10 +7352,6 @@ msgstr ""
 #: pyarchinit_mini/web_interface/templates/tma/list.html:18
 msgid "Search by site, box, inventory, material..."
 msgstr "Cerca per sito, cassetta, inventario, materiale..."
-
-#: pyarchinit_mini/web_interface/templates/tma/list.html:32
-msgid "records"
-msgstr "record"
 
 #: pyarchinit_mini/web_interface/templates/tma/list.html:48
 #, fuzzy
@@ -6581,10 +7379,114 @@ msgstr "Genera etichette PDF (tutti i filtrati)"
 msgid "No TMA records found."
 msgstr "tabelle trovate"
 
-#: pyarchinit_mini/web_interface/templates/us/form.html:15
-#, fuzzy
-msgid "Record"
-msgstr "Recorder"
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:2
+msgid "Tomba"
+msgstr "Tomba"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:7
+msgid "Edit Tomba"
+msgstr "Modifica Tomba"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:7
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:20
+msgid "New Tomba"
+msgstr "Nuova Tomba"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:17
+msgid "Rito e Sepoltura"
+msgstr "Rito e Sepoltura"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:18
+msgid "Corredo"
+msgstr "Corredo"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:42
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:56
+msgid "Nr. Scheda TAF"
+msgstr "Nr. Scheda TAF"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:50
+msgid "Nr. Struttura"
+msgstr "Nr. Struttura"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:54
+msgid "Nr. Individuo"
+msgstr "Nr. Individuo"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:63
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:55
+msgid "Rito"
+msgstr "Rito"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:68
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:57
+msgid "Tipo Sepoltura"
+msgstr "Tipo Sepoltura"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:73
+msgid "Tipo Deposizione"
+msgstr "Tipo Deposizione"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:78
+msgid "Copertura Tipo"
+msgstr "Copertura Tipo"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:83
+msgid "Tipo Contenitore Resti"
+msgstr "Tipo Contenitore Resti"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:93
+msgid "Segnacoli"
+msgstr "Segnacoli"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:98
+msgid "Canale Libatorio (Sì/No)"
+msgstr "Canale Libatorio (Sì/No)"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:103
+msgid "Oggetti Rinvenuti Esterno"
+msgstr "Oggetti Rinvenuti Esterno"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:107
+msgid "Descrizione TAF"
+msgstr "Descrizione TAF"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:111
+msgid "Interpretazione TAF"
+msgstr "Interpretazione TAF"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:120
+msgid "Corredo Presenza"
+msgstr "Corredo Presenza"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:125
+msgid "Corredo Tipo"
+msgstr "Corredo Tipo"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:129
+msgid "Corredo Descrizione"
+msgstr "Corredo Descrizione"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:163
+msgid "Tomba Media"
+msgstr "Media Tomba"
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:2
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:6
+msgid "Tombe - Sepolture"
+msgstr "Tombe - Sepolture"
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:29
+msgid "Search by site, rito, struttura, individuo..."
+msgstr "Cerca per sito, rito, struttura, individuo..."
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:75
+msgid "Delete this Tomba record?"
+msgstr "Eliminare questo record Tomba?"
+
+#: pyarchinit_mini/web_interface/templates/tomba/list.html:108
+msgid "No Tomba records found."
+msgstr "Nessun record Tomba trovato."
 
 #: pyarchinit_mini/web_interface/templates/us/form.html:15
 msgid "of"
@@ -6793,8 +7695,12 @@ msgid "Tip:"
 msgstr "Tip:"
 
 #: pyarchinit_mini/web_interface/templates/us/form.html:415
-msgid "Specifying the initial and final period helps to chronologically contextualize the stratigraphic unit in the archaeological site."
-msgstr "Specificare il periodo iniziale e finale aiuta a contestualizzare cronologicamente l'unità stratigrafica nel sito archeologico."
+msgid ""
+"Specifying the initial and final period helps to chronologically "
+"contextualize the stratigraphic unit in the archaeological site."
+msgstr ""
+"Specificare il periodo iniziale e finale aiuta a contestualizzare "
+"cronologicamente l'unità stratigrafica nel sito archeologico."
 
 #: pyarchinit_mini/web_interface/templates/us/form.html:423
 msgid "Formato relazioni stratigrafiche:"
@@ -6827,12 +7733,20 @@ msgid "Harris Matrix Relationships"
 msgstr "Harris Matrix"
 
 #: pyarchinit_mini/web_interface/templates/us/form.html:444
-msgid "After saving the SU, it will be possible to view the complete Harris Matrix of the site in the dedicated section."
-msgstr "Dopo aver salvato l'US, sarà possibile visualizzare il Matrix di Harris completo del sito nella sezione dedicata."
+msgid ""
+"After saving the SU, it will be possible to view the complete Harris "
+"Matrix of the site in the dedicated section."
+msgstr ""
+"Dopo aver salvato l'US, sarà possibile visualizzare il Matrix di Harris "
+"completo del sito nella sezione dedicata."
 
 #: pyarchinit_mini/web_interface/templates/us/form.html:448
-msgid "The system will automatically validate stratigraphic relationships to identify any paradoxes or cycles."
-msgstr "Il sistema validerà automaticamente i rapporti stratigrafici per identificare eventuali paradossi o cicli."
+msgid ""
+"The system will automatically validate stratigraphic relationships to "
+"identify any paradoxes or cycles."
+msgstr ""
+"Il sistema validerà automaticamente i rapporti stratigrafici per "
+"identificare eventuali paradossi o cicli."
 
 #: pyarchinit_mini/web_interface/templates/us/form.html:457
 msgid "Inclusions"
@@ -6862,11 +7776,11 @@ msgstr "Containers/Contents"
 msgid "Containment relationships (e.g. \"Container: SU 1000\")"
 msgstr "Containment relationships (e.g. \"Container: SU 1000\")"
 
-#: pyarchinit_mini/web_interface/templates/us/form.html:616
+#: pyarchinit_mini/web_interface/templates/us/form.html:613
 msgid "No media files have been uploaded for this US yet."
 msgstr "Nessun file multimediale è stato ancora caricato per questa US."
 
-#: pyarchinit_mini/web_interface/templates/us/form.html:629
+#: pyarchinit_mini/web_interface/templates/us/form.html:626
 msgid "Save US"
 msgstr "Salva US"
 
@@ -6921,14 +7835,300 @@ msgstr "tabelle trovate"
 msgid "No US found."
 msgstr "Nessuna US trovata."
 
+#: pyarchinit_mini/web_interface/templates/ut/form.html:7
+msgid "Edit UT"
+msgstr "Modifica UT"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:7
+#: pyarchinit_mini/web_interface/templates/ut/list.html:20
+msgid "New UT"
+msgstr "Nuova UT"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:16
+msgid "Anagrafica"
+msgstr "Anagrafica"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:18
+msgid "Survey"
+msgstr "Ricognizione"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:19
+msgid "Analisi"
+msgstr "Analisi"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:34
+msgid "Progetto"
+msgstr "Progetto"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:38
+#: pyarchinit_mini/web_interface/templates/ut/list.html:55
+msgid "Nr. UT"
+msgstr "Nr. UT"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:42
+#: pyarchinit_mini/web_interface/templates/ut/list.html:56
+msgid "UT Letterale"
+msgstr "UT Letterale"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:46
+msgid "Definizione UT"
+msgstr "Definizione UT"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:51
+msgid "Interpretazione UT"
+msgstr "Interpretazione UT"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:55
+msgid "Descrizione UT"
+msgstr "Descrizione UT"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:64
+msgid "Nazione"
+msgstr "Nazione"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:68
+msgid "Regione"
+msgstr "Regione"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:72
+msgid "Provincia"
+msgstr "Provincia"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:76
+msgid "Comune"
+msgstr "Comune"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:80
+msgid "Frazione"
+msgstr "Frazione"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:84
+#: pyarchinit_mini/web_interface/templates/ut/list.html:58
+msgid "Localita"
+msgstr "Localita"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:88
+msgid "Indirizzo"
+msgstr "Indirizzo"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:92
+msgid "Nr. Civico"
+msgstr "Nr. Civico"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:96
+msgid "Carta Topo IGM"
+msgstr "Carta Topo IGM"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:100
+msgid "Carta CTR"
+msgstr "Carta CTR"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:104
+msgid "Coordinate Geografiche"
+msgstr "Coordinate Geografiche"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:108
+msgid "Coordinate Piane"
+msgstr "Coordinate Piane"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:116
+msgid "Geometria"
+msgstr "Geometria"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:120
+msgid "Foglio Catastale"
+msgstr "Foglio Catastale"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:129
+msgid "Visibility %"
+msgstr "Visibilità %"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:133
+msgid "Vegetation Coverage"
+msgstr "Copertura Vegetazione"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:138
+msgid "GPS Method"
+msgstr "Metodo GPS"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:143
+msgid "Coordinate Precision"
+msgstr "Precisione Coordinate"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:147
+msgid "Survey Type"
+msgstr "Tipo Ricognizione"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:152
+msgid "Surface Condition"
+msgstr "Condizione Superficie"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:157
+msgid "Accessibility"
+msgstr "Accessibilità"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:162
+msgid "Photo Documentation"
+msgstr "Documentazione Fotografica"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:166
+msgid "Weather Conditions"
+msgstr "Condizioni Meteo"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:171
+msgid "Andamento Terreno / Pendenza"
+msgstr "Andamento Terreno / Pendenza"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:175
+msgid "Utilizzo Suolo / Vegetazione"
+msgstr "Utilizzo Suolo / Vegetazione"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:179
+msgid "Team Members"
+msgstr "Componenti Équipe"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:183
+msgid "Metodo Rilievo e Ricognizione"
+msgstr "Metodo Rilievo e Ricognizione"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:187
+msgid "Descrizione Empirica Suolo"
+msgstr "Descrizione Empirica Suolo"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:191
+msgid "Descrizione Luogo"
+msgstr "Descrizione Luogo"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:195
+msgid "Data rilievo"
+msgstr "Data rilievo"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:199
+msgid "Ora / Meteo"
+msgstr "Ora / Meteo"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:203
+msgid "Responsabile rilievo"
+msgstr "Responsabile rilievo"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:207
+msgid "Dimensioni UT"
+msgstr "Dimensioni UT"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:211
+msgid "Reperti per mq"
+msgstr "Reperti per mq"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:215
+msgid "Reperti Datanti"
+msgstr "Reperti Datanti"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:219
+msgid "Bibliografia"
+msgstr "Bibliografia"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:223
+msgid "Documentazione"
+msgstr "Documentazione"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:227
+msgid "Enti Tutela / Vincoli"
+msgstr "Enti Tutela / Vincoli"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:231
+msgid "Indagini Preliminari"
+msgstr "Indagini Preliminari"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:235
+msgid "Periodo I"
+msgstr "Periodo I"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:239
+msgid "Datazione I"
+msgstr "Datazione I"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:243
+msgid "Interpretazione I"
+msgstr "Interpretazione I"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:247
+msgid "Periodo II"
+msgstr "Periodo II"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:251
+msgid "Datazione II"
+msgstr "Datazione II"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:255
+msgid "Interpretazione II"
+msgstr "Interpretazione II"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:264
+msgid "Potential Score"
+msgstr "Punteggio Potenziale"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:268
+msgid "Risk Score"
+msgstr "Punteggio Rischio"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:272
+msgid "Analysis Date"
+msgstr "Data Analisi"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:276
+msgid "Analysis Method"
+msgstr "Metodo Analisi"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:280
+msgid "Potential Factors"
+msgstr "Fattori di Potenziale"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:284
+msgid "Risk Factors"
+msgstr "Fattori di Rischio"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:293
+msgid "UT Media"
+msgstr "Media UT"
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:29
+msgid "Search by project, ut_letterale, def_ut, localita..."
+msgstr "Cerca per progetto, ut_letterale, def_ut, localita..."
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:33
+msgid "All projects"
+msgstr "Tutti i progetti"
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:54
+msgid "Project"
+msgstr "Progetto"
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:57
+msgid "Def. UT"
+msgstr "Def. UT"
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:77
+msgid "Delete this UT record?"
+msgstr "Eliminare questo record UT?"
+
+#: pyarchinit_mini/web_interface/templates/ut/list.html:110
+msgid "No UT records found."
+msgstr "Nessun record UT trovato."
+
 #: pyarchinit_mini/web_interface/templates/yed_import/index.html:5
 #, fuzzy
 msgid "Import yEd GraphML"
 msgstr "Export GraphML"
 
 #: pyarchinit_mini/web_interface/templates/yed_import/index.html:7
-msgid "Upload an Extended Matrix .graphml exported from pyarchinit QGIS or this editor to populate the site / US / periodizzazione tables. Preview before apply."
-msgstr "Carica un Extended Matrix .graphml esportato da pyarchinit QGIS o da questo editor per popolare le tabelle site / US / periodizzazione. Anteprima prima di applicare."
+msgid ""
+"Upload an Extended Matrix .graphml exported from pyarchinit QGIS or this "
+"editor to populate the site / US / periodizzazione tables. Preview before"
+" apply."
+msgstr ""
+"Carica un Extended Matrix .graphml esportato da pyarchinit QGIS o da "
+"questo editor per popolare le tabelle site / US / periodizzazione. "
+"Anteprima prima di applicare."
 
 #: pyarchinit_mini/web_interface/templates/yed_import/index.html:12
 #, fuzzy
@@ -7001,843 +8201,6 @@ msgstr "Datazione"
 #: pyarchinit_mini/web_interface/templates/yed_import/result.html:23
 msgid "Import another file"
 msgstr "Importa un altro file"
-
-#: pyarchinit_mini/web_interface/templates/base.html:174
-#: pyarchinit_mini/web_interface/templates/dashboard.html:70
-msgid "Tombe"
-msgstr "Tombe"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:2
-msgid "Tomba"
-msgstr "Tomba"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:7
-msgid "Edit Tomba"
-msgstr "Modifica Tomba"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:7
-#: pyarchinit_mini/web_interface/templates/tomba/list.html:9
-msgid "New Tomba"
-msgstr "Nuova Tomba"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:17
-msgid "Rito e Sepoltura"
-msgstr "Rito e Sepoltura"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:18
-msgid "Corredo"
-msgstr "Corredo"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:37
-#: pyarchinit_mini/web_interface/templates/tomba/list.html:45
-msgid "Nr. Scheda TAF"
-msgstr "Nr. Scheda TAF"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:41
-msgid "Sigla Struttura"
-msgstr "Sigla Struttura"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:45
-msgid "Nr. Struttura"
-msgstr "Nr. Struttura"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:49
-msgid "Nr. Individuo"
-msgstr "Nr. Individuo"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:58
-#: pyarchinit_mini/web_interface/templates/tomba/list.html:44
-msgid "Rito"
-msgstr "Rito"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:63
-#: pyarchinit_mini/web_interface/templates/tomba/list.html:46
-msgid "Tipo Sepoltura"
-msgstr "Tipo Sepoltura"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:68
-msgid "Tipo Deposizione"
-msgstr "Tipo Deposizione"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:73
-msgid "Copertura Tipo"
-msgstr "Copertura Tipo"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:78
-msgid "Tipo Contenitore Resti"
-msgstr "Tipo Contenitore Resti"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:83
-msgid "Stato di Conservazione"
-msgstr "Stato di Conservazione"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:88
-msgid "Segnacoli"
-msgstr "Segnacoli"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:92
-msgid "Canale Libatorio (Sì/No)"
-msgstr "Canale Libatorio (Sì/No)"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:96
-msgid "Oggetti Rinvenuti Esterno"
-msgstr "Oggetti Rinvenuti Esterno"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:100
-msgid "Descrizione TAF"
-msgstr "Descrizione TAF"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:104
-msgid "Interpretazione TAF"
-msgstr "Interpretazione TAF"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:113
-msgid "Corredo Presenza"
-msgstr "Corredo Presenza"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:118
-msgid "Corredo Tipo"
-msgstr "Corredo Tipo"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:122
-msgid "Corredo Descrizione"
-msgstr "Corredo Descrizione"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:131
-msgid "Periodo Iniziale"
-msgstr "Periodo Iniziale"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:135
-msgid "Fase Iniziale"
-msgstr "Fase Iniziale"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:139
-msgid "Periodo Finale"
-msgstr "Periodo Finale"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:143
-msgid "Fase Finale"
-msgstr "Fase Finale"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:147
-msgid "Datazione Estesa"
-msgstr "Datazione Estesa"
-
-#: pyarchinit_mini/web_interface/templates/tomba/form.html:156
-msgid "Tomba Media"
-msgstr "Media Tomba"
-
-#: pyarchinit_mini/web_interface/templates/tomba/list.html:2
-#: pyarchinit_mini/web_interface/templates/tomba/list.html:6
-msgid "Tombe - Sepolture"
-msgstr "Tombe - Sepolture"
-
-#: pyarchinit_mini/web_interface/templates/tomba/list.html:18
-msgid "Search by site, rito, struttura, individuo..."
-msgstr "Cerca per sito, rito, struttura, individuo..."
-
-#: pyarchinit_mini/web_interface/templates/tomba/list.html:64
-msgid "Delete this Tomba record?"
-msgstr "Eliminare questo record Tomba?"
-
-#: pyarchinit_mini/web_interface/templates/tomba/list.html:97
-msgid "No Tomba records found."
-msgstr "Nessun record Tomba trovato."
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:2
-msgid "Struttura"
-msgstr "Struttura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:7
-msgid "Edit Struttura"
-msgstr "Modifica Struttura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:7
-#: pyarchinit_mini/web_interface/templates/struttura/list.html:9
-msgid "New Struttura"
-msgstr "Nuova Struttura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:19
-msgid "Sotto-tabelle"
-msgstr "Sotto-tabelle"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:18
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:118
-msgid "Articolazione"
-msgstr "Articolazione"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:37
-msgid "Numero Struttura"
-msgstr "Numero Struttura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:41
-#: pyarchinit_mini/web_interface/templates/struttura/list.html:45
-msgid "Categoria Struttura"
-msgstr "Categoria Struttura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:46
-#: pyarchinit_mini/web_interface/templates/struttura/list.html:46
-msgid "Tipologia Struttura"
-msgstr "Tipologia Struttura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:51
-msgid "Definizione Struttura"
-msgstr "Definizione Struttura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:55
-msgid "Data Compilazione"
-msgstr "Data Compilazione"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:59
-msgid "Nome Compilatore"
-msgstr "Nome Compilatore"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:72
-msgid "Interpretazione"
-msgstr "Interpretazione"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:76
-msgid "Quota"
-msgstr "Quota"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:84
-msgid "Relazione Topografica"
-msgstr "Relazione Topografica"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:88
-msgid "Materiali Impiegati"
-msgstr "Materiali Impiegati"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:92
-msgid "Elementi Strutturali"
-msgstr "Elementi Strutturali"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:96
-msgid "Rapporti Struttura"
-msgstr "Rapporti Struttura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:100
-msgid "Misure Struttura"
-msgstr "Misure Struttura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:109
-msgid "Prospetto Ingresso"
-msgstr "Prospetto Ingresso"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:113
-msgid "Orientamento Ingresso"
-msgstr "Orientamento Ingresso"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:123
-msgid "N. Ambienti"
-msgstr "N. Ambienti"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:127
-msgid "Sviluppo Planimetrico"
-msgstr "Sviluppo Planimetrico"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:131
-msgid "Orientamento Ambienti"
-msgstr "Orientamento Ambienti"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:135
-msgid "Elementi Costitutivi"
-msgstr "Elementi Costitutivi"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:139
-msgid "Motivo Decorativo"
-msgstr "Motivo Decorativo"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:143
-msgid "Potenzialità Archeologica"
-msgstr "Potenzialità Archeologica"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:147
-msgid "Manufatti"
-msgstr "Manufatti"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:151
-msgid "Elementi Datanti"
-msgstr "Elementi Datanti"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:155
-msgid "Fasi Funzionali"
-msgstr "Fasi Funzionali"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:154
-msgid "Materiali"
-msgstr "Materiali"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:165
-msgid "Tipologia elemento"
-msgstr "Tipologia elemento"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:165
-msgid "Quantità"
-msgstr "Quantità"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:176
-msgid "Tipo di rapporto"
-msgstr "Tipo di rapporto"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:176
-msgid "Sigla"
-msgstr "Sigla"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:176
-msgid "Numero"
-msgstr "Numero"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
-msgid "Elementi architettonici"
-msgstr "Elementi architettonici"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
-msgid "Tipo misura"
-msgstr "Tipo misura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
-msgid "Unità di misura"
-msgstr "Unità di misura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
-msgid "Valore"
-msgstr "Valore"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:200
-msgid "Stato"
-msgstr "Stato"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:200
-msgid "Grado"
-msgstr "Grado"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:200
-msgid "Fattori agenti"
-msgstr "Fattori agenti"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:211
-msgid "Prospetto"
-msgstr "Prospetto"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:222
-msgid "Orientamento"
-msgstr "Orientamento"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:232
-msgid "Elemento"
-msgstr "Elemento"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:243
-msgid "Manufatto"
-msgstr "Manufatto"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:254
-msgid "Ambiente"
-msgstr "Ambiente"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:254
-msgid "Definizione e fasi funzionali"
-msgstr "Definizione e fasi funzionali"
-
-#: pyarchinit_mini/web_interface/templates/struttura/form.html:189
-msgid "Struttura Media"
-msgstr "Media Struttura"
-
-#: pyarchinit_mini/web_interface/templates/struttura/list.html:18
-msgid "Search by site, sigla, categoria, tipologia..."
-msgstr "Cerca per sito, sigla, categoria, tipologia..."
-
-#: pyarchinit_mini/web_interface/templates/struttura/list.html:64
-msgid "Delete this Struttura record?"
-msgstr "Eliminare questo record Struttura?"
-
-#: pyarchinit_mini/web_interface/templates/struttura/list.html:97
-msgid "No Struttura records found."
-msgstr "Nessun record Struttura trovato."
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:7
-msgid "Edit Fauna"
-msgstr "Modifica Fauna"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:7
-#: pyarchinit_mini/web_interface/templates/fauna/list.html:9
-msgid "New Fauna"
-msgstr "Nuova Fauna"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:18
-msgid "Fauna Data"
-msgstr "Dati Fauna"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:19
-msgid "Combustion & Conservation"
-msgstr "Combustione e Conservazione"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:20
-msgid "Notes"
-msgstr "Note"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:35
-msgid "Saggio"
-msgstr "Saggio"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:43
-msgid "ID US"
-msgstr "ID US"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:47
-msgid "Datazione US"
-msgstr "Datazione US"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:55
-msgid "Responsabile Scheda"
-msgstr "Responsabile Scheda"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:59
-msgid "Documentazione Fotografica"
-msgstr "Documentazione Fotografica"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:68
-msgid "Metodologia Recupero"
-msgstr "Metodologia Recupero"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:73
-msgid "Contesto"
-msgstr "Contesto"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:78
-msgid "Deposizione"
-msgstr "Deposizione"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:83
-msgid "Descrizione Contesto"
-msgstr "Descrizione Contesto"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:87
-msgid "Resti in Connessione Anatomica"
-msgstr "Resti in Connessione Anatomica"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:91
-msgid "Tipologia Accumulo"
-msgstr "Tipologia Accumulo"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:95
-msgid "Note Terreno / Giacitura"
-msgstr "Note Terreno / Giacitura"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:99
-msgid "Affidabilità Stratigrafica"
-msgstr "Affidabilità Stratigrafica"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:108
-msgid "Numero Stimato Resti"
-msgstr "Numero Stimato Resti"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:112
-msgid "Numero Minimo Individui"
-msgstr "Numero Minimo Individui"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:116
-msgid "Stato Frammentazione"
-msgstr "Stato Frammentazione"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:125
-msgid "Specie / PSI"
-msgstr "Specie / PSI"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:130
-msgid "PSI (Parti Scheletriche)"
-msgstr "PSI (Parti Scheletriche)"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:137
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:160
-msgid "Aggiungi riga"
-msgstr "Aggiungi riga"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:144
-msgid "Misure Ossa"
-msgstr "Misure Ossa"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:148
-msgid "Elemento Anatomico"
-msgstr "Elemento Anatomico"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:150
-msgid "GL (mm)"
-msgstr "GL (mm)"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:151
-msgid "GB (mm)"
-msgstr "GB (mm)"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:152
-msgid "Bp (mm)"
-msgstr "Bp (mm)"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:153
-msgid "Bd (mm)"
-msgstr "Bd (mm)"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:120
-#: pyarchinit_mini/web_interface/templates/fauna/list.html:45
-msgid "Specie"
-msgstr "Specie"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:125
-msgid "Parti Scheletriche"
-msgstr "Parti Scheletriche"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:130
-msgid "Specie (PSI, JSON)"
-msgstr "Specie (PSI, JSON)"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:134
-msgid "Misure Ossa (JSON)"
-msgstr "Misure Ossa (JSON)"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:143
-msgid "Tracce Combustione"
-msgstr "Tracce Combustione"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:147
-msgid "Combustione Altri Materiali US"
-msgstr "Combustione Altri Materiali US"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:149
-msgid "— —"
-msgstr "— —"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:150
-msgid "Sì"
-msgstr "Sì"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:155
-msgid "Tipo Combustione"
-msgstr "Tipo Combustione"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:159
-msgid "Segni Tafonomici Evidenti"
-msgstr "Segni Tafonomici Evidenti"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:163
-msgid "Caratterizzazione Segni Tafonomici"
-msgstr "Caratterizzazione Segni Tafonomici"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:172
-msgid "Alterazioni Morfologiche"
-msgstr "Alterazioni Morfologiche"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:181
-msgid "Campionature Effettuate"
-msgstr "Campionature Effettuate"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:185
-msgid "Classi Reperti in Associazione"
-msgstr "Classi Reperti in Associazione"
-
-#: pyarchinit_mini/web_interface/templates/fauna/form.html:189
-msgid "Osservazioni"
-msgstr "Osservazioni"
-
-#: pyarchinit_mini/web_interface/templates/fauna/list.html:18
-msgid "Search by site, area, us, saggio, specie, contesto..."
-msgstr "Cerca per sito, area, us, saggio, specie, contesto..."
-
-#: pyarchinit_mini/web_interface/templates/fauna/list.html:46
-msgid "N. Minimo Individui"
-msgstr "N. Minimo Individui"
-
-#: pyarchinit_mini/web_interface/templates/fauna/list.html:64
-msgid "Delete this Fauna record?"
-msgstr "Eliminare questo record Fauna?"
-
-#: pyarchinit_mini/web_interface/templates/fauna/list.html:97
-msgid "No Fauna records found."
-msgstr "Nessun record Fauna trovato."
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:7
-msgid "Edit UT"
-msgstr "Modifica UT"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:7
-#: pyarchinit_mini/web_interface/templates/ut/list.html:9
-msgid "New UT"
-msgstr "Nuova UT"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:16
-msgid "Anagrafica"
-msgstr "Anagrafica"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:17
-msgid "Ubicazione"
-msgstr "Ubicazione"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:18
-msgid "Survey"
-msgstr "Ricognizione"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:19
-msgid "Analisi"
-msgstr "Analisi"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:29
-msgid "Progetto"
-msgstr "Progetto"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:33
-#: pyarchinit_mini/web_interface/templates/ut/list.html:44
-msgid "Nr. UT"
-msgstr "Nr. UT"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:37
-#: pyarchinit_mini/web_interface/templates/ut/list.html:45
-msgid "UT Letterale"
-msgstr "UT Letterale"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:41
-msgid "Definizione UT"
-msgstr "Definizione UT"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:46
-msgid "Interpretazione UT"
-msgstr "Interpretazione UT"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:50
-msgid "Descrizione UT"
-msgstr "Descrizione UT"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:59
-msgid "Nazione"
-msgstr "Nazione"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:63
-msgid "Regione"
-msgstr "Regione"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:67
-msgid "Provincia"
-msgstr "Provincia"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:71
-msgid "Comune"
-msgstr "Comune"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:75
-msgid "Frazione"
-msgstr "Frazione"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:79
-#: pyarchinit_mini/web_interface/templates/ut/list.html:47
-msgid "Localita"
-msgstr "Localita"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:83
-msgid "Indirizzo"
-msgstr "Indirizzo"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:87
-msgid "Nr. Civico"
-msgstr "Nr. Civico"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:91
-msgid "Carta Topo IGM"
-msgstr "Carta Topo IGM"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:95
-msgid "Carta CTR"
-msgstr "Carta CTR"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:99
-msgid "Coordinate Geografiche"
-msgstr "Coordinate Geografiche"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:103
-msgid "Coordinate Piane"
-msgstr "Coordinate Piane"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:111
-msgid "Geometria"
-msgstr "Geometria"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:115
-msgid "Foglio Catastale"
-msgstr "Foglio Catastale"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:124
-msgid "Visibility %"
-msgstr "Visibilità %"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:128
-msgid "Vegetation Coverage"
-msgstr "Copertura Vegetazione"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:132
-msgid "GPS Method"
-msgstr "Metodo GPS"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:137
-msgid "Coordinate Precision"
-msgstr "Precisione Coordinate"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:141
-msgid "Survey Type"
-msgstr "Tipo Ricognizione"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:146
-msgid "Surface Condition"
-msgstr "Condizione Superficie"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:151
-msgid "Accessibility"
-msgstr "Accessibilità"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:156
-msgid "Photo Documentation"
-msgstr "Documentazione Fotografica"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:160
-msgid "Weather Conditions"
-msgstr "Condizioni Meteo"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:164
-msgid "Andamento Terreno / Pendenza"
-msgstr "Andamento Terreno / Pendenza"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:168
-msgid "Utilizzo Suolo / Vegetazione"
-msgstr "Utilizzo Suolo / Vegetazione"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:172
-msgid "Team Members"
-msgstr "Componenti Équipe"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:176
-msgid "Metodo Rilievo e Ricognizione"
-msgstr "Metodo Rilievo e Ricognizione"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:180
-msgid "Descrizione Empirica Suolo"
-msgstr "Descrizione Empirica Suolo"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:184
-msgid "Descrizione Luogo"
-msgstr "Descrizione Luogo"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:192
-msgid "Ora / Meteo"
-msgstr "Ora / Meteo"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:200
-msgid "Dimensioni UT"
-msgstr "Dimensioni UT"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:204
-msgid "Reperti per mq"
-msgstr "Reperti per mq"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:208
-msgid "Reperti Datanti"
-msgstr "Reperti Datanti"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:212
-msgid "Bibliografia"
-msgstr "Bibliografia"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:216
-msgid "Documentazione"
-msgstr "Documentazione"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:220
-msgid "Enti Tutela / Vincoli"
-msgstr "Enti Tutela / Vincoli"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:224
-msgid "Indagini Preliminari"
-msgstr "Indagini Preliminari"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:228
-msgid "Periodo I"
-msgstr "Periodo I"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:232
-msgid "Datazione I"
-msgstr "Datazione I"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:236
-msgid "Interpretazione I"
-msgstr "Interpretazione I"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:240
-msgid "Periodo II"
-msgstr "Periodo II"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:244
-msgid "Datazione II"
-msgstr "Datazione II"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:248
-msgid "Interpretazione II"
-msgstr "Interpretazione II"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:257
-msgid "Potential Score"
-msgstr "Punteggio Potenziale"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:261
-msgid "Risk Score"
-msgstr "Punteggio Rischio"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:265
-msgid "Analysis Date"
-msgstr "Data Analisi"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:269
-msgid "Analysis Method"
-msgstr "Metodo Analisi"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:273
-msgid "Potential Factors"
-msgstr "Fattori di Potenziale"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:277
-msgid "Risk Factors"
-msgstr "Fattori di Rischio"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:286
-msgid "UT Media"
-msgstr "Media UT"
-
-#: pyarchinit_mini/web_interface/templates/ut/list.html:18
-msgid "Search by project, ut_letterale, def_ut, localita..."
-msgstr "Cerca per progetto, ut_letterale, def_ut, localita..."
-
-#: pyarchinit_mini/web_interface/templates/ut/list.html:22
-msgid "All projects"
-msgstr "Tutti i progetti"
-
-#: pyarchinit_mini/web_interface/templates/ut/list.html:43
-msgid "Project"
-msgstr "Progetto"
-
-#: pyarchinit_mini/web_interface/templates/ut/list.html:46
-msgid "Def. UT"
-msgstr "Def. UT"
-
-#: pyarchinit_mini/web_interface/templates/ut/list.html:66
-msgid "Delete this UT record?"
-msgstr "Eliminare questo record UT?"
-
-#: pyarchinit_mini/web_interface/templates/ut/list.html:99
-msgid "No UT records found."
-msgstr "Nessun record UT trovato."
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:188
-msgid "Data rilievo"
-msgstr "Data rilievo"
-
-#: pyarchinit_mini/web_interface/templates/ut/form.html:196
-msgid "Responsabile rilievo"
-msgstr "Responsabile rilievo"
 
 #~ msgid "OK"
 #~ msgstr "OK"
@@ -8268,7 +8631,9 @@ msgstr "Responsabile rilievo"
 #~ msgstr "Visualizzatore Matplotlib (Semplice)"
 
 #~ msgid "For advanced visualization with groupings and desktop GUI style,"
-#~ msgstr "Per una visualizzazione avanzata con raggruppamenti e stile desktop GUI,"
+#~ msgstr ""
+#~ "Per una visualizzazione avanzata con "
+#~ "raggruppamenti e stile desktop GUI,"
 
 #~ msgid "switch to Graphviz"
 #~ msgstr "passa a Graphviz"
@@ -9139,4 +9504,16 @@ msgstr "Responsabile rilievo"
 
 #~ msgid "Relationship types: covers, cuts, leans on, fills, equal to, bonds to"
 #~ msgstr "Relationship types: covers, cuts, leans on, fills, equal to, bonds to"
+
+#~ msgid "Primary"
+#~ msgstr "Principale"
+
+#~ msgid "Parti Scheletriche"
+#~ msgstr "Parti Scheletriche"
+
+#~ msgid "Specie (PSI, JSON)"
+#~ msgstr "Specie (PSI, JSON)"
+
+#~ msgid "Misure Ossa (JSON)"
+#~ msgstr "Misure Ossa (JSON)"
 

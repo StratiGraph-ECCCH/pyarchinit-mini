@@ -142,6 +142,25 @@ def flask_app(db_manager, media_service, struttura_service, user_service):
         login_user(AuthUser(user_dict))
         return ""
 
+    # Stub SP4 export endpoints (app.py "SP4 export helpers" block) — only
+    # needed here so struttura/list.html's export button url_for() calls
+    # resolve; the export behavior itself is covered by
+    # tests/struttura/test_struttura_export_routes.py.
+    @app.route('/export/struttura/excel')
+    @login_required
+    def export_struttura_excel():
+        return ""
+
+    @app.route('/export/struttura/csv')
+    @login_required
+    def export_struttura_csv():
+        return ""
+
+    @app.route('/export/struttura/pdf')
+    @login_required
+    def export_struttura_pdf():
+        return ""
+
     def _media_gallery(entity_key, id_entity):
         items = media_service.get_media_for_entity(entity_key, id_entity)
         return [{

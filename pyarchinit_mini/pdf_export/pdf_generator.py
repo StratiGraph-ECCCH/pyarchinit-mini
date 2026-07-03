@@ -1039,15 +1039,135 @@ class PDFGenerator:
             
         return relationships
     
-    def generate_inventario_pdf(self, site_name: str, inventario_list: List[Dict[str, Any]], 
+    def generate_inventario_pdf(self, site_name: str, inventario_list: List[Dict[str, Any]],
                                output_path: str, logo_path: str = None) -> str:
         """Generate Inventario (Finds) PDF report using authentic PyArchInit template"""
-        
+
         from .pyarchinit_finds_template import PyArchInitFindsTemplate
-        
+
         # Use the authentic PyArchInit finds template (single_Finds_pdf_sheet style)
         template = PyArchInitFindsTemplate()
         return template.generate_finds_sheets(inventario_list, output_path, site_name, logo_path)
+
+    # ------------------------------------------------------------------
+    # Generic records PDF (SP4 export: tomba/struttura/fauna/ut, etc.)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _safe_cell_text(value: Any) -> str:
+        """Stringify a cell value defensively and escape it for reportlab's
+        Paragraph mini-XML markup (so raw '&'/'<'/'>' in the data — e.g. in
+        free-text description fields — can't break layout)."""
+        try:
+            text = str(value)
+        except Exception:
+            text = repr(value)
+        return (text.replace('&', '&amp;')
+                    .replace('<', '&lt;')
+                    .replace('>', '&gt;'))
+
+    def generate_records_pdf(self, title: str, rows: List[Dict[str, Any]],
+                            output_path: str,
+                            field_labels: Optional[Dict[str, str]] = None) -> str:
+        """Generate a generic, per-record PDF for a list of flat entity
+        records (tomba/struttura/fauna/ut and similar).
+
+        Renders a document title, then for EACH record: a small heading line
+        (the record's id column plus a key identifying field, when present)
+        followed by a 2-column "field | value" table, skipping empty/None
+        values. This is a per-record vertical layout — not one giant wide
+        table — so it stays readable even for records with many columns
+        (e.g. UT's ~58 fields): the field/value table simply flows onto
+        further pages for long records instead of being squeezed sideways.
+
+        Args:
+            title: Document title (e.g. the entity name, "Tomba").
+            rows: List of flat dict records. Any JSON/Python-repr columns
+                must already be flattened to readable strings by the caller
+                (see the struttura/fauna flatten helpers in app.py) —
+                this method just renders whatever it's given.
+            output_path: Path to write the PDF to.
+            field_labels: Optional {column_name: human_label} map. Columns
+                not present fall back to the raw column name.
+
+        Returns:
+            output_path.
+        """
+        field_labels = field_labels or {}
+
+        doc = SimpleDocTemplate(
+            output_path, pagesize=A4,
+            leftMargin=2 * cm, rightMargin=2 * cm,
+            topMargin=1.5 * cm, bottomMargin=1.5 * cm,
+        )
+
+        styles = self.styles
+        story: List = []
+        story.append(Paragraph(self._safe_cell_text(title or ''), styles['CustomTitle']))
+        story.append(Paragraph(
+            f"{_('Total records')}: {len(rows)} — {_('Generated')}: "
+            f"{datetime.now().strftime('%Y-%m-%d %H:%M')}",
+            styles['Normal']
+        ))
+        story.append(Spacer(1, 0.3 * inch))
+
+        if not rows:
+            story.append(Paragraph(_('No records to display.'), styles['Normal']))
+            doc.build(story)
+            return output_path
+
+        value_style = ParagraphStyle('RecordValue', parent=styles['Normal'],
+                                     fontSize=8, leading=10)
+        label_style = ParagraphStyle('RecordLabel', parent=styles['Normal'],
+                                     fontSize=8, leading=10, fontName='Helvetica-Bold')
+
+        for idx, row in enumerate(rows):
+            if not isinstance(row, dict):
+                continue
+
+            # Heading: id_<entity> column (if any) + a key identifying field.
+            id_col = next((k for k in row.keys() if k.startswith('id_') and row.get(k) is not None), None)
+            key_col = next((c for c in ('sito', 'progetto', 'nome', 'titolo', 'sigla_struttura')
+                            if c != id_col and row.get(c)), None)
+            heading_parts = []
+            if id_col:
+                heading_parts.append(f"{field_labels.get(id_col, id_col)}: {row.get(id_col)}")
+            if key_col:
+                heading_parts.append(f"{field_labels.get(key_col, key_col)}: {row.get(key_col)}")
+            heading = ' — '.join(heading_parts) if heading_parts else f"{_('Record')} {idx + 1}"
+
+            story.append(Paragraph(self._safe_cell_text(heading), styles['SectionHeader']))
+
+            table_rows = []
+            for col, val in row.items():
+                if val is None:
+                    continue
+                if isinstance(val, str) and val.strip() == '':
+                    continue
+                label = field_labels.get(col, col)
+                table_rows.append([
+                    Paragraph(self._safe_cell_text(label), label_style),
+                    Paragraph(self._safe_cell_text(val), value_style),
+                ])
+
+            if table_rows:
+                tbl = Table(table_rows, colWidths=[4.5 * cm, 12.5 * cm], repeatRows=0)
+                tbl.setStyle(TableStyle([
+                    ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+                    ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                    ('BACKGROUND', (0, 0), (0, -1), colors.Color(0.93, 0.95, 1.0)),
+                    ('FONTSIZE', (0, 0), (-1, -1), 8),
+                    ('TOPPADDING', (0, 0), (-1, -1), 3),
+                    ('BOTTOMPADDING', (0, 0), (-1, -1), 3),
+                ]))
+                story.append(tbl)
+            else:
+                story.append(Paragraph(_('(no data)'), styles['Normal']))
+
+            story.append(Spacer(1, 0.25 * inch))
+
+        doc.build(story)
+        return output_path
 
     # ------------------------------------------------------------------
     # Site Dossier

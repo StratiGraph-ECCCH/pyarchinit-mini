@@ -143,6 +143,25 @@ def flask_app(db_manager, media_service, tomba_service, user_service):
         login_user(AuthUser(user_dict))
         return ""
 
+    # Stub SP4 export endpoints (app.py "SP4 export helpers" block) — only
+    # needed here so tomba/list.html's export button url_for() calls
+    # resolve; the export behavior itself is covered by
+    # tests/tomba/test_tomba_export_routes.py.
+    @app.route('/export/tomba/excel')
+    @login_required
+    def export_tomba_excel():
+        return ""
+
+    @app.route('/export/tomba/csv')
+    @login_required
+    def export_tomba_csv():
+        return ""
+
+    @app.route('/export/tomba/pdf')
+    @login_required
+    def export_tomba_pdf():
+        return ""
+
     def _media_gallery(entity_key, id_entity):
         items = media_service.get_media_for_entity(entity_key, id_entity)
         return [{

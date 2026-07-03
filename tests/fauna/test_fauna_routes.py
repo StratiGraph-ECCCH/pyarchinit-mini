@@ -111,6 +111,25 @@ def flask_app(db_manager, fauna_service, user_service):
         login_user(AuthUser(user_dict))
         return ""
 
+    # Stub SP4 export endpoints (app.py "SP4 export helpers" block) — only
+    # needed here so fauna/list.html's export button url_for() calls
+    # resolve; the export behavior itself is covered by
+    # tests/fauna/test_fauna_export_routes.py.
+    @app.route('/export/fauna/excel')
+    @login_required
+    def export_fauna_excel():
+        return ""
+
+    @app.route('/export/fauna/csv')
+    @login_required
+    def export_fauna_csv():
+        return ""
+
+    @app.route('/export/fauna/pdf')
+    @login_required
+    def export_fauna_pdf():
+        return ""
+
     # ---- /fauna (mirrors app.py's fauna_list) ----
     @app.route('/fauna')
     @login_required
