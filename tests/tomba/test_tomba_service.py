@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from pyarchinit_mini.models.base import Base
 from pyarchinit_mini.models.tomba import Tomba  # noqa
+from pyarchinit_mini.models.thesaurus import ThesaurusSigle
 from pyarchinit_mini.services.tomba_service import TombaService
 
 class _Conn:
@@ -28,6 +29,37 @@ def test_crud(svc):
 
 def test_get_thesaurus_values_unknown_field_empty(svc):
     assert svc.get_thesaurus_values("nope")==[]
+
+
+def test_get_thesaurus_values_reads_plugin_shared_pyarchinit_thesaurus_sigle(svc):
+    """Mini's thesaurus combos must read the SAME pyarchinit_thesaurus_sigle
+    source the classic plugin fills, so vocab is shared on the festos DB."""
+    session = svc.db_manager.connection.get_session()
+    session.add(ThesaurusSigle(
+        nome_tabella="tomba_table", tipologia_sigla="7.1",
+        sigla="INU", sigla_estesa="Inumazione", lingua="it",
+    ))
+    session.add(ThesaurusSigle(
+        nome_tabella="tomba_table", tipologia_sigla="7.1",
+        sigla="CRM", sigla_estesa="Cremazione", lingua="it",
+    ))
+    session.commit()
+    session.close()
+
+    values = svc.get_thesaurus_values("rito")
+    assert {"value": "Inumazione", "code": "INU"} in values
+    assert {"value": "Cremazione", "code": "CRM"} in values
+
+
+def test_get_thesaurus_values_falls_back_to_seed_when_db_empty(svc):
+    """A THESAURUS_MAP field with no rows in either pyarchinit_thesaurus_sigle
+    or thesaurus_field must still return the in-memory THESAURUS_MAPPINGS seed."""
+    values = svc.get_thesaurus_values("corredo_presenza")
+    assert values == [{"value": v, "code": ""} for v in ["Sì", "No", "Parziale"]]
+
+
+def test_get_thesaurus_values_truly_unknown_field_returns_empty(svc):
+    assert svc.get_thesaurus_values("this_field_does_not_exist_anywhere") == []
 
 def test_search_matches_text_fields(svc):
     svc.create_tomba({"sito": "Volterra", "rito": "inumazione", "sigla_struttura": "TB"})

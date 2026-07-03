@@ -152,28 +152,58 @@ class FaunaService:
     # ---------------- Thesaurus integration ----------------
 
     THESAURUS_TABLE = 'fauna_table'
+    THESAURUS_MAP = {
+        'contesto': '13.1', 'metodologia_recupero': '13.2', 'tipologia_accumulo': '13.3',
+        'deposizione': '13.4', 'stato_frammentazione': '13.5', 'stato_conservazione': '13.6',
+        'affidabilita_stratigrafica': '13.7', 'tracce_combustione': '13.8', 'tipo_combustione': '13.9',
+        'resti_connessione_anatomica': '13.10', 'specie': '13.11', 'parti_scheletriche': '13.12',
+        'segni_tafonomici_evidenti': '13.14', 'caratterizzazione_segni_tafonomici': '13.15',
+        'numero_stimato_resti': '13.16',
+    }
 
     def get_thesaurus_values(self, field: str) -> List[Dict[str, str]]:
         """Return thesaurus values for a Fauna field as [{value, code}, ...].
-        Queries Mini's thesaurus_field table keyed by field_name. Returns []
-        for unknown/unmapped fields or on error."""
+        Tries PyArchInit's native pyarchinit_thesaurus_sigle table first (the
+        vocab shared with the classic plugin), falls back to Mini's
+        thesaurus_field, then to the in-memory THESAURUS_MAPPINGS seed.
+        Returns [] for unknown fields or on error."""
         from sqlalchemy import text
 
         results = []
+        sigla = self.THESAURUS_MAP.get(field)
         try:
             with self.db_manager.connection.get_session() as session:
-                try:
-                    rows = session.execute(text(
-                        "SELECT value, label FROM thesaurus_field "
-                        "WHERE table_name = :t AND field_name = :f "
-                        "ORDER BY value"
-                    ), {'t': self.THESAURUS_TABLE, 'f': field}).fetchall()
-                    for r in rows:
-                        results.append({'value': r[0], 'code': r[1] or ''})
-                except Exception:
-                    pass
+                if sigla:
+                    try:
+                        rows = session.execute(text(
+                            "SELECT sigla, sigla_estesa FROM pyarchinit_thesaurus_sigle "
+                            "WHERE nome_tabella = :t AND tipologia_sigla = :s "
+                            "ORDER BY sigla_estesa"
+                        ), {'t': self.THESAURUS_TABLE, 's': sigla}).fetchall()
+                        for r in rows:
+                            results.append({'value': r.sigla_estesa or r.sigla, 'code': r.sigla})
+                    except Exception:
+                        pass
+
+                if not results:
+                    try:
+                        rows = session.execute(text(
+                            "SELECT value, label FROM thesaurus_field "
+                            "WHERE table_name = :t AND field_name = :f "
+                            "ORDER BY value"
+                        ), {'t': self.THESAURUS_TABLE, 'f': field}).fetchall()
+                        for r in rows:
+                            results.append({'value': r.value, 'code': r.label or ''})
+                    except Exception:
+                        pass
         except Exception as e:
             logger.warning(f"get_thesaurus_values({field}): {e}")
+
+        if not results:
+            from pyarchinit_mini.models.thesaurus import THESAURUS_MAPPINGS
+            for v in THESAURUS_MAPPINGS.get(self.THESAURUS_TABLE, {}).get(field, []):
+                results.append({'value': v, 'code': ''})
+
         return results
 
     def get_distinct_sites(self) -> List[str]:

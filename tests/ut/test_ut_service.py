@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from pyarchinit_mini.models.base import Base
 from pyarchinit_mini.models.ut import Ut  # noqa
+from pyarchinit_mini.models.thesaurus import ThesaurusSigle
 from pyarchinit_mini.services.ut_service import UtService
 
 class _Conn:
@@ -41,6 +42,34 @@ def test_list_ut_filters_by_progetto(svc):
 
 def test_get_thesaurus_values_unknown_field_empty(svc):
     assert svc.get_thesaurus_values("nope")==[]
+
+
+def test_get_thesaurus_values_reads_plugin_shared_pyarchinit_thesaurus_sigle(svc):
+    """Mini's thesaurus combos must read the SAME pyarchinit_thesaurus_sigle
+    source the classic plugin fills, so vocab is shared on the festos DB."""
+    session = svc.db_manager.connection.get_session()
+    session.add(ThesaurusSigle(
+        nome_tabella="ut_table", tipologia_sigla="12.1",
+        sigla="SIST", sigla_estesa="Sistematica", lingua="it",
+    ))
+    session.commit()
+    session.close()
+
+    values = svc.get_thesaurus_values("survey_type")
+    assert {"value": "Sistematica", "code": "SIST"} in values
+
+
+def test_get_thesaurus_values_falls_back_to_seed_when_db_empty(svc):
+    """A THESAURUS_MAP field with no rows in either pyarchinit_thesaurus_sigle
+    or thesaurus_field must still return the in-memory THESAURUS_MAPPINGS seed."""
+    from pyarchinit_mini.models.thesaurus import THESAURUS_MAPPINGS
+    values = svc.get_thesaurus_values("def_ut")
+    expected = THESAURUS_MAPPINGS["ut_table"]["def_ut"]
+    assert values == [{"value": v, "code": ""} for v in expected]
+
+
+def test_get_thesaurus_values_truly_unknown_field_returns_empty(svc):
+    assert svc.get_thesaurus_values("this_field_does_not_exist_anywhere") == []
 
 
 def test_search_matches_text_fields(svc):
