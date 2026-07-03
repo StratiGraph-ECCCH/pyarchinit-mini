@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Fauna') }} {{ fauna.id_fauna if fauna and fauna.id_fauna else _('New') }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-paw"></i>
+        {% if fauna and fauna.id_fauna %}{{ _('Edit Fauna') }} #{{ fauna.id_fauna }}{% else %}{{ _('New Fauna') }}{% endif %}
+    </h2>
+    <a href="{{ url_for('fauna_list') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> {{ _('Back') }}
+    </a>
+</div>
+
+<form method="POST">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-basic">{{ _('Identification') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-context">{{ _('Context') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-fauna">{{ _('Fauna Data') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-combustion">{{ _('Combustion & Conservation') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-notes">{{ _('Notes') }}</a></li>
+    </ul>
+    <div class="tab-content border border-top-0 p-3">
+        <!-- Identification -->
+        <div class="tab-pane fade show active" id="tab-basic">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Site') }} *</label>
+                    <input type="text" name="sito" class="form-control" value="{{ fauna.sito or '' }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Area') }}</label>
+                    <input type="text" name="area" class="form-control" value="{{ fauna.area or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Saggio') }}</label>
+                    <input type="text" name="saggio" class="form-control" value="{{ fauna.saggio or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('US') }}</label>
+                    <input type="text" name="us" class="form-control" value="{{ fauna.us or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('ID US') }}</label>
+                    <input type="number" name="id_us" class="form-control" value="{{ fauna.id_us if fauna.id_us is not none else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Datazione US') }}</label>
+                    <input type="text" name="datazione_us" class="form-control" value="{{ fauna.datazione_us or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Data Compilazione') }}</label>
+                    <input type="date" name="data_compilazione" class="form-control" value="{{ fauna.data_compilazione or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Responsabile Scheda') }}</label>
+                    <input type="text" name="responsabile_scheda" class="form-control" value="{{ fauna.responsabile_scheda or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Documentazione Fotografica') }}</label>
+                    <input type="text" name="documentazione_fotografica" class="form-control" value="{{ fauna.documentazione_fotografica or '' }}">
+                </div>
+            </div>
+        </div>
+        <!-- Context -->
+        <div class="tab-pane fade" id="tab-context">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Metodologia Recupero') }}</label>
+                    <input type="text" name="metodologia_recupero" class="form-control" value="{{ fauna.metodologia_recupero or '' }}" list="thes-metodologia_recupero">
+                    <datalist id="thes-metodologia_recupero"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Contesto') }}</label>
+                    <input type="text" name="contesto" class="form-control" value="{{ fauna.contesto or '' }}" list="thes-contesto">
+                    <datalist id="thes-contesto"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Deposizione') }}</label>
+                    <input type="text" name="deposizione" class="form-control" value="{{ fauna.deposizione or '' }}" list="thes-deposizione">
+                    <datalist id="thes-deposizione"></datalist>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">{{ _('Descrizione Contesto') }}</label>
+                    <textarea name="descrizione_contesto" class="form-control" rows="3">{{ fauna.descrizione_contesto or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Resti in Connessione Anatomica') }}</label>
+                    <input type="text" name="resti_connessione_anatomica" class="form-control" value="{{ fauna.resti_connessione_anatomica or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Tipologia Accumulo') }}</label>
+                    <input type="text" name="tipologia_accumulo" class="form-control" value="{{ fauna.tipologia_accumulo or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Note Terreno / Giacitura') }}</label>
+                    <textarea name="note_terreno_giacitura" class="form-control" rows="3">{{ fauna.note_terreno_giacitura or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Affidabilità Stratigrafica') }}</label>
+                    <input type="text" name="affidabilita_stratigrafica" class="form-control" value="{{ fauna.affidabilita_stratigrafica or '' }}">
+                </div>
+            </div>
+        </div>
+        <!-- Fauna Data -->
+        <div class="tab-pane fade" id="tab-fauna">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Numero Stimato Resti') }}</label>
+                    <input type="text" name="numero_stimato_resti" class="form-control" value="{{ fauna.numero_stimato_resti or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Numero Minimo Individui') }}</label>
+                    <input type="number" name="numero_minimo_individui" class="form-control" value="{{ fauna.numero_minimo_individui if fauna.numero_minimo_individui is not none else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Stato Frammentazione') }}</label>
+                    <input type="text" name="stato_frammentazione" class="form-control" value="{{ fauna.stato_frammentazione or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Specie') }}</label>
+                    <input type="text" name="specie" class="form-control" value="{{ fauna.specie or '' }}" list="thes-specie">
+                    <datalist id="thes-specie"></datalist>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Parti Scheletriche') }}</label>
+                    <input type="text" name="parti_scheletriche" class="form-control" value="{{ fauna.parti_scheletriche or '' }}" list="thes-parti_scheletriche">
+                    <datalist id="thes-parti_scheletriche"></datalist>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Specie (PSI, JSON)') }}</label>
+                    <textarea name="specie_psi" class="form-control" rows="4">{{ fauna.specie_psi or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Misure Ossa (JSON)') }}</label>
+                    <textarea name="misure_ossa" class="form-control" rows="4">{{ fauna.misure_ossa or '' }}</textarea>
+                </div>
+            </div>
+        </div>
+        <!-- Combustion & Conservation -->
+        <div class="tab-pane fade" id="tab-combustion">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Tracce Combustione') }}</label>
+                    <input type="text" name="tracce_combustione" class="form-control" value="{{ fauna.tracce_combustione or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Combustione Altri Materiali US') }}</label>
+                    <select name="combustione_altri_materiali_us" class="form-select">
+                        <option value="" {{ 'selected' if fauna.combustione_altri_materiali_us is none else '' }}>{{ _('— —') }}</option>
+                        <option value="sì" {{ 'selected' if fauna.combustione_altri_materiali_us == True else '' }}>{{ _('Sì') }}</option>
+                        <option value="no" {{ 'selected' if fauna.combustione_altri_materiali_us == False else '' }}>{{ _('No') }}</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Tipo Combustione') }}</label>
+                    <input type="text" name="tipo_combustione" class="form-control" value="{{ fauna.tipo_combustione or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Segni Tafonomici Evidenti') }}</label>
+                    <input type="text" name="segni_tafonomici_evidenti" class="form-control" value="{{ fauna.segni_tafonomici_evidenti or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Caratterizzazione Segni Tafonomici') }}</label>
+                    <input type="text" name="caratterizzazione_segni_tafonomici" class="form-control" value="{{ fauna.caratterizzazione_segni_tafonomici or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Stato di Conservazione') }}</label>
+                    <input type="text" name="stato_conservazione" class="form-control" value="{{ fauna.stato_conservazione or '' }}" list="thes-stato_conservazione">
+                    <datalist id="thes-stato_conservazione"></datalist>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Alterazioni Morfologiche') }}</label>
+                    <input type="text" name="alterazioni_morfologiche" class="form-control" value="{{ fauna.alterazioni_morfologiche or '' }}">
+                </div>
+            </div>
+        </div>
+        <!-- Notes -->
+        <div class="tab-pane fade" id="tab-notes">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Campionature Effettuate') }}</label>
+                    <input type="text" name="campionature_effettuate" class="form-control" value="{{ fauna.campionature_effettuate or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Classi Reperti in Associazione') }}</label>
+                    <input type="text" name="classi_reperti_associazione" class="form-control" value="{{ fauna.classi_reperti_associazione or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Osservazioni') }}</label>
+                    <textarea name="osservazioni" class="form-control" rows="3">{{ fauna.osservazioni or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Interpretazione') }}</label>
+                    <textarea name="interpretazione" class="form-control" rows="3">{{ fauna.interpretazione or '' }}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> {{ _('Save') }}
+        </button>
+    </div>
+</form>
+
+<script>
+// Populate datalist elements with thesaurus values from PyArchInit
+const THES_FIELDS = ['specie','parti_scheletriche','contesto','stato_conservazione','metodologia_recupero','deposizione'];
+THES_FIELDS.forEach(function(field) {
+    fetch('/api/fauna/thesaurus/' + field)
+        .then(function(r) { return r.json(); })
+        .then(function(values) {
+            if (!Array.isArray(values)) return;
+            const dl = document.getElementById('thes-' + field);
+            if (!dl) return;
+            dl.innerHTML = '';
+            values.forEach(function(v) {
+                const opt = document.createElement('option');
+                opt.value = v.value || '';
+                if (v.code) opt.label = v.code;
+                dl.appendChild(opt);
+            });
+        })
+        .catch(function() { /* silent */ });
+});
+</script>
+{% endblock %}

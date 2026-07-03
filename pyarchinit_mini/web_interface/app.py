@@ -681,6 +681,8 @@ def create_app():
     tomba_service = TombaService(db_manager)
     from pyarchinit_mini.services.struttura_service import StrutturaService
     struttura_service = StrutturaService(db_manager)
+    from pyarchinit_mini.services.fauna_service import FaunaService
+    fauna_service = FaunaService(db_manager)
     # matrix_visualizer and graphviz_visualizer are declared at module level
     pdf_generator = PDFGenerator()
     storage_service = StorageConfigService(db_manager)
@@ -715,6 +717,7 @@ def create_app():
     app.storage_service = storage_service
     app.tomba_service = tomba_service
     app.struttura_service = struttura_service
+    app.fauna_service = fauna_service
 
     # Initialize Flask-Login
     init_login_manager(app, user_service)
@@ -5194,6 +5197,78 @@ def create_app():
         """Return thesaurus values for a Struttura field"""
         try:
             values = struttura_service.get_thesaurus_values(field)
+            return jsonify(values)
+        except Exception as e:
+            return jsonify({'error': str(e), 'values': []}), 500
+
+    # ===== Fauna =====
+    @app.route('/fauna')
+    @login_required
+    def fauna_list():
+        page = request.args.get('page', 1, type=int)
+        per_page = 50
+        search = request.args.get('search', '').strip()
+        sito_filter = request.args.get('sito', '').strip()
+        try:
+            fauna_list_data = fauna_service.list_fauna(page=page, size=per_page,
+                                                         search=search, sito=sito_filter)
+            total = fauna_service.count_fauna(search=search, sito=sito_filter)
+            sites = fauna_service.get_distinct_sites()
+            import math
+            total_pages = max(math.ceil(total / per_page), 1)
+            return render_template('fauna/list.html', fauna_list=fauna_list_data,
+                                   total=total, page=page, total_pages=total_pages,
+                                   search=search, sito_filter=sito_filter, sites=sites)
+        except Exception as e:
+            flash(f'Errore Fauna: {str(e)}', 'error')
+            return redirect(url_for('index'))
+
+    @app.route('/fauna/new', methods=['GET', 'POST'])
+    @login_required
+    @write_permission_required
+    def fauna_create():
+        if request.method == 'POST':
+            data = {k: v for k, v in request.form.items()}
+            fauna_id = fauna_service.create_fauna(data)
+            if fauna_id:
+                flash('Fauna creata', 'success')
+                return redirect(url_for('fauna_edit', fauna_id=fauna_id))
+            flash('Errore creazione Fauna', 'error')
+        return render_template('fauna/form.html', fauna={})
+
+    @app.route('/fauna/<int:fauna_id>', methods=['GET', 'POST'])
+    @login_required
+    @write_permission_required
+    def fauna_edit(fauna_id):
+        fauna = fauna_service.get_fauna(fauna_id)
+        if not fauna:
+            flash('Fauna non trovata', 'error')
+            return redirect(url_for('fauna_list'))
+        if request.method == 'POST':
+            data = {k: v for k, v in request.form.items()}
+            if fauna_service.update_fauna(fauna_id, data):
+                flash('Fauna aggiornata', 'success')
+            else:
+                flash('Errore aggiornamento', 'error')
+            return redirect(url_for('fauna_edit', fauna_id=fauna_id))
+        return render_template('fauna/form.html', fauna=fauna)
+
+    @app.route('/fauna/<int:fauna_id>/delete', methods=['POST'])
+    @login_required
+    @write_permission_required
+    def fauna_delete(fauna_id):
+        if fauna_service.delete_fauna(fauna_id):
+            flash('Fauna eliminata', 'success')
+        else:
+            flash('Errore eliminazione', 'error')
+        return redirect(url_for('fauna_list'))
+
+    @app.route('/api/fauna/thesaurus/<field>')
+    @login_required
+    def fauna_thesaurus(field):
+        """Return thesaurus values for a Fauna field"""
+        try:
+            values = fauna_service.get_thesaurus_values(field)
             return jsonify(values)
         except Exception as e:
             return jsonify({'error': str(e), 'values': []}), 500
