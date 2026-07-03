@@ -1,3 +1,9 @@
+## 3.0.2 — 2026-07-03
+
+### Fixed
+- CSV-import routes (`import_sites_csv`/`import_us_csv`/`import_inventario_csv`) now remove their temp file in a `finally` block — no leak if the import raises.
+- New-record thesaurus lookups (`get_thesaurus_values`) now `rollback()` between the `pyarchinit_thesaurus_sigle` and `thesaurus_field` fallback queries, so on PostgreSQL a missing sigle table no longer aborts the transaction and silently skips the `thesaurus_field` layer.
+
 ## 3.0.1 — 2026-07-03
 
 Post-3.0.0 cleanup + plugin-thesaurus interop alignment for the new record types.
