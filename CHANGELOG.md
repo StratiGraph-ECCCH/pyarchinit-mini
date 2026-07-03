@@ -7,6 +7,13 @@
 - Docs: Sphinx autodoc stubs (`docs/tomba.rst`, `docs/tomba_service.rst`) and a new "Schede Tomba" section in the Web Interface Tutorial.
 - i18n: added the missing `"Tombe"` catalog entry (IT: "Tombe", EN: "Graves") so the dashboard tile/nav label translates correctly instead of leaking Italian into the English UI.
 
+### Added — Struttura (architectural structure) record type
+- New **Struttura** entity mirroring the classic PyArchInit `struttura_table`: identification, description, room articolazione, and chronology fields, with `StrutturaService` (list/count/get/create/update/delete, site filtering, free-text search).
+- Web UI: `/struttura` list + create/edit form (4 tabs: Identification, Description, Articolazione, Chronology), media upload panel (same media pipeline as Sites/US/Inventario/Tomba), and a "Strutture" dashboard tile/nav entry.
+- Thesaurus-backed dropdowns for 4 fields (Categoria Struttura, Tipologia Struttura, Orientamento Ingresso, Articolazione) via `GET /api/struttura/thesaurus/<field>`.
+- Docs: Sphinx autodoc stubs (`docs/struttura.rst`, `docs/struttura_service.rst`) and a new "Schede Struttura" section in the Web Interface Tutorial.
+- i18n: full template extraction — 32 new catalog entries (tab names, field labels, "New/Edit Struttura", list/search/delete strings) added to both the Italian and English catalogs, so the Struttura pages are fully translated instead of leaking raw Italian into the English UI.
+
 ## 2.9.1 — 2026-05-19
 
 ### Fixed — Harris Matrix proper rendering (post-2.9.0 feedback)

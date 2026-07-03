@@ -660,6 +660,78 @@ From the Tomba edit form, use the **Tomba Media** panel to attach photos, drawin
 .. note::
    Media uploaded here appears in the entity's media gallery alongside other archaeological records, keeping documentation centralized per grave.
 
+Schede Struttura (Structure Records)
+=====================================
+
+The Struttura module manages architectural structure records (mirroring the classic PyArchInit ``struttura_table``), covering identification, description, room articulation, and chronology.
+
+Struttura List
+--------------
+
+Navigate to **Strutture** in the top menu (``/struttura``) to see the paginated list of structure records.
+
+Features:
+
+* Paginated list (50 records per page)
+* Filter by site (Sito) and free-text search (matches Sito, Sigla Struttura, Categoria Struttura, Tipologia Struttura)
+* Create new Struttura button
+* Direct links to each record's edit form
+
+Creating/Editing a Struttura
+------------------------------
+
+The Struttura form is organized into four tabs (plus a Media tab once the record has been saved): Identification, Description, Articolazione, and Chronology.
+
+**Required Fields:**
+
+* Site (Sito) - free-text entry
+
+**Identification:**
+
+* Sigla Struttura, Numero Struttura, Categoria Struttura, Tipologia Struttura, Definizione Struttura, Data Compilazione, Nome Compilatore
+
+**Description:**
+
+* Descrizione, Interpretazione, Quota, Stato di Conservazione, Relazione Topografica, Materiali Impiegati, Elementi Strutturali, Rapporti Struttura, Misure Struttura
+
+**Articolazione (Room Layout):**
+
+* Prospetto Ingresso, Orientamento Ingresso, Articolazione, N. Ambienti, Sviluppo Planimetrico, Orientamento Ambienti, Elementi Costitutivi, Motivo Decorativo, Potenzialità Archeologica, Manufatti, Elementi Datanti, Fasi Funzionali
+
+**Chronology:**
+
+* Periodo Iniziale / Fase Iniziale, Periodo Finale / Fase Finale, Datazione Estesa (Extended Dating)
+
+.. tip::
+   Save the record first (Create), then continue editing it to attach media — the media upload panel becomes available once the Struttura has an ID.
+
+.. note::
+   Six long-text fields (Stato di Conservazione, Prospetto Ingresso, Orientamento Ambienti, Elementi Costitutivi, Manufatti, Fasi Funzionali) render as multi-line ``<textarea>`` inputs, matching the classic PyArchInit desktop GUI's free-text/JSON-list fields for these columns. Enter plain text, or a JSON-formatted list if you are keeping parity with data imported from the classic PyArchInit desktop client.
+
+Thesaurus Dropdowns
+--------------------
+
+Four fields use ICCD-style controlled vocabulary, populated live from the thesaurus via ``GET /api/struttura/thesaurus/<field>``:
+
+* Categoria Struttura, Tipologia Struttura, Orientamento Ingresso, Articolazione
+
+Each of these renders as a text input backed by an HTML ``<datalist>`` of suggested values, so you can either pick a standardized term or enter a custom value.
+
+.. note::
+   Numeric fields (Numero Struttura, N. Ambienti, Periodo Iniziale, Fase Iniziale, Periodo Finale, Fase Finale) use HTML number inputs; Quota uses a decimal (``step="any"``) number input.
+
+Uploading Media to a Struttura
+---------------------------------
+
+From the Struttura edit form, use the **Struttura Media** panel to attach photos, drawings, or documents:
+
+1. Open an existing Struttura record (``/struttura/<id>``)
+2. In the Struttura Media section, choose a file and upload
+3. The file is linked to the Struttura entity via the standard media pipeline (same viewers and formats as Sites, US, Inventario, and Tomba)
+
+.. note::
+   Media uploaded here appears in the entity's media gallery alongside other archaeological records, keeping documentation centralized per structure.
+
 Upload Media
 ============
 
@@ -1171,6 +1243,7 @@ You now know how to:
 * Document stratigraphic units with all their attributes
 * Record material inventory finds with ICCD-compliant fields
 * Manage Tomba (burial) records with thesaurus-backed ritual/structure fields
+* Manage Struttura (architectural structure) records with thesaurus-backed identification/articolazione fields
 * Upload and manage media files
 * Create and visualize Harris Matrix diagrams
 * Export diagrams to GraphML and Extended Matrix formats

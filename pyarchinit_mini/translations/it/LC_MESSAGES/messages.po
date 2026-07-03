@@ -7135,6 +7135,138 @@ msgstr "Eliminare questo record Tomba?"
 msgid "No Tomba records found."
 msgstr "Nessun record Tomba trovato."
 
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:2
+msgid "Struttura"
+msgstr "Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:7
+msgid "Edit Struttura"
+msgstr "Modifica Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:7
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:9
+msgid "New Struttura"
+msgstr "Nuova Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:18
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:118
+msgid "Articolazione"
+msgstr "Articolazione"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:37
+msgid "Numero Struttura"
+msgstr "Numero Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:41
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:45
+msgid "Categoria Struttura"
+msgstr "Categoria Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:46
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:46
+msgid "Tipologia Struttura"
+msgstr "Tipologia Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:51
+msgid "Definizione Struttura"
+msgstr "Definizione Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:55
+msgid "Data Compilazione"
+msgstr "Data Compilazione"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:59
+msgid "Nome Compilatore"
+msgstr "Nome Compilatore"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:72
+msgid "Interpretazione"
+msgstr "Interpretazione"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:76
+msgid "Quota"
+msgstr "Quota"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:84
+msgid "Relazione Topografica"
+msgstr "Relazione Topografica"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:88
+msgid "Materiali Impiegati"
+msgstr "Materiali Impiegati"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:92
+msgid "Elementi Strutturali"
+msgstr "Elementi Strutturali"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:96
+msgid "Rapporti Struttura"
+msgstr "Rapporti Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:100
+msgid "Misure Struttura"
+msgstr "Misure Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:109
+msgid "Prospetto Ingresso"
+msgstr "Prospetto Ingresso"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:113
+msgid "Orientamento Ingresso"
+msgstr "Orientamento Ingresso"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:123
+msgid "N. Ambienti"
+msgstr "N. Ambienti"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:127
+msgid "Sviluppo Planimetrico"
+msgstr "Sviluppo Planimetrico"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:131
+msgid "Orientamento Ambienti"
+msgstr "Orientamento Ambienti"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:135
+msgid "Elementi Costitutivi"
+msgstr "Elementi Costitutivi"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:139
+msgid "Motivo Decorativo"
+msgstr "Motivo Decorativo"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:143
+msgid "Potenzialità Archeologica"
+msgstr "Potenzialità Archeologica"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:147
+msgid "Manufatti"
+msgstr "Manufatti"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:151
+msgid "Elementi Datanti"
+msgstr "Elementi Datanti"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:155
+msgid "Fasi Funzionali"
+msgstr "Fasi Funzionali"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:189
+msgid "Struttura Media"
+msgstr "Media Struttura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:18
+msgid "Search by site, sigla, categoria, tipologia..."
+msgstr "Cerca per sito, sigla, categoria, tipologia..."
+
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:64
+msgid "Delete this Struttura record?"
+msgstr "Eliminare questo record Struttura?"
+
+#: pyarchinit_mini/web_interface/templates/struttura/list.html:97
+msgid "No Struttura records found."
+msgstr "Nessun record Struttura trovato."
+
 #~ msgid "OK"
 #~ msgstr "OK"
 

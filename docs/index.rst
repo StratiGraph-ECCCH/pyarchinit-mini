@@ -173,6 +173,8 @@ Data Management
    data/inventory
    tomba
    tomba_service
+   struttura
+   struttura_service
    features/stratigraphic_relationships
 
 Harris Matrix & Visualization
