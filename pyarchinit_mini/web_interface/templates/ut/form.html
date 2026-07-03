@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+{% block title %}{{ _('UT') }} {{ ut.id_ut if ut and ut.id_ut else _('New') }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-vector-square"></i>
+        {% if ut and ut.id_ut %}{{ _('Edit UT') }} #{{ ut.id_ut }}{% else %}{{ _('New UT') }}{% endif %}
+    </h2>
+    <a href="{{ url_for('ut_list') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> {{ _('Back') }}
+    </a>
+</div>
+
+<form method="POST">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-anagrafica">{{ _('Anagrafica') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-ubicazione">{{ _('Ubicazione') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-survey">{{ _('Survey') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-analisi">{{ _('Analisi') }}</a></li>
+        {% if ut and ut.id_ut %}
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-media">{{ _('Media') }} ({{ media|length }})</a></li>
+        {% endif %}
+    </ul>
+    <div class="tab-content border border-top-0 p-3">
+        <!-- Anagrafica -->
+        <div class="tab-pane fade show active" id="tab-anagrafica">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Progetto') }} *</label>
+                    <input type="text" name="progetto" class="form-control" value="{{ ut.progetto or '' }}" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Nr. UT') }}</label>
+                    <input type="number" name="nr_ut" class="form-control" value="{{ ut.nr_ut if ut.nr_ut is not none else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('UT Letterale') }}</label>
+                    <input type="text" name="ut_letterale" class="form-control" value="{{ ut.ut_letterale or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Definizione UT') }}</label>
+                    <input type="text" name="def_ut" class="form-control" value="{{ ut.def_ut or '' }}" list="thes-def_ut">
+                    <datalist id="thes-def_ut"></datalist>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Interpretazione UT') }}</label>
+                    <input type="text" name="interpretazione_ut" class="form-control" value="{{ ut.interpretazione_ut or '' }}">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">{{ _('Descrizione UT') }}</label>
+                    <textarea name="descrizione_ut" class="form-control" rows="3">{{ ut.descrizione_ut or '' }}</textarea>
+                </div>
+            </div>
+        </div>
+        <!-- Ubicazione -->
+        <div class="tab-pane fade" id="tab-ubicazione">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Nazione') }}</label>
+                    <input type="text" name="nazione" class="form-control" value="{{ ut.nazione or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Regione') }}</label>
+                    <input type="text" name="regione" class="form-control" value="{{ ut.regione or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Provincia') }}</label>
+                    <input type="text" name="provincia" class="form-control" value="{{ ut.provincia or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Comune') }}</label>
+                    <input type="text" name="comune" class="form-control" value="{{ ut.comune or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Frazione') }}</label>
+                    <input type="text" name="frazione" class="form-control" value="{{ ut.frazione or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Localita') }}</label>
+                    <input type="text" name="localita" class="form-control" value="{{ ut.localita or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Indirizzo') }}</label>
+                    <input type="text" name="indirizzo" class="form-control" value="{{ ut.indirizzo or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Nr. Civico') }}</label>
+                    <input type="text" name="nr_civico" class="form-control" value="{{ ut.nr_civico or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Carta Topo IGM') }}</label>
+                    <input type="text" name="carta_topo_igm" class="form-control" value="{{ ut.carta_topo_igm or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Carta CTR') }}</label>
+                    <input type="text" name="carta_ctr" class="form-control" value="{{ ut.carta_ctr or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Coordinate Geografiche') }}</label>
+                    <input type="text" name="coord_geografiche" class="form-control" value="{{ ut.coord_geografiche or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Coordinate Piane') }}</label>
+                    <input type="text" name="coord_piane" class="form-control" value="{{ ut.coord_piane or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Quota') }}</label>
+                    <input type="number" step="any" name="quota" class="form-control" value="{{ ut.quota if ut.quota is not none else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Geometria') }}</label>
+                    <input type="text" name="geometria" class="form-control" value="{{ ut.geometria or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Foglio Catastale') }}</label>
+                    <input type="text" name="foglio_catastale" class="form-control" value="{{ ut.foglio_catastale or '' }}">
+                </div>
+            </div>
+        </div>
+        <!-- Survey -->
+        <div class="tab-pane fade" id="tab-survey">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Visibility %') }}</label>
+                    <input type="number" name="visibility_percent" class="form-control" value="{{ ut.visibility_percent if ut.visibility_percent is not none else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Vegetation Coverage') }}</label>
+                    <input type="text" name="vegetation_coverage" class="form-control" value="{{ ut.vegetation_coverage or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('GPS Method') }}</label>
+                    <input type="text" name="gps_method" class="form-control" value="{{ ut.gps_method or '' }}" list="thes-gps_method">
+                    <datalist id="thes-gps_method"></datalist>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Coordinate Precision') }}</label>
+                    <input type="number" step="any" name="coordinate_precision" class="form-control" value="{{ ut.coordinate_precision if ut.coordinate_precision is not none else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Survey Type') }}</label>
+                    <input type="text" name="survey_type" class="form-control" value="{{ ut.survey_type or '' }}" list="thes-survey_type">
+                    <datalist id="thes-survey_type"></datalist>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Surface Condition') }}</label>
+                    <input type="text" name="surface_condition" class="form-control" value="{{ ut.surface_condition or '' }}" list="thes-surface_condition">
+                    <datalist id="thes-surface_condition"></datalist>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Accessibility') }}</label>
+                    <input type="text" name="accessibility" class="form-control" value="{{ ut.accessibility or '' }}" list="thes-accessibility">
+                    <datalist id="thes-accessibility"></datalist>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Photo Documentation') }}</label>
+                    <input type="number" name="photo_documentation" class="form-control" value="{{ ut.photo_documentation if ut.photo_documentation is not none else '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Weather Conditions') }}</label>
+                    <input type="text" name="weather_conditions" class="form-control" value="{{ ut.weather_conditions or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Andamento Terreno / Pendenza') }}</label>
+                    <input type="text" name="andamento_terreno_pendenza" class="form-control" value="{{ ut.andamento_terreno_pendenza or '' }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Utilizzo Suolo / Vegetazione') }}</label>
+                    <input type="text" name="utilizzo_suolo_vegetazione" class="form-control" value="{{ ut.utilizzo_suolo_vegetazione or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Team Members') }}</label>
+                    <textarea name="team_members" class="form-control" rows="2">{{ ut.team_members or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Metodo Rilievo e Ricognizione') }}</label>
+                    <input type="text" name="metodo_rilievo_e_ricognizione" class="form-control" value="{{ ut.metodo_rilievo_e_ricognizione or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Descrizione Empirica Suolo') }}</label>
+                    <textarea name="descrizione_empirica_suolo" class="form-control" rows="3">{{ ut.descrizione_empirica_suolo or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Descrizione Luogo') }}</label>
+                    <textarea name="descrizione_luogo" class="form-control" rows="3">{{ ut.descrizione_luogo or '' }}</textarea>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Data') }}</label>
+                    <input type="text" name="data" class="form-control" value="{{ ut.data or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Ora / Meteo') }}</label>
+                    <input type="text" name="ora_meteo" class="form-control" value="{{ ut.ora_meteo or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Responsabile') }}</label>
+                    <input type="text" name="responsabile" class="form-control" value="{{ ut.responsabile or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Dimensioni UT') }}</label>
+                    <input type="text" name="dimensioni_ut" class="form-control" value="{{ ut.dimensioni_ut or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Reperti per mq') }}</label>
+                    <input type="text" name="rep_per_mq" class="form-control" value="{{ ut.rep_per_mq or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Reperti Datanti') }}</label>
+                    <input type="text" name="rep_datanti" class="form-control" value="{{ ut.rep_datanti or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Bibliografia') }}</label>
+                    <textarea name="bibliografia" class="form-control" rows="2">{{ ut.bibliografia or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Documentazione') }}</label>
+                    <textarea name="documentazione" class="form-control" rows="2">{{ ut.documentazione or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Enti Tutela / Vincoli') }}</label>
+                    <input type="text" name="enti_tutela_vincoli" class="form-control" value="{{ ut.enti_tutela_vincoli or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Indagini Preliminari') }}</label>
+                    <input type="text" name="indagini_preliminari" class="form-control" value="{{ ut.indagini_preliminari or '' }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">{{ _('Periodo I') }}</label>
+                    <input type="text" name="periodo_I" class="form-control" value="{{ ut.periodo_I or '' }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">{{ _('Datazione I') }}</label>
+                    <input type="text" name="datazione_I" class="form-control" value="{{ ut.datazione_I or '' }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">{{ _('Interpretazione I') }}</label>
+                    <input type="text" name="interpretazione_I" class="form-control" value="{{ ut.interpretazione_I or '' }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">{{ _('Periodo II') }}</label>
+                    <input type="text" name="periodo_II" class="form-control" value="{{ ut.periodo_II or '' }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">{{ _('Datazione II') }}</label>
+                    <input type="text" name="datazione_II" class="form-control" value="{{ ut.datazione_II or '' }}">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">{{ _('Interpretazione II') }}</label>
+                    <input type="text" name="interpretazione_II" class="form-control" value="{{ ut.interpretazione_II or '' }}">
+                </div>
+            </div>
+        </div>
+        <!-- Analisi -->
+        <div class="tab-pane fade" id="tab-analisi">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Potential Score') }}</label>
+                    <input type="number" step="any" name="potential_score" class="form-control" value="{{ ut.potential_score if ut.potential_score is not none else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Risk Score') }}</label>
+                    <input type="number" step="any" name="risk_score" class="form-control" value="{{ ut.risk_score if ut.risk_score is not none else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Analysis Date') }}</label>
+                    <input type="text" name="analysis_date" class="form-control" value="{{ ut.analysis_date or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Analysis Method') }}</label>
+                    <input type="text" name="analysis_method" class="form-control" value="{{ ut.analysis_method or '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Potential Factors') }}</label>
+                    <textarea name="potential_factors" class="form-control" rows="3">{{ ut.potential_factors or '' }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Risk Factors') }}</label>
+                    <textarea name="risk_factors" class="form-control" rows="3">{{ ut.risk_factors or '' }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        {% if ut and ut.id_ut %}
+        <!-- Media -->
+        <div class="tab-pane fade" id="tab-media">
+            <h5>{{ _('UT Media') }}</h5>
+            {% if media %}
+            <div class="row g-2">
+                {% for m in media %}
+                <div class="col-md-3">
+                    <div class="card">
+                        {% if m.media_type == 'image' %}
+                        <img src="{{ m.url }}" class="card-img-top" style="max-height:150px;object-fit:cover;">
+                        {% else %}
+                        <div class="card-body text-center"><i class="fas fa-file fa-3x text-muted"></i></div>
+                        {% endif %}
+                        <div class="card-body p-2">
+                            <small>{{ m.media_name }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted">{{ _('No media attached yet.') }}</p>
+            {% endif %}
+
+            <h6 class="mt-3">{{ _('Upload media') }}</h6>
+            <form method="POST" action="{{ url_for('ut_media_upload', ut_id=ut.id_ut) }}" enctype="multipart/form-data" class="row g-2">
+                <div class="col-md-8"><input type="file" name="file" class="form-control" required></div>
+                <div class="col-md-4"><button type="submit" class="btn btn-primary w-100">{{ _('Upload') }}</button></div>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> {{ _('Save') }}
+        </button>
+    </div>
+</form>
+
+<script>
+// Populate datalist elements with thesaurus values from PyArchInit
+const UT_THES_FIELDS = ['def_ut','survey_type','gps_method','surface_condition','accessibility'];
+UT_THES_FIELDS.forEach(function(field) {
+    fetch('/api/ut/thesaurus/' + field)
+        .then(function(r) { return r.json(); })
+        .then(function(values) {
+            if (!Array.isArray(values)) return;
+            const dl = document.getElementById('thes-' + field);
+            if (!dl) return;
+            dl.innerHTML = '';
+            values.forEach(function(v) {
+                const opt = document.createElement('option');
+                opt.value = v.value || '';
+                if (v.code) opt.label = v.code;
+                dl.appendChild(opt);
+            });
+        })
+        .catch(function() { /* silent */ });
+});
+</script>
+{% endblock %}

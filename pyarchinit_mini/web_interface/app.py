@@ -683,6 +683,8 @@ def create_app():
     struttura_service = StrutturaService(db_manager)
     from pyarchinit_mini.services.fauna_service import FaunaService
     fauna_service = FaunaService(db_manager)
+    from pyarchinit_mini.services.ut_service import UtService
+    ut_service = UtService(db_manager)
     # matrix_visualizer and graphviz_visualizer are declared at module level
     pdf_generator = PDFGenerator()
     storage_service = StorageConfigService(db_manager)
@@ -718,6 +720,7 @@ def create_app():
     app.tomba_service = tomba_service
     app.struttura_service = struttura_service
     app.fauna_service = fauna_service
+    app.ut_service = ut_service
 
     # Initialize Flask-Login
     init_login_manager(app, user_service)
@@ -5274,6 +5277,104 @@ def create_app():
         """Return thesaurus values for a Fauna field"""
         try:
             values = fauna_service.get_thesaurus_values(field)
+            return jsonify(values)
+        except Exception as e:
+            return jsonify({'error': str(e), 'values': []}), 500
+
+    # ===== UT - Unita di Tracciamento (project-scoped) =====
+    @app.route('/ut')
+    @login_required
+    def ut_list():
+        page = request.args.get('page', 1, type=int)
+        per_page = 50
+        search = request.args.get('search', '').strip()
+        progetto_filter = request.args.get('progetto', '').strip()
+        try:
+            ut_list_data = ut_service.list_ut(page=page, size=per_page,
+                                               search=search, progetto=progetto_filter)
+            total = ut_service.count_ut(search=search, progetto=progetto_filter)
+            projects = ut_service.get_distinct_projects()
+            import math
+            total_pages = max(math.ceil(total / per_page), 1)
+            return render_template('ut/list.html', ut_list=ut_list_data,
+                                   total=total, page=page, total_pages=total_pages,
+                                   search=search, progetto_filter=progetto_filter, projects=projects)
+        except Exception as e:
+            flash(f'Errore UT: {str(e)}', 'error')
+            return redirect(url_for('index'))
+
+    @app.route('/ut/new', methods=['GET', 'POST'])
+    @login_required
+    @write_permission_required
+    def ut_create():
+        if request.method == 'POST':
+            data = {k: v for k, v in request.form.items()}
+            ut_id = ut_service.create_ut(data)
+            if ut_id:
+                flash('UT creata', 'success')
+                return redirect(url_for('ut_edit', ut_id=ut_id))
+            flash('Errore creazione UT', 'error')
+        return render_template('ut/form.html', ut={}, media=[])
+
+    @app.route('/ut/<int:ut_id>', methods=['GET', 'POST'])
+    @login_required
+    @write_permission_required
+    def ut_edit(ut_id):
+        ut = ut_service.get_ut(ut_id)
+        if not ut:
+            flash('UT non trovata', 'error')
+            return redirect(url_for('ut_list'))
+        if request.method == 'POST':
+            data = {k: v for k, v in request.form.items()}
+            if ut_service.update_ut(ut_id, data):
+                flash('UT aggiornata', 'success')
+            else:
+                flash('Errore aggiornamento', 'error')
+            return redirect(url_for('ut_edit', ut_id=ut_id))
+        # Load attached media
+        media_items = []
+        try:
+            media_items = _media_gallery('ut', ut_id)
+        except Exception:
+            pass
+        return render_template('ut/form.html', ut=ut, media=media_items)
+
+    @app.route('/ut/<int:ut_id>/delete', methods=['POST'])
+    @login_required
+    @write_permission_required
+    def ut_delete(ut_id):
+        if ut_service.delete_ut(ut_id):
+            flash('UT eliminata', 'success')
+        else:
+            flash('Errore eliminazione', 'error')
+        return redirect(url_for('ut_list'))
+
+    @app.route('/ut/<int:ut_id>/media/upload', methods=['POST'])
+    @login_required
+    @write_permission_required
+    def ut_media_upload(ut_id):
+        try:
+            f = request.files.get('file')
+            if not f or not f.filename:
+                flash('Nessun file', 'error')
+                return redirect(url_for('ut_edit', ut_id=ut_id))
+            from werkzeug.utils import secure_filename
+            filename = secure_filename(f.filename)
+            tmp_path = os.path.join(tempfile.gettempdir(), filename)
+            f.save(tmp_path)
+            media_service.add_media(tmp_path, 'ut', ut_id)
+            flash('Media caricato', 'success')
+            os.unlink(tmp_path)
+        except Exception as e:
+            flash(f'Errore upload: {e}', 'error')
+        return redirect(url_for('ut_edit', ut_id=ut_id))
+
+    @app.route('/api/ut/thesaurus/<field>')
+    @login_required
+    def ut_thesaurus(field):
+        """Return thesaurus values for a Ut field"""
+        try:
+            values = ut_service.get_thesaurus_values(field)
             return jsonify(values)
         except Exception as e:
             return jsonify({'error': str(e), 'values': []}), 500
