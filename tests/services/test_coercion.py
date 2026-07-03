@@ -38,6 +38,19 @@ def test_bool_unrecognized_is_none():
     assert out["combustione_altri_materiali_us"] is None
 
 
+def test_bool_int_one_is_true():
+    """A raw int (e.g. 1/0 from a spreadsheet/JSON import) must coerce too,
+    not fall through to None — bool is checked before int since bool is an
+    int subclass in Python."""
+    out = coerce_types(Fauna, {"combustione_altri_materiali_us": 1})
+    assert out["combustione_altri_materiali_us"] is True
+
+
+def test_bool_int_zero_is_false():
+    out = coerce_types(Fauna, {"combustione_altri_materiali_us": 0})
+    assert out["combustione_altri_materiali_us"] is False
+
+
 def test_date_valid_iso_string():
     out = coerce_types(Fauna, {"data_compilazione": "2024-05-01"})
     assert out["data_compilazione"] == datetime.date(2024, 5, 1)

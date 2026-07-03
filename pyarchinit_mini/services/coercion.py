@@ -26,6 +26,8 @@ _FALSE_WORDS = {"false", "0", "no", "off", "n"}
 def _coerce_bool(value: Any) -> Any:
     if value is None or isinstance(value, bool):
         return value
+    if isinstance(value, int):
+        return value != 0
     if isinstance(value, str):
         v = value.strip().lower()
         if v == '':
@@ -93,6 +95,8 @@ def coerce_types(model, data: Dict[str, Any]) -> Dict[str, Any]:
       {"true","1","si","sì","on","yes","y"} -> True; words in
       {"false","0","no","off","n"} -> False; empty string -> None;
       anything else unrecognized -> None. Already-bool values pass through.
+      A plain int (not a bool) is truthiness-coerced: 0 -> False, any
+      non-zero int -> True (e.g. a spreadsheet/JSON import sending 1/0).
     - Date     -> date.fromisoformat(v) for a "YYYY-MM-DD" string; empty
       string or an invalid value -> None. Already-date values pass through.
 
@@ -104,6 +108,8 @@ def coerce_types(model, data: Dict[str, Any]) -> Dict[str, Any]:
     checked before Integer/Float too), since a Boolean column's type
     could in principle be an Integer subtype on some dialects — checking
     Boolean first ensures it's always handled by the Boolean branch.
+    Likewise _coerce_bool itself checks isinstance(value, bool) before
+    isinstance(value, int), since bool is a subclass of int in Python.
     """
     coerced = dict(data)
     for col in model.__table__.columns:

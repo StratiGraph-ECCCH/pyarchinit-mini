@@ -99,10 +99,10 @@ def test_create_ut_coerces_integer_float_and_numeric_strings(svc):
     assert isinstance(row["nr_ut"], int)
     assert row["quota"] == 1.5
     assert isinstance(row["quota"], float)
-    # potential_score is a Numeric(5,2) column: coerce_types() produces a
-    # Python float (see tests/services/test_coercion.py), but SQLAlchemy's
-    # Numeric type defaults to asdecimal=True on SELECT, so the round-tripped
-    # value comes back as Decimal('3.25') — equal to 3.25, not `is` a float.
+    # potential_score is a Numeric(5,2, asdecimal=False) column: both the
+    # write-side coerce_types() and the column's own asdecimal=False keep
+    # the round-tripped value a Python float, not a Decimal (see
+    # test_potential_score_and_risk_score_round_trip_as_float below).
     assert row["potential_score"] == 3.25
 
 
@@ -132,3 +132,22 @@ def test_update_ut_coerces_numeric_string(svc):
     assert svc.update_ut(uid, {"potential_score": "notanumber"}) is True
     row = svc.get_ut(uid)
     assert row["potential_score"] is None
+
+
+def test_potential_score_and_risk_score_round_trip_as_float(svc):
+    """potential_score/risk_score are Numeric(5,2, asdecimal=False) columns:
+    a JSON endpoint returning a ut record must not choke on a
+    non-JSON-serializable Decimal, so a read-back must come back as float,
+    not Decimal."""
+    from decimal import Decimal
+
+    uid = svc.create_ut({"progetto": "P", "potential_score": "3.25", "risk_score": "1.50"})
+    row = svc.get_ut(uid)
+
+    assert row["potential_score"] == 3.25
+    assert isinstance(row["potential_score"], float)
+    assert not isinstance(row["potential_score"], Decimal)
+
+    assert row["risk_score"] == 1.50
+    assert isinstance(row["risk_score"], float)
+    assert not isinstance(row["risk_score"], Decimal)
