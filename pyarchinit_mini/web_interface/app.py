@@ -5917,6 +5917,10 @@ def create_app():
                                 ut_by_survey_type[sv] = ut_by_survey_type.get(sv, 0) + 1
                             context['ut_summary'] = {
                                 'total': ut_total,
+                                # by_* and sample are computed over up to `aggregated_over`
+                                # rows (UT is project-scoped, not site-scoped), which may be
+                                # fewer than `total` for very large datasets.
+                                'aggregated_over': len(ut_dicts),
                                 'by_def_ut': ut_by_def_ut,
                                 'by_survey_type': ut_by_survey_type,
                                 'sample': [

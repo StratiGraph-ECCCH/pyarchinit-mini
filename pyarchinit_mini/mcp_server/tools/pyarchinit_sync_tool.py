@@ -185,9 +185,11 @@ class PyArchInitSyncTool(BaseTool):
             if 'thesaurus' in data_types:
                 logger.info("Importing thesaurus...")
                 thes_result = service.import_thesaurus()
-                results['imported']['thesaurus'] = thes_result.get('total_imported', 0)
-                if not thes_result.get('success', True):
-                    results['errors'].append(f"Thesaurus import: {thes_result.get('message', 'failed')}")
+                # import_thesaurus returns the same {imported/updated/skipped/errors}
+                # contract as the other importers (not total_imported/success).
+                results['imported']['thesaurus'] = thes_result.get('imported', 0)
+                if thes_result.get('errors'):
+                    results['errors'].extend([f"Thesaurus import: {e}" for e in thes_result['errors']])
 
             if results['errors']:
                 results['success'] = len(results['errors']) < len(data_types)  # Partial success
@@ -223,8 +225,11 @@ class PyArchInitSyncTool(BaseTool):
                 if us_result.get('errors'):
                     results['errors'].extend(f"US export: {e}" for e in us_result['errors'])
 
-            # NOTE: 'inventario' is intentionally NOT handled here - there is no
-            # ImportExportService.export_inventario() method (import-only for now).
+            # 'inventario' export is unsupported (no ImportExportService.export_inventario();
+            # import-only). Surface it as an error for consistency with the other entities
+            # rather than silently dropping the request.
+            if 'inventario' in data_types:
+                results['errors'].append("Inventario export: not yet supported by ImportExportService (import-only)")
 
             # Export tomba (burials)
             if 'tomba' in data_types:
