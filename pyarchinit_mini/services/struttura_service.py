@@ -2,6 +2,7 @@
 Struttura Service — manages struttura_table (structure) records.
 """
 
+import ast
 import logging
 from typing import Dict, Any, List, Optional
 from sqlalchemy import or_
@@ -12,8 +13,68 @@ from .coercion import coerce_types
 logger = logging.getLogger(__name__)
 
 
+def _normalize_pylist(v) -> str:
+    """Parse an incoming struttura sub-table value (the browser sends a
+    JSON-serialized list-of-lists, e.g. '[["buono","medio","umidità"]]')
+    with ast.literal_eval — which accepts JSON's double-quoted list/string
+    syntax just fine, since it's a subset of Python literal syntax — drop
+    any cell that is empty/blank (matching the classic pyarchinit plugin's
+    table2dict, which appends a cell to a row's sub_list only `if
+    bool(value)`, i.e. it drops ALL empty cells, not just trailing ones,
+    producing a shorter positional list), drop rows that end up empty, and
+    re-serialize with Python repr() — the exact str(list-of-lists) format
+    the classic plugin writes and reads back with eval(). Never raises:
+    malformed, non-list, or empty input becomes the string '[]'."""
+    if v is None:
+        return '[]'
+    if isinstance(v, (list, tuple)):
+        parsed = v
+    else:
+        try:
+            parsed = ast.literal_eval(v)
+        except (SyntaxError, ValueError, TypeError):
+            return '[]'
+    if not isinstance(parsed, (list, tuple)):
+        return '[]'
+    rows = []
+    for row in parsed:
+        if not isinstance(row, (list, tuple)):
+            continue
+        cells = [str(c) for c in row if str(c).strip()]
+        if cells:
+            rows.append(cells)
+    return repr(rows)
+
+
+def parse_pylist(v) -> list:
+    """Parse a struttura sub-table column's stored value — Python repr,
+    single-quoted, as produced by _normalize_pylist and by the classic
+    pyarchinit plugin's table2dict — into a Python list-of-lists, for
+    handing to the edit-form template (which passes it through `| tojson`
+    for the JS widget). Returns [] for None/empty/malformed input; never
+    raises."""
+    if not v:
+        return []
+    try:
+        parsed = ast.literal_eval(v)
+    except (SyntaxError, ValueError, TypeError):
+        return []
+    return parsed if isinstance(parsed, list) else []
+
+
 class StrutturaService:
     """Service for Struttura (structure) records."""
+
+    # The 10 struttura_table columns stored as str(list-of-lists) —
+    # the classic plugin's repeatable sub-table format (see
+    # _normalize_pylist / parse_pylist above). Shared with the web route
+    # (struttura_edit) and the form template's widget instantiation.
+    SUBTABLE_COLS = [
+        'materiali_impiegati', 'elementi_strutturali', 'rapporti_struttura',
+        'misure_struttura', 'stato_conservazione', 'prospetto_ingresso',
+        'orientamento_ambienti', 'elementi_costitutivi', 'manufatti',
+        'fasi_funzionali',
+    ]
 
     def __init__(self, db_manager):
         self.db_manager = db_manager
@@ -78,6 +139,13 @@ class StrutturaService:
                 valid_keys = Struttura.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys and v is not None and v != ''}
                 clean = coerce_types(Struttura, clean)
+                # Sub-table columns are always normalized to str(list-of-lists)
+                # if present in the payload at all — even a blank value must
+                # become the literal '[]' (not be dropped/left NULL), matching
+                # the classic plugin's format.
+                for key in self.SUBTABLE_COLS:
+                    if key in data and key in valid_keys:
+                        clean[key] = _normalize_pylist(data.get(key))
                 row = Struttura(**clean)
                 session.add(row)
                 session.flush()
@@ -98,6 +166,9 @@ class StrutturaService:
                 valid_keys = Struttura.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys}
                 clean = coerce_types(Struttura, clean)
+                for key in self.SUBTABLE_COLS:
+                    if key in clean:
+                        clean[key] = _normalize_pylist(clean.get(key))
                 for k, v in clean.items():
                     setattr(row, k, v if v != '' else None)
                 session.commit()
@@ -126,6 +197,15 @@ class StrutturaService:
     THESAURUS_MAP = {
         'sigla_struttura': '6.1', 'categoria_struttura': '6.2', 'tipologia_struttura': '6.3',
         'definizione_struttura': '6.4', 'sviluppo_planimetrico': '6.15',
+        # Sub-table cell thesauri (see SUBTABLE_COLS / the form's repeatable
+        # widgets). These are NOT struttura_table columns themselves — each
+        # backs one THES cell of a repeatable sub-table row — so they are
+        # named after the cell's purpose rather than a DB column name.
+        'materiali_impiegati': '6.5', 'elementi_strutturali': '6.6',
+        'rapporti_sigla': '6.1',  # reuses the same sigla vocab as sigla_struttura
+        'misure_elementi_arch': '6.9', 'misure_tipo': '6.7', 'misure_unita': '6.8',
+        'stato_fattori': '6.10', 'prospetto_ingresso': '6.11',
+        'elementi_costitutivi': '6.12', 'manufatti': '6.13', 'fasi_definizione': '6.14',
     }
 
     def get_thesaurus_values(self, field: str) -> List[Dict[str, str]]:

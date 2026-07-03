@@ -1,10 +1,14 @@
+import ast
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from pyarchinit_mini.models.base import Base
 from pyarchinit_mini.models.struttura import Struttura  # noqa
 from pyarchinit_mini.models.thesaurus import ThesaurusSigle
-from pyarchinit_mini.services.struttura_service import StrutturaService
+from pyarchinit_mini.services.struttura_service import (
+    StrutturaService, _normalize_pylist, parse_pylist,
+)
 
 class _Conn:
     def __init__(s,e): s._S=sessionmaker(bind=e)
@@ -149,3 +153,97 @@ def test_update_struttura_coerces_float_string(svc):
     assert svc.update_struttura(sid, {"quota": "notafloat"}) is True
     row = svc.get_struttura(sid)
     assert row["quota"] is None
+
+
+# --------------------------------------------------------------------------
+# Sub-table serialization (SP4): the 10 struttura_table list-of-lists columns
+# are stored as str(list-of-lists-of-strings) — Python repr with single
+# quotes — the SAME format the classic pyarchinit plugin writes/reads with
+# eval(), NOT json.dumps (unlike fauna's specie_psi/misure_ossa). See
+# StrutturaService._normalize_pylist / parse_pylist.
+# --------------------------------------------------------------------------
+
+def test_create_struttura_subtable_repr_roundtrip(svc):
+    sid = svc.create_struttura({"sito": "S", "stato_conservazione": '[["buono","medio","umidità"]]'})
+    row = svc.get_struttura(sid)
+    stored = row["stato_conservazione"]
+    assert ast.literal_eval(stored) == [["buono", "medio", "umidità"]]
+    assert "'" in stored  # repr() uses single quotes, not json.dumps double quotes
+
+
+def test_create_struttura_subtable_drops_trailing_empty_cells(svc):
+    sid = svc.create_struttura({"sito": "S", "stato_conservazione": '[["buono","",""]]'})
+    row = svc.get_struttura(sid)
+    assert ast.literal_eval(row["stato_conservazione"]) == [["buono"]]
+
+
+def test_create_struttura_subtable_drops_interior_empty_cells(svc):
+    """Matches the classic plugin's table2dict, which appends a cell only
+    `if bool(value)` — ALL empty cells are dropped, not just trailing
+    ones, so a blank cell in the middle of a row collapses positionally."""
+    sid = svc.create_struttura({"sito": "S", "elementi_strutturali": '[["", "muro"]]'})
+    row = svc.get_struttura(sid)
+    assert ast.literal_eval(row["elementi_strutturali"]) == [["muro"]]
+
+
+def test_create_struttura_subtable_malformed_becomes_bracket_string(svc):
+    sid = svc.create_struttura({"sito": "S", "stato_conservazione": "not-a-list{"})
+    row = svc.get_struttura(sid)
+    assert row["stato_conservazione"] == "[]"
+
+
+def test_create_struttura_subtable_empty_becomes_bracket_string(svc):
+    sid = svc.create_struttura({"sito": "S", "materiali_impiegati": "[]"})
+    row = svc.get_struttura(sid)
+    assert row["materiali_impiegati"] == "[]"
+
+
+def test_update_struttura_subtable_repr_roundtrip(svc):
+    sid = svc.create_struttura({"sito": "S"})
+    assert svc.update_struttura(sid, {
+        "materiali_impiegati": '[["laterizio"],["pietra","malta"]]',
+    }) is True
+    row = svc.get_struttura(sid)
+    assert ast.literal_eval(row["materiali_impiegati"]) == [["laterizio"], ["pietra", "malta"]]
+
+
+def test_update_struttura_subtable_malformed_becomes_bracket_string(svc):
+    sid = svc.create_struttura({"sito": "S", "manufatti": '[["ceramica"]]'})
+    assert svc.update_struttura(sid, {"manufatti": "{{broken"}) is True
+    row = svc.get_struttura(sid)
+    assert row["manufatti"] == "[]"
+
+
+def test_normalize_pylist_drops_fully_blank_rows():
+    assert _normalize_pylist('[["a"], ["", ""]]') == "[['a']]"
+
+
+def test_normalize_pylist_empty_and_none_become_bracket_string():
+    assert _normalize_pylist('[]') == '[]'
+    assert _normalize_pylist(None) == '[]'
+
+
+def test_parse_pylist_handles_single_and_double_quoted():
+    assert parse_pylist("[['a']]") == [['a']]
+    assert parse_pylist('[["a"]]') == [["a"]]
+
+
+def test_parse_pylist_empty_and_malformed_return_empty_list():
+    assert parse_pylist(None) == []
+    assert parse_pylist('') == []
+    assert parse_pylist('not a list') == []
+
+
+def test_thesaurus_map_has_subtable_cell_entries():
+    """The sub-table cell thesauri (6.5-6.14, + rapporti_sigla reusing 6.1)
+    must be present so /api/struttura/thesaurus/<field> serves them for the
+    form's repeatable-row widgets."""
+    expected = {
+        'materiali_impiegati': '6.5', 'elementi_strutturali': '6.6',
+        'rapporti_sigla': '6.1', 'misure_elementi_arch': '6.9',
+        'misure_tipo': '6.7', 'misure_unita': '6.8', 'stato_fattori': '6.10',
+        'prospetto_ingresso': '6.11', 'elementi_costitutivi': '6.12',
+        'manufatti': '6.13', 'fasi_definizione': '6.14',
+    }
+    for field, sigla in expected.items():
+        assert StrutturaService.THESAURUS_MAP.get(field) == sigla

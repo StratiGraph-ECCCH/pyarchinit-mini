@@ -7370,6 +7370,10 @@ msgstr "Edit Structure"
 msgid "New Struttura"
 msgstr "New Structure"
 
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:19
+msgid "Sotto-tabelle"
+msgstr "Sub-tables"
+
 #: pyarchinit_mini/web_interface/templates/struttura/form.html:18
 #: pyarchinit_mini/web_interface/templates/struttura/form.html:118
 msgid "Articolazione"
@@ -7472,6 +7476,82 @@ msgstr "Dating Elements"
 #: pyarchinit_mini/web_interface/templates/struttura/form.html:155
 msgid "Fasi Funzionali"
 msgstr "Functional Phases"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:154
+msgid "Materiali"
+msgstr "Materials"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:165
+msgid "Tipologia elemento"
+msgstr "Element Typology"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:165
+msgid "Quantità"
+msgstr "Quantity"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:176
+msgid "Tipo di rapporto"
+msgstr "Relationship Type"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:176
+msgid "Sigla"
+msgstr "Code"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:176
+msgid "Numero"
+msgstr "Number"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
+msgid "Elementi architettonici"
+msgstr "Architectural Elements"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
+msgid "Tipo misura"
+msgstr "Measurement Type"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
+msgid "Unità di misura"
+msgstr "Unit of Measurement"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:187
+msgid "Valore"
+msgstr "Value"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:200
+msgid "Stato"
+msgstr "State"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:200
+msgid "Grado"
+msgstr "Degree"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:200
+msgid "Fattori agenti"
+msgstr "Agents/Factors"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:211
+msgid "Prospetto"
+msgstr "Elevation"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:222
+msgid "Orientamento"
+msgstr "Orientation"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:232
+msgid "Elemento"
+msgstr "Element"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:243
+msgid "Manufatto"
+msgstr "Artifact"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:254
+msgid "Ambiente"
+msgstr "Room"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:254
+msgid "Definizione e fasi funzionali"
+msgstr "Definition and Functional Phases"
 
 #: pyarchinit_mini/web_interface/templates/struttura/form.html:189
 msgid "Struttura Media"

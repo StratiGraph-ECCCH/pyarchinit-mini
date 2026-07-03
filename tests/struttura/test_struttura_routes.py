@@ -51,7 +51,7 @@ from pyarchinit_mini.models.base import Base
 from pyarchinit_mini.models.user import UserRole
 from pyarchinit_mini.services.user_service import UserService
 from pyarchinit_mini.services.media_service import MediaService
-from pyarchinit_mini.services.struttura_service import StrutturaService
+from pyarchinit_mini.services.struttura_service import StrutturaService, parse_pylist as struttura_parse_pylist
 from pyarchinit_mini.media_manager.media_handler import MediaHandler
 from pyarchinit_mini.web_interface.auth_routes import (
     init_login_manager, write_permission_required, User as AuthUser,
@@ -188,7 +188,8 @@ def flask_app(db_manager, media_service, struttura_service, user_service):
                 flash('Struttura creata', 'success')
                 return redirect(url_for('struttura_edit', struttura_id=struttura_id))
             flash('Errore creazione Struttura', 'error')
-        return render_template('struttura/form.html', struttura={}, media=[])
+        subtables = {col: [] for col in StrutturaService.SUBTABLE_COLS}
+        return render_template('struttura/form.html', struttura={}, media=[], subtables=subtables)
 
     # ---- /struttura/<id> (mirrors app.py's struttura_edit) ----
     @app.route('/struttura/<int:struttura_id>', methods=['GET', 'POST'])
@@ -211,7 +212,8 @@ def flask_app(db_manager, media_service, struttura_service, user_service):
             media_items = _media_gallery('struttura', struttura_id)
         except Exception:
             pass
-        return render_template('struttura/form.html', struttura=struttura, media=media_items)
+        subtables = {col: struttura_parse_pylist(struttura.get(col)) for col in StrutturaService.SUBTABLE_COLS}
+        return render_template('struttura/form.html', struttura=struttura, media=media_items, subtables=subtables)
 
     # ---- /struttura/<id>/delete (mirrors app.py's struttura_delete) ----
     @app.route('/struttura/<int:struttura_id>/delete', methods=['POST'])
@@ -364,3 +366,30 @@ def test_delete_removes_record(logged_in_client, struttura_service):
     r = logged_in_client.post(f"/struttura/{sid}/delete", follow_redirects=False)
     assert r.status_code in (302, 303)
     assert struttura_service.get_struttura(sid) is None
+
+
+def test_edit_page_renders_subtable_widget_with_parsed_data(logged_in_client, struttura_service):
+    """The edit form must pre-parse the str()-repr sub-table value server-side
+    (StrutturaService.parse_pylist) and hand a real JS array to the widget —
+    never a raw single-quoted Python-repr string for client-side JSON.parse."""
+    sid = struttura_service.create_struttura({
+        "sito": "Volterra",
+        "stato_conservazione": '[["buono","medio","umidità"]]',
+    })
+    r = logged_in_client.get(f"/struttura/{sid}")
+    assert r.status_code == 200
+    html = r.data.decode("utf-8")
+    # widget scaffolding present
+    assert 'id="stato_conservazione_hidden"' in html
+    assert 'id="stato_conservazione_tbody"' in html
+    # server-parsed data embedded as JSON (double-quoted), not the raw
+    # single-quoted Python repr the DB actually stores
+    assert '"buono"' in html
+    assert '[\'buono\'' not in html
+
+
+def test_new_form_renders_subtable_widget_with_empty_data(logged_in_client):
+    r = logged_in_client.get("/struttura/new")
+    assert r.status_code == 200
+    html = r.data.decode("utf-8")
+    assert 'id="materiali_impiegati_hidden"' in html

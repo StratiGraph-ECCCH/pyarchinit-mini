@@ -11,11 +11,12 @@
     </a>
 </div>
 
-<form method="POST">
+<form method="POST" id="strutturaForm">
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-basic">{{ _('Identification') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-desc">{{ _('Description') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-articolazione">{{ _('Articolazione') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-subtables">{{ _('Sotto-tabelle') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-crono">{{ _('Chronology') }}</a></li>
         {% if struttura and struttura.id_struttura %}
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-media">{{ _('Media') }} ({{ media|length }})</a></li>
@@ -84,38 +85,14 @@
                     <input type="number" step="any" name="quota" class="form-control" value="{{ struttura.quota if struttura.quota is not none else '' }}">
                 </div>
                 <div class="col-md-8">
-                    <label class="form-label">{{ _('Stato di Conservazione') }}</label>
-                    <textarea name="stato_conservazione" class="form-control" rows="3">{{ struttura.stato_conservazione or '' }}</textarea>
-                </div>
-                <div class="col-md-6">
                     <label class="form-label">{{ _('Relazione Topografica') }}</label>
                     <input type="text" name="relazione_topografica" class="form-control" value="{{ struttura.relazione_topografica or '' }}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">{{ _('Materiali Impiegati') }}</label>
-                    <input type="text" name="materiali_impiegati" class="form-control" value="{{ struttura.materiali_impiegati or '' }}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">{{ _('Elementi Strutturali') }}</label>
-                    <input type="text" name="elementi_strutturali" class="form-control" value="{{ struttura.elementi_strutturali or '' }}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">{{ _('Rapporti Struttura') }}</label>
-                    <input type="text" name="rapporti_struttura" class="form-control" value="{{ struttura.rapporti_struttura or '' }}">
-                </div>
-                <div class="col-md-12">
-                    <label class="form-label">{{ _('Misure Struttura') }}</label>
-                    <input type="text" name="misure_struttura" class="form-control" value="{{ struttura.misure_struttura or '' }}">
                 </div>
             </div>
         </div>
         <!-- Articolazione -->
         <div class="tab-pane fade" id="tab-articolazione">
             <div class="row g-2">
-                <div class="col-md-6">
-                    <label class="form-label">{{ _('Prospetto Ingresso') }}</label>
-                    <textarea name="prospetto_ingresso" class="form-control" rows="3">{{ struttura.prospetto_ingresso or '' }}</textarea>
-                </div>
                 <div class="col-md-3">
                     <label class="form-label">{{ _('Orientamento Ingresso') }}</label>
                     <select name="orientamento_ingresso" class="form-select">
@@ -148,14 +125,6 @@
                     <datalist id="thes-sviluppo_planimetrico"></datalist>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">{{ _('Orientamento Ambienti') }}</label>
-                    <textarea name="orientamento_ambienti" class="form-control" rows="3">{{ struttura.orientamento_ambienti or '' }}</textarea>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">{{ _('Elementi Costitutivi') }}</label>
-                    <textarea name="elementi_costitutivi" class="form-control" rows="3">{{ struttura.elementi_costitutivi or '' }}</textarea>
-                </div>
-                <div class="col-md-6">
                     <label class="form-label">{{ _('Motivo Decorativo') }}</label>
                     <input type="text" name="motivo_decorativo" class="form-control" value="{{ struttura.motivo_decorativo or '' }}">
                 </div>
@@ -170,18 +139,125 @@
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">{{ _('Manufatti') }}</label>
-                    <textarea name="manufatti" class="form-control" rows="3">{{ struttura.manufatti or '' }}</textarea>
-                </div>
-                <div class="col-md-6">
                     <label class="form-label">{{ _('Elementi Datanti') }}</label>
                     <input type="text" name="elementi_datanti" class="form-control" value="{{ struttura.elementi_datanti or '' }}">
                 </div>
-                <div class="col-md-12">
-                    <label class="form-label">{{ _('Fasi Funzionali') }}</label>
-                    <textarea name="fasi_funzionali" class="form-control" rows="3">{{ struttura.fasi_funzionali or '' }}</textarea>
-                </div>
             </div>
+        </div>
+        <!-- Sub-tables (10 repeatable list-of-lists columns, str()-repr serialized to
+             match the classic pyarchinit plugin's format exactly — see
+             StrutturaService._normalize_pylist / parse_pylist). -->
+        <div class="tab-pane fade" id="tab-subtables">
+            <fieldset class="mb-4">
+                <legend class="h6">{{ _('Materiali Impiegati') }}</legend>
+                <table class="table table-sm table-bordered align-middle" id="materiali_impiegati_table">
+                    <thead><tr><th>{{ _('Materiali') }}</th><th style="width:2.5rem;"></th></tr></thead>
+                    <tbody id="materiali_impiegati_tbody"></tbody>
+                </table>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="materiali_impiegati_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                <input type="hidden" name="materiali_impiegati" id="materiali_impiegati_hidden">
+                <datalist id="thes-materiali_impiegati"></datalist>
+            </fieldset>
+
+            <fieldset class="mb-4">
+                <legend class="h6">{{ _('Elementi Strutturali') }}</legend>
+                <table class="table table-sm table-bordered align-middle" id="elementi_strutturali_table">
+                    <thead><tr><th>{{ _('Tipologia elemento') }}</th><th>{{ _('Quantità') }}</th><th style="width:2.5rem;"></th></tr></thead>
+                    <tbody id="elementi_strutturali_tbody"></tbody>
+                </table>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="elementi_strutturali_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                <input type="hidden" name="elementi_strutturali" id="elementi_strutturali_hidden">
+                <datalist id="thes-elementi_strutturali"></datalist>
+            </fieldset>
+
+            <fieldset class="mb-4">
+                <legend class="h6">{{ _('Rapporti Struttura') }}</legend>
+                <table class="table table-sm table-bordered align-middle" id="rapporti_struttura_table">
+                    <thead><tr><th>{{ _('Tipo di rapporto') }}</th><th>{{ _('Sito') }}</th><th>{{ _('Sigla') }}</th><th>{{ _('Numero') }}</th><th style="width:2.5rem;"></th></tr></thead>
+                    <tbody id="rapporti_struttura_tbody"></tbody>
+                </table>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="rapporti_struttura_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                <input type="hidden" name="rapporti_struttura" id="rapporti_struttura_hidden">
+                <datalist id="thes-rapporti_sigla"></datalist>
+            </fieldset>
+
+            <fieldset class="mb-4">
+                <legend class="h6">{{ _('Misure Struttura') }}</legend>
+                <table class="table table-sm table-bordered align-middle" id="misure_struttura_table">
+                    <thead><tr><th>{{ _('Ubicazione') }}</th><th>{{ _('Elementi architettonici') }}</th><th>{{ _('Tipo misura') }}</th><th>{{ _('Unità di misura') }}</th><th>{{ _('Valore') }}</th><th style="width:2.5rem;"></th></tr></thead>
+                    <tbody id="misure_struttura_tbody"></tbody>
+                </table>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="misure_struttura_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                <input type="hidden" name="misure_struttura" id="misure_struttura_hidden">
+                <datalist id="thes-misure_elementi_arch"></datalist>
+                <datalist id="thes-misure_tipo"></datalist>
+                <datalist id="thes-misure_unita"></datalist>
+            </fieldset>
+
+            <fieldset class="mb-4">
+                <legend class="h6">{{ _('Stato di Conservazione') }}</legend>
+                <table class="table table-sm table-bordered align-middle" id="stato_conservazione_table">
+                    <thead><tr><th>{{ _('Stato') }}</th><th>{{ _('Grado') }}</th><th>{{ _('Fattori agenti') }}</th><th style="width:2.5rem;"></th></tr></thead>
+                    <tbody id="stato_conservazione_tbody"></tbody>
+                </table>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="stato_conservazione_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                <input type="hidden" name="stato_conservazione" id="stato_conservazione_hidden">
+                <datalist id="thes-stato_fattori"></datalist>
+            </fieldset>
+
+            <fieldset class="mb-4">
+                <legend class="h6">{{ _('Prospetto Ingresso') }}</legend>
+                <table class="table table-sm table-bordered align-middle" id="prospetto_ingresso_table">
+                    <thead><tr><th>{{ _('Prospetto') }}</th><th style="width:2.5rem;"></th></tr></thead>
+                    <tbody id="prospetto_ingresso_tbody"></tbody>
+                </table>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="prospetto_ingresso_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                <input type="hidden" name="prospetto_ingresso" id="prospetto_ingresso_hidden">
+                <datalist id="thes-prospetto_ingresso"></datalist>
+            </fieldset>
+
+            <fieldset class="mb-4">
+                <legend class="h6">{{ _('Orientamento Ambienti') }}</legend>
+                <table class="table table-sm table-bordered align-middle" id="orientamento_ambienti_table">
+                    <thead><tr><th>{{ _('Orientamento') }}</th><th style="width:2.5rem;"></th></tr></thead>
+                    <tbody id="orientamento_ambienti_tbody"></tbody>
+                </table>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="orientamento_ambienti_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                <input type="hidden" name="orientamento_ambienti" id="orientamento_ambienti_hidden">
+            </fieldset>
+
+            <fieldset class="mb-4">
+                <legend class="h6">{{ _('Elementi Costitutivi') }}</legend>
+                <table class="table table-sm table-bordered align-middle" id="elementi_costitutivi_table">
+                    <thead><tr><th>{{ _('Elemento') }}</th><th style="width:2.5rem;"></th></tr></thead>
+                    <tbody id="elementi_costitutivi_tbody"></tbody>
+                </table>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="elementi_costitutivi_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                <input type="hidden" name="elementi_costitutivi" id="elementi_costitutivi_hidden">
+                <datalist id="thes-elementi_costitutivi"></datalist>
+            </fieldset>
+
+            <fieldset class="mb-4">
+                <legend class="h6">{{ _('Manufatti') }}</legend>
+                <table class="table table-sm table-bordered align-middle" id="manufatti_table">
+                    <thead><tr><th>{{ _('Manufatto') }}</th><th style="width:2.5rem;"></th></tr></thead>
+                    <tbody id="manufatti_tbody"></tbody>
+                </table>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="manufatti_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                <input type="hidden" name="manufatti" id="manufatti_hidden">
+                <datalist id="thes-manufatti"></datalist>
+            </fieldset>
+
+            <fieldset class="mb-2">
+                <legend class="h6">{{ _('Fasi Funzionali') }}</legend>
+                <table class="table table-sm table-bordered align-middle" id="fasi_funzionali_table">
+                    <thead><tr><th>{{ _('Ambiente') }}</th><th>{{ _('Periodizzazione') }}</th><th>{{ _('Definizione e fasi funzionali') }}</th><th style="width:2.5rem;"></th></tr></thead>
+                    <tbody id="fasi_funzionali_tbody"></tbody>
+                </table>
+                <button type="button" class="btn btn-sm btn-outline-secondary" id="fasi_funzionali_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                <input type="hidden" name="fasi_funzionali" id="fasi_funzionali_hidden">
+                <datalist id="thes-fasi_definizione"></datalist>
+            </fieldset>
         </div>
         <!-- Chronology -->
         <div class="tab-pane fade" id="tab-crono">
@@ -251,9 +327,16 @@
 </form>
 
 <script>
-// Populate datalist elements with thesaurus values from PyArchInit
+window.STRUTTURA_SUBTABLES_DATA = {{ subtables | tojson }};
+</script>
+<script>
+// Populate datalist elements with thesaurus values from PyArchInit. The flat
+// fields (sigla_struttura etc.) back plain inputs; the sub-table fields back
+// the per-cell datalists used by the repeatable-row widgets below — both
+// share the same fetch-and-fill logic, just different datalist ids.
 const STRUTTURA_THES_FIELDS = ['sigla_struttura','categoria_struttura','tipologia_struttura','definizione_struttura','sviluppo_planimetrico'];
-STRUTTURA_THES_FIELDS.forEach(function(field) {
+const STRUTTURA_SUBTABLE_THES_FIELDS = ['materiali_impiegati','elementi_strutturali','rapporti_sigla','misure_elementi_arch','misure_tipo','misure_unita','stato_fattori','prospetto_ingresso','elementi_costitutivi','manufatti','fasi_definizione'];
+STRUTTURA_THES_FIELDS.concat(STRUTTURA_SUBTABLE_THES_FIELDS).forEach(function(field) {
     fetch('/api/struttura/thesaurus/' + field)
         .then(function(r) { return r.json(); })
         .then(function(values) {
@@ -269,6 +352,129 @@ STRUTTURA_THES_FIELDS.forEach(function(field) {
             });
         })
         .catch(function() { /* silent */ });
+});
+
+// Reusable repeatable-row widget for the 10 struttura_table list-of-lists
+// columns. The server pre-parses the stored str()-repr value into a real
+// Python list (StrutturaService.parse_pylist) and hands it to the template
+// as `subtables`, so `initialData` here is already a JS array — never a
+// single-quoted Python-repr string, which JSON.parse cannot handle. On
+// submit each widget serializes its rows to JSON (double-quoted), which the
+// server re-parses with ast.literal_eval and re-serializes with repr() to
+// match the classic plugin's str(list-of-lists) format exactly.
+function initStrutturaRepeatableTable(opts) {
+    const tbody = document.getElementById(opts.tbodyId);
+    const addBtn = document.getElementById(opts.addBtnId);
+    const hidden = document.getElementById(opts.hiddenInputId);
+    const ncols = opts.columns.length;
+
+    function makeCell(col, value) {
+        if (col.options) {
+            const sel = document.createElement('select');
+            sel.className = 'form-select form-select-sm';
+            const blank = document.createElement('option');
+            blank.value = '';
+            blank.textContent = '-- --';
+            sel.appendChild(blank);
+            col.options.forEach(function(o) {
+                const opt = document.createElement('option');
+                opt.value = o;
+                opt.textContent = o;
+                if (value === o) opt.selected = true;
+                sel.appendChild(opt);
+            });
+            return sel;
+        }
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'form-control form-control-sm';
+        if (col.list) input.setAttribute('list', col.list);
+        input.value = value != null ? value : '';
+        return input;
+    }
+
+    function addRow(values) {
+        const vals = values || new Array(ncols).fill('');
+        const tr = document.createElement('tr');
+        opts.columns.forEach(function(col, i) {
+            const td = document.createElement('td');
+            td.appendChild(makeCell(col, vals[i]));
+            tr.appendChild(td);
+        });
+        const tdBtn = document.createElement('td');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-sm btn-outline-danger';
+        btn.innerHTML = '<i class="fas fa-times"></i>';
+        btn.addEventListener('click', function() { tr.remove(); serialize(); });
+        tdBtn.appendChild(btn);
+        tr.appendChild(tdBtn);
+        tbody.appendChild(tr);
+    }
+
+    function serialize() {
+        const rows = [];
+        Array.from(tbody.querySelectorAll('tr')).forEach(function(tr) {
+            const cells = tr.querySelectorAll('input, select');
+            const vals = Array.from(cells).map(function(c) { return c.value.trim(); });
+            const allBlank = vals.every(function(v) { return v === ''; });
+            if (!allBlank) rows.push(vals);
+        });
+        hidden.value = JSON.stringify(rows);
+        return rows;
+    }
+
+    addBtn.addEventListener('click', function() { addRow(); serialize(); });
+    tbody.addEventListener('input', serialize);
+    tbody.addEventListener('change', serialize);
+
+    let initial = opts.initialData;
+    if (!Array.isArray(initial)) initial = [];
+    if (initial.length === 0) {
+        addRow();
+    } else {
+        initial.forEach(function(row) { addRow(row); });
+    }
+    serialize();
+
+    return serialize;
+}
+
+const STRUTTURA_SUBTABLE_CONFIG = [
+    { col: 'materiali_impiegati', columns: [{ list: 'thes-materiali_impiegati' }] },
+    { col: 'elementi_strutturali', columns: [{ list: 'thes-elementi_strutturali' }, {}] },
+    { col: 'rapporti_struttura', columns: [{}, {}, { list: 'thes-rapporti_sigla' }, {}] },
+    { col: 'misure_struttura', columns: [
+        { options: ['ESTERNO', 'INTERNO'] },
+        { list: 'thes-misure_elementi_arch' },
+        { list: 'thes-misure_tipo' },
+        { list: 'thes-misure_unita' },
+        {},
+    ] },
+    { col: 'stato_conservazione', columns: [
+        { options: ['CONSERVAZIONE', "VISIBILITA'", "ACCESSIBILITA'"] },
+        { options: ['OTTIMO', 'BUONO', 'DISCRETO', 'SCARSO', 'PESSIMO', 'NON RILEVABILE'] },
+        { list: 'thes-stato_fattori' },
+    ] },
+    { col: 'prospetto_ingresso', columns: [{ list: 'thes-prospetto_ingresso' }] },
+    { col: 'orientamento_ambienti', columns: [{ options: ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'] }] },
+    { col: 'elementi_costitutivi', columns: [{ list: 'thes-elementi_costitutivi' }] },
+    { col: 'manufatti', columns: [{ list: 'thes-manufatti' }] },
+    { col: 'fasi_funzionali', columns: [{}, {}, { list: 'thes-fasi_definizione' }] },
+];
+
+const strutturaSubtableSerializers = STRUTTURA_SUBTABLE_CONFIG.map(function(cfg) {
+    return initStrutturaRepeatableTable({
+        tbodyId: cfg.col + '_tbody',
+        addBtnId: cfg.col + '_add',
+        hiddenInputId: cfg.col + '_hidden',
+        columns: cfg.columns,
+        initialData: (window.STRUTTURA_SUBTABLES_DATA || {})[cfg.col] || [],
+    });
+});
+
+document.getElementById('strutturaForm').addEventListener('submit', function() {
+    strutturaSubtableSerializers.forEach(function(fn) { fn(); });
 });
 </script>
 {% endblock %}

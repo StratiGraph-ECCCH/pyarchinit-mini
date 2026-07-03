@@ -679,7 +679,7 @@ def create_app():
     tma_service = TMAService(db_manager)
     from pyarchinit_mini.services.tomba_service import TombaService
     tomba_service = TombaService(db_manager)
-    from pyarchinit_mini.services.struttura_service import StrutturaService
+    from pyarchinit_mini.services.struttura_service import StrutturaService, parse_pylist as struttura_parse_pylist
     struttura_service = StrutturaService(db_manager)
     from pyarchinit_mini.services.fauna_service import FaunaService
     fauna_service = FaunaService(db_manager)
@@ -5142,7 +5142,8 @@ def create_app():
                 flash('Struttura creata', 'success')
                 return redirect(url_for('struttura_edit', struttura_id=struttura_id))
             flash('Errore creazione Struttura', 'error')
-        return render_template('struttura/form.html', struttura={}, media=[])
+        subtables = {col: [] for col in StrutturaService.SUBTABLE_COLS}
+        return render_template('struttura/form.html', struttura={}, media=[], subtables=subtables)
 
     @app.route('/struttura/<int:struttura_id>', methods=['GET', 'POST'])
     @login_required
@@ -5165,7 +5166,8 @@ def create_app():
             media_items = _media_gallery('struttura', struttura_id)
         except Exception:
             pass
-        return render_template('struttura/form.html', struttura=struttura, media=media_items)
+        subtables = {col: struttura_parse_pylist(struttura.get(col)) for col in StrutturaService.SUBTABLE_COLS}
+        return render_template('struttura/form.html', struttura=struttura, media=media_items, subtables=subtables)
 
     @app.route('/struttura/<int:struttura_id>/delete', methods=['POST'])
     @login_required
