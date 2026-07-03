@@ -7714,6 +7714,14 @@ msgstr "Eliminare questo record UT?"
 msgid "No UT records found."
 msgstr "Nessun record UT trovato."
 
+#: pyarchinit_mini/web_interface/templates/ut/form.html:188
+msgid "Data rilievo"
+msgstr "Data rilievo"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:196
+msgid "Responsabile rilievo"
+msgstr "Responsabile rilievo"
+
 #~ msgid "OK"
 #~ msgstr "OK"
 
