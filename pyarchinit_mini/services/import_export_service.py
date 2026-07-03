@@ -327,6 +327,7 @@ class ImportExportService:
             raise ValueError("Source database not configured")
 
         # Auto-migrate source database to add i18n columns if needed
+        migration_stats = {}
         if auto_migrate:
             logger.info("Checking source database for missing i18n columns...")
             migration_stats = self.migrate_source_database(tables=['site_table'], auto_backup=auto_backup)
@@ -336,6 +337,7 @@ class ImportExportService:
                 logger.info(f"Database backup: {migration_stats['backup_path']}")
 
         stats = {'imported': 0, 'updated': 0, 'skipped': 0, 'errors': []}
+        stats['backup_path'] = migration_stats.get('backup_path')
 
         source_session = self.source_session_maker()
         mini_session = self.mini_session_maker()
@@ -782,6 +784,7 @@ class ImportExportService:
             raise ValueError("Source database not configured")
 
         # Auto-migrate source database to add i18n columns if needed
+        migration_stats = {}
         if auto_migrate:
             logger.info("Checking source database for missing i18n columns...")
             migration_stats = self.migrate_source_database(tables=['us_table'], auto_backup=auto_backup)
@@ -795,7 +798,8 @@ class ImportExportService:
             'updated': 0,
             'skipped': 0,
             'relationships_created': 0,
-            'errors': []
+            'errors': [],
+            'backup_path': migration_stats.get('backup_path'),
         }
 
         source_session = self.source_session_maker()
@@ -1283,6 +1287,7 @@ class ImportExportService:
             raise ValueError("Source database not configured")
 
         # Auto-migrate source database to add i18n columns if needed
+        migration_stats = {}
         if auto_migrate:
             logger.info("Checking source database for missing i18n columns...")
             migration_stats = self.migrate_source_database(tables=['inventario_materiali_table'], auto_backup=auto_backup)
@@ -1292,6 +1297,7 @@ class ImportExportService:
                 logger.info(f"Database backup: {migration_stats['backup_path']}")
 
         stats = {'imported': 0, 'updated': 0, 'skipped': 0, 'errors': []}
+        stats['backup_path'] = migration_stats.get('backup_path')
 
         source_session = self.source_session_maker()
         mini_session = self.mini_session_maker()

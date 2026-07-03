@@ -5043,6 +5043,9 @@ def create_app():
         ([[specie, psi], ...] JSON) and misure_ossa ([[elemento, specie,
         GL, GB, Bd, Bp], ...] JSON) replaced by human-readable strings."""
         out = dict(d)
+        # list_fauna injects a derived 'specie_display'; drop it so exports don't
+        # carry two overlapping species columns (the flattened specie_psi below).
+        out.pop('specie_display', None)
 
         specie_psi = out.get('specie_psi')
         try:
@@ -5809,6 +5812,118 @@ def create_app():
                                         'ware', 'material', 'note'
                                     ) if p.get(k)}
                                     for p in pottery_dicts[:200]
+                                ],
+                            }
+                        except Exception:
+                            pass
+
+                        # --- TOMBA context ---
+                        try:
+                            from pyarchinit_mini.models.tomba import Tomba
+                            all_tomba = session.query(Tomba).filter(Tomba.sito == site_name).all()
+                            tomba_dicts = [t.to_dict() for t in all_tomba]
+                            tomba_by_rito = {}
+                            tomba_by_tipo_sepoltura = {}
+                            for t in tomba_dicts:
+                                r = (t.get('rito') or '-').strip() or '-'
+                                ts = (t.get('tipo_sepoltura') or '-').strip() or '-'
+                                tomba_by_rito[r] = tomba_by_rito.get(r, 0) + 1
+                                tomba_by_tipo_sepoltura[ts] = tomba_by_tipo_sepoltura.get(ts, 0) + 1
+                            context['tomba_summary'] = {
+                                'total': len(tomba_dicts),
+                                'by_rito': tomba_by_rito,
+                                'by_tipo_sepoltura': tomba_by_tipo_sepoltura,
+                                'sample': [
+                                    {k: t.get(k) for k in (
+                                        'id_tomba', 'sito', 'area', 'nr_scheda_taf',
+                                        'rito', 'tipo_sepoltura', 'datazione_estesa'
+                                    ) if t.get(k)}
+                                    for t in tomba_dicts[:200]
+                                ],
+                            }
+                        except Exception:
+                            pass
+
+                        # --- STRUTTURA context ---
+                        try:
+                            from pyarchinit_mini.models.struttura import Struttura
+                            all_struttura = session.query(Struttura).filter(Struttura.sito == site_name).all()
+                            struttura_dicts = [s.to_dict() for s in all_struttura]
+                            struttura_by_categoria = {}
+                            struttura_by_tipologia = {}
+                            for s in struttura_dicts:
+                                cat = (s.get('categoria_struttura') or '-').strip() or '-'
+                                tip = (s.get('tipologia_struttura') or '-').strip() or '-'
+                                struttura_by_categoria[cat] = struttura_by_categoria.get(cat, 0) + 1
+                                struttura_by_tipologia[tip] = struttura_by_tipologia.get(tip, 0) + 1
+                            context['struttura_summary'] = {
+                                'total': len(struttura_dicts),
+                                'by_categoria_struttura': struttura_by_categoria,
+                                'by_tipologia_struttura': struttura_by_tipologia,
+                                'sample': [
+                                    {k: s.get(k) for k in (
+                                        'id_struttura', 'sito', 'sigla_struttura', 'categoria_struttura',
+                                        'definizione_struttura', 'datazione_estesa'
+                                    ) if s.get(k)}
+                                    for s in struttura_dicts[:200]
+                                ],
+                            }
+                        except Exception:
+                            pass
+
+                        # --- FAUNA context ---
+                        try:
+                            from pyarchinit_mini.models.fauna import Fauna
+                            from pyarchinit_mini.services.fauna_service import FaunaService
+                            all_fauna = session.query(Fauna).filter(Fauna.sito == site_name).all()
+                            fauna_dicts = [f.to_dict() for f in all_fauna]
+                            fauna_by_contesto = {}
+                            fauna_by_specie = {}
+                            fauna_sample = []
+                            for f in fauna_dicts:
+                                c = (f.get('contesto') or '-').strip() or '-'
+                                fauna_by_contesto[c] = fauna_by_contesto.get(c, 0) + 1
+                                species_str = FaunaService._species_summary(f.get('specie_psi'))
+                                for name in [s.strip() for s in species_str.split(',') if s.strip()]:
+                                    fauna_by_specie[name] = fauna_by_specie.get(name, 0) + 1
+                                if len(fauna_sample) < 200:
+                                    row = {k: f.get(k) for k in (
+                                        'id_fauna', 'sito', 'us', 'contesto', 'numero_minimo_individui'
+                                    ) if f.get(k)}
+                                    if species_str:
+                                        row['species'] = species_str
+                                    fauna_sample.append(row)
+                            context['fauna_summary'] = {
+                                'total': len(fauna_dicts),
+                                'by_contesto': fauna_by_contesto,
+                                'by_specie': fauna_by_specie,
+                                'sample': fauna_sample,
+                            }
+                        except Exception:
+                            pass
+
+                        # --- UT context (project-scoped, NOT filtered by site) ---
+                        try:
+                            from pyarchinit_mini.models.ut import Ut
+                            ut_total = session.query(sqlfunc.count(Ut.id_ut)).scalar() or 0
+                            all_ut = session.query(Ut).limit(500).all()
+                            ut_dicts = [u.to_dict() for u in all_ut]
+                            ut_by_def_ut = {}
+                            ut_by_survey_type = {}
+                            for u in ut_dicts:
+                                d = (u.get('def_ut') or '-').strip() or '-'
+                                sv = (u.get('survey_type') or '-').strip() or '-'
+                                ut_by_def_ut[d] = ut_by_def_ut.get(d, 0) + 1
+                                ut_by_survey_type[sv] = ut_by_survey_type.get(sv, 0) + 1
+                            context['ut_summary'] = {
+                                'total': ut_total,
+                                'by_def_ut': ut_by_def_ut,
+                                'by_survey_type': ut_by_survey_type,
+                                'sample': [
+                                    {k: u.get(k) for k in (
+                                        'id_ut', 'progetto', 'nr_ut', 'def_ut', 'localita', 'comune'
+                                    ) if u.get(k)}
+                                    for u in ut_dicts[:200]
                                 ],
                             }
                         except Exception:

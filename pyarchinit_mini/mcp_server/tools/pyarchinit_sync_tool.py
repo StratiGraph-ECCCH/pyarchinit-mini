@@ -102,33 +102,43 @@ class PyArchInitSyncTool(BaseTool):
             if 'sites' in data_types:
                 logger.info("Importing sites...")
                 site_result = service.import_sites(sito_filter=site_filter, auto_backup=auto_backup)
-                results['imported']['sites'] = site_result.get('sites_imported', 0)
+                results['imported']['sites'] = site_result.get('imported', 0)
                 if site_result.get('backup_path'):
                     results['backup_path'] = site_result['backup_path']
-                if not site_result.get('success', True):
-                    results['errors'].append(f"Sites import: {site_result.get('message', 'failed')}")
+                if site_result.get('errors'):
+                    results['errors'].extend(f"Sites import: {e}" for e in site_result['errors'])
 
             # Import US
             if 'us' in data_types:
                 logger.info("Importing US...")
                 us_result = service.import_us(sito_filter=site_filter, auto_backup=auto_backup)
-                results['imported']['us'] = us_result.get('us_imported', 0)
+                results['imported']['us'] = us_result.get('imported', 0)
                 results['imported']['relationships'] = us_result.get('relationships_created', 0)
                 if not results['backup_path'] and us_result.get('backup_path'):
                     results['backup_path'] = us_result['backup_path']
-                if not us_result.get('success', True):
-                    results['errors'].append(f"US import: {us_result.get('message', 'failed')}")
+                if us_result.get('errors'):
+                    results['errors'].extend(f"US import: {e}" for e in us_result['errors'])
+
+            # Import inventario (finds/materials)
+            if 'inventario' in data_types:
+                logger.info("Importing inventario...")
+                inv_result = service.import_inventario(sito_filter=site_filter, auto_backup=auto_backup)
+                results['imported']['inventario'] = inv_result.get('imported', 0)
+                if not results['backup_path'] and inv_result.get('backup_path'):
+                    results['backup_path'] = inv_result['backup_path']
+                if inv_result.get('errors'):
+                    results['errors'].extend(f"Inventario import: {e}" for e in inv_result['errors'])
 
             # Import tomba (burials)
             if 'tomba' in data_types:
                 logger.info("Importing tomba...")
                 if hasattr(service, 'import_tomba'):
                     tomba_result = service.import_tomba(sito_filter=site_filter, auto_backup=auto_backup)
-                    results['imported']['tomba'] = tomba_result.get('tomba_imported', 0)
+                    results['imported']['tomba'] = tomba_result.get('imported', 0)
                     if not results['backup_path'] and tomba_result.get('backup_path'):
                         results['backup_path'] = tomba_result['backup_path']
-                    if not tomba_result.get('success', True):
-                        results['errors'].append(f"Tomba import: {tomba_result.get('message', 'failed')}")
+                    if tomba_result.get('errors'):
+                        results['errors'].extend(f"Tomba import: {e}" for e in tomba_result['errors'])
                 else:
                     results['errors'].append("Tomba import: not yet supported by ImportExportService")
 
@@ -137,11 +147,11 @@ class PyArchInitSyncTool(BaseTool):
                 logger.info("Importing struttura...")
                 if hasattr(service, 'import_struttura'):
                     struttura_result = service.import_struttura(sito_filter=site_filter, auto_backup=auto_backup)
-                    results['imported']['struttura'] = struttura_result.get('struttura_imported', 0)
+                    results['imported']['struttura'] = struttura_result.get('imported', 0)
                     if not results['backup_path'] and struttura_result.get('backup_path'):
                         results['backup_path'] = struttura_result['backup_path']
-                    if not struttura_result.get('success', True):
-                        results['errors'].append(f"Struttura import: {struttura_result.get('message', 'failed')}")
+                    if struttura_result.get('errors'):
+                        results['errors'].extend(f"Struttura import: {e}" for e in struttura_result['errors'])
                 else:
                     results['errors'].append("Struttura import: not yet supported by ImportExportService")
 
@@ -150,11 +160,11 @@ class PyArchInitSyncTool(BaseTool):
                 logger.info("Importing fauna...")
                 if hasattr(service, 'import_fauna'):
                     fauna_result = service.import_fauna(sito_filter=site_filter, auto_backup=auto_backup)
-                    results['imported']['fauna'] = fauna_result.get('fauna_imported', 0)
+                    results['imported']['fauna'] = fauna_result.get('imported', 0)
                     if not results['backup_path'] and fauna_result.get('backup_path'):
                         results['backup_path'] = fauna_result['backup_path']
-                    if not fauna_result.get('success', True):
-                        results['errors'].append(f"Fauna import: {fauna_result.get('message', 'failed')}")
+                    if fauna_result.get('errors'):
+                        results['errors'].extend(f"Fauna import: {e}" for e in fauna_result['errors'])
                 else:
                     results['errors'].append("Fauna import: not yet supported by ImportExportService")
 
@@ -163,11 +173,11 @@ class PyArchInitSyncTool(BaseTool):
                 logger.info("Importing ut...")
                 if hasattr(service, 'import_ut'):
                     ut_result = service.import_ut(sito_filter=site_filter, auto_backup=auto_backup)
-                    results['imported']['ut'] = ut_result.get('ut_imported', 0)
+                    results['imported']['ut'] = ut_result.get('imported', 0)
                     if not results['backup_path'] and ut_result.get('backup_path'):
                         results['backup_path'] = ut_result['backup_path']
-                    if not ut_result.get('success', True):
-                        results['errors'].append(f"UT import: {ut_result.get('message', 'failed')}")
+                    if ut_result.get('errors'):
+                        results['errors'].extend(f"UT import: {e}" for e in ut_result['errors'])
                 else:
                     results['errors'].append("UT import: not yet supported by ImportExportService")
 
@@ -199,27 +209,31 @@ class PyArchInitSyncTool(BaseTool):
             if 'sites' in data_types:
                 logger.info("Exporting sites...")
                 site_result = service.export_sites(target_db_connection=target_db_url, sito_filter=site_filter)
-                results['exported']['sites'] = site_result.get('sites_exported', 0)
-                if not site_result.get('success', True):
-                    results['errors'].append(f"Sites export: {site_result.get('message', 'failed')}")
+                results['exported']['sites'] = site_result.get('exported', 0)
+                if site_result.get('errors'):
+                    results['errors'].extend(f"Sites export: {e}" for e in site_result['errors'])
 
             # Export US
             if 'us' in data_types:
                 logger.info("Exporting US...")
                 us_result = service.export_us(target_db_connection=target_db_url, sito_filter=site_filter)
-                results['exported']['us'] = us_result.get('us_exported', 0)
-                results['exported']['relationships'] = us_result.get('relationships_exported', 0)
-                if not us_result.get('success', True):
-                    results['errors'].append(f"US export: {us_result.get('message', 'failed')}")
+                results['exported']['us'] = us_result.get('exported', 0)
+                # NOTE: export_us() does not track/return a relationships count
+                # (unlike import_us's relationships_created) - no such key to read.
+                if us_result.get('errors'):
+                    results['errors'].extend(f"US export: {e}" for e in us_result['errors'])
+
+            # NOTE: 'inventario' is intentionally NOT handled here - there is no
+            # ImportExportService.export_inventario() method (import-only for now).
 
             # Export tomba (burials)
             if 'tomba' in data_types:
                 logger.info("Exporting tomba...")
                 if hasattr(service, 'export_tomba'):
                     tomba_result = service.export_tomba(target_db_connection=target_db_url, sito_filter=site_filter)
-                    results['exported']['tomba'] = tomba_result.get('tomba_exported', 0)
-                    if not tomba_result.get('success', True):
-                        results['errors'].append(f"Tomba export: {tomba_result.get('message', 'failed')}")
+                    results['exported']['tomba'] = tomba_result.get('exported', 0)
+                    if tomba_result.get('errors'):
+                        results['errors'].extend(f"Tomba export: {e}" for e in tomba_result['errors'])
                 else:
                     results['errors'].append("Tomba export: not yet supported by ImportExportService")
 
@@ -228,9 +242,9 @@ class PyArchInitSyncTool(BaseTool):
                 logger.info("Exporting struttura...")
                 if hasattr(service, 'export_struttura'):
                     struttura_result = service.export_struttura(target_db_connection=target_db_url, sito_filter=site_filter)
-                    results['exported']['struttura'] = struttura_result.get('struttura_exported', 0)
-                    if not struttura_result.get('success', True):
-                        results['errors'].append(f"Struttura export: {struttura_result.get('message', 'failed')}")
+                    results['exported']['struttura'] = struttura_result.get('exported', 0)
+                    if struttura_result.get('errors'):
+                        results['errors'].extend(f"Struttura export: {e}" for e in struttura_result['errors'])
                 else:
                     results['errors'].append("Struttura export: not yet supported by ImportExportService")
 
@@ -239,9 +253,9 @@ class PyArchInitSyncTool(BaseTool):
                 logger.info("Exporting fauna...")
                 if hasattr(service, 'export_fauna'):
                     fauna_result = service.export_fauna(target_db_connection=target_db_url, sito_filter=site_filter)
-                    results['exported']['fauna'] = fauna_result.get('fauna_exported', 0)
-                    if not fauna_result.get('success', True):
-                        results['errors'].append(f"Fauna export: {fauna_result.get('message', 'failed')}")
+                    results['exported']['fauna'] = fauna_result.get('exported', 0)
+                    if fauna_result.get('errors'):
+                        results['errors'].extend(f"Fauna export: {e}" for e in fauna_result['errors'])
                 else:
                     results['errors'].append("Fauna export: not yet supported by ImportExportService")
 
@@ -250,9 +264,9 @@ class PyArchInitSyncTool(BaseTool):
                 logger.info("Exporting ut...")
                 if hasattr(service, 'export_ut'):
                     ut_result = service.export_ut(target_db_connection=target_db_url, sito_filter=site_filter)
-                    results['exported']['ut'] = ut_result.get('ut_exported', 0)
-                    if not ut_result.get('success', True):
-                        results['errors'].append(f"UT export: {ut_result.get('message', 'failed')}")
+                    results['exported']['ut'] = ut_result.get('exported', 0)
+                    if ut_result.get('errors'):
+                        results['errors'].extend(f"UT export: {e}" for e in ut_result['errors'])
                 else:
                     results['errors'].append("UT export: not yet supported by ImportExportService")
 

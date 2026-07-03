@@ -50,9 +50,13 @@ REGOLE (OBBLIGATORIE):
    Per le pottery usa context['pottery_summary']: aggregazioni by_form, by_fabric, by_us e un sample fino a 200 record.
    Quando rispondi su frammenti ceramici cita conteggi totali e per US.
    Link alle tombe: <a href="/tomba/ID" class="text-primary">Tomba ID</a>
+   Per le tombe usa context['tomba_summary']: aggregazioni by_rito, by_tipo_sepoltura e un sample fino a 200 record.
    Link alle strutture: <a href="/struttura/ID" class="text-primary">Struttura ID</a>
+   Per le strutture usa context['struttura_summary']: aggregazioni by_categoria_struttura, by_tipologia_struttura e un sample fino a 200 record.
    Link alla fauna: <a href="/fauna/ID" class="text-primary">Fauna ID</a>
+   Per la fauna usa context['fauna_summary']: aggregazioni by_contesto, by_specie e un sample fino a 200 record.
    Link alle UT: <a href="/ut/ID" class="text-primary">UT ID</a>
+   Per le UT usa context['ut_summary']: aggregazioni by_def_ut, by_survey_type e un sample fino a 200 record (dataset di progetto globale, non filtrato per sito).
 7. MAI tralasciare dati. Se ci sono 700 US, cita e analizza TUTTE le US — raggruppa per tipo, area, periodo, anno, ma includi TUTTI i numeri. Crea tabelle complete.
 8. Includi statistiche dettagliate: conteggi per tipo, per area, per periodo, per operatore.
 9. Sii ESAUSTIVO: ogni US, ogni materiale, ogni relazione deve essere menzionata o inclusa in una tabella.
@@ -75,9 +79,13 @@ RULES (MANDATORY):
    For pottery use context['pottery_summary']: by_form, by_fabric, by_us aggregations + sample up to 200 records.
    When asked about pottery sherds, include totals and per-US counts.
    Tomba links: <a href="/tomba/ID" class="text-primary">Tomba ID</a>
+   For tombe use context['tomba_summary']: by_rito, by_tipo_sepoltura aggregations + sample up to 200 records.
    Struttura links: <a href="/struttura/ID" class="text-primary">Struttura ID</a>
+   For strutture use context['struttura_summary']: by_categoria_struttura, by_tipologia_struttura aggregations + sample up to 200 records.
    Fauna links: <a href="/fauna/ID" class="text-primary">Fauna ID</a>
+   For fauna use context['fauna_summary']: by_contesto, by_specie aggregations + sample up to 200 records.
    UT links: <a href="/ut/ID" class="text-primary">UT ID</a>
+   For UT use context['ut_summary']: by_def_ut, by_survey_type aggregations + sample up to 200 records (global project-wide dataset, not filtered by site).
 7. NEVER omit data. If there are 700 US, cite and analyze ALL of them — group by type, area, period, year, but include ALL numbers. Create complete tables.
 8. Include detailed statistics: counts by type, area, period, operator.
 9. Be EXHAUSTIVE: every US, every material, every relationship must be mentioned or included in a table.
@@ -88,6 +96,43 @@ RULES (MANDATORY):
 
 def _get_system_prompt(lang='it'):
     return SYSTEM_PROMPT_IT if lang == 'it' else SYSTEM_PROMPT_EN
+
+
+def _build_context_block(context: Dict[str, Any], lang: str = 'it') -> str:
+    """Assemble the "COMPLETE DATA" context block injected into the system
+    prompt by ask(). Pure function (no LLM call) so it can be unit-tested
+    directly. Order: stats first, then bulk data, mirroring ask()'s
+    original inline assembly."""
+    ctx_parts = []
+    if context.get('site'):
+        ctx_parts.append("SITE INFO:\n" + json.dumps(context['site'], indent=1, default=str))
+    if context.get('us_statistics'):
+        ctx_parts.append("US STATISTICS (COMPLETE):\n" + json.dumps(context['us_statistics'], indent=1, default=str))
+    if context.get('inv_statistics'):
+        ctx_parts.append("MATERIAL STATISTICS (COMPLETE):\n" + json.dumps(context['inv_statistics'], indent=1, default=str))
+    if context.get('pottery_summary'):
+        ctx_parts.append("POTTERY STATISTICS (COMPLETE):\n" + json.dumps(context['pottery_summary'], indent=1, default=str))
+    if context.get('tomba_summary'):
+        ctx_parts.append("TOMBA STATISTICS (COMPLETE):\n" + json.dumps(context['tomba_summary'], indent=1, default=str))
+    if context.get('struttura_summary'):
+        ctx_parts.append("STRUTTURA STATISTICS (COMPLETE):\n" + json.dumps(context['struttura_summary'], indent=1, default=str))
+    if context.get('fauna_summary'):
+        ctx_parts.append("FAUNA STATISTICS (COMPLETE):\n" + json.dumps(context['fauna_summary'], indent=1, default=str))
+    if context.get('ut_summary'):
+        ctx_parts.append("UT STATISTICS (COMPLETE):\n" + json.dumps(context['ut_summary'], indent=1, default=str))
+    # Include ALL US records (truncated per record to save tokens)
+    if context.get('us_list'):
+        us_summary = []
+        for u in context['us_list']:
+            us_summary.append({k: u.get(k) for k in ['us', 'area', 'unita_tipo', 'd_stratigrafica', 'd_interpretativa', 'datazione', 'schedatore', 'anno_scavo', 'rapporti'] if u.get(k)})
+        ctx_parts.append(f"ALL {len(us_summary)} US RECORDS (key fields):\n" + json.dumps(us_summary, default=str))
+    if context.get('inv_list'):
+        inv_summary = []
+        for i in context['inv_list']:
+            inv_summary.append({k: i.get(k) for k in ['numero_inventario', 'tipo_reperto', 'definizione', 'us', 'area', 'stato_conservazione', 'datazione_reperto'] if i.get(k)})
+        ctx_parts.append(f"ALL {len(inv_summary)} MATERIAL RECORDS (key fields):\n" + json.dumps(inv_summary, default=str))
+
+    return "\n\n".join(ctx_parts)
 
 
 class AIAssistantService:
@@ -153,28 +198,7 @@ class AIAssistantService:
                 system += f"\n\nSite name for links: {site_name}"
 
             # Build comprehensive context: stats first, then data
-            ctx_parts = []
-            if context.get('site'):
-                ctx_parts.append("SITE INFO:\n" + json.dumps(context['site'], indent=1, default=str))
-            if context.get('us_statistics'):
-                ctx_parts.append("US STATISTICS (COMPLETE):\n" + json.dumps(context['us_statistics'], indent=1, default=str))
-            if context.get('inv_statistics'):
-                ctx_parts.append("MATERIAL STATISTICS (COMPLETE):\n" + json.dumps(context['inv_statistics'], indent=1, default=str))
-            if context.get('pottery_summary'):
-                ctx_parts.append("POTTERY STATISTICS (COMPLETE):\n" + json.dumps(context['pottery_summary'], indent=1, default=str))
-            # Include ALL US records (truncated per record to save tokens)
-            if context.get('us_list'):
-                us_summary = []
-                for u in context['us_list']:
-                    us_summary.append({k: u.get(k) for k in ['us', 'area', 'unita_tipo', 'd_stratigrafica', 'd_interpretativa', 'datazione', 'schedatore', 'anno_scavo', 'rapporti'] if u.get(k)})
-                ctx_parts.append(f"ALL {len(us_summary)} US RECORDS (key fields):\n" + json.dumps(us_summary, default=str))
-            if context.get('inv_list'):
-                inv_summary = []
-                for i in context['inv_list']:
-                    inv_summary.append({k: i.get(k) for k in ['numero_inventario', 'tipo_reperto', 'definizione', 'us', 'area', 'stato_conservazione', 'datazione_reperto'] if i.get(k)})
-                ctx_parts.append(f"ALL {len(inv_summary)} MATERIAL RECORDS (key fields):\n" + json.dumps(inv_summary, default=str))
-
-            full_context = "\n\n".join(ctx_parts)
+            full_context = _build_context_block(context, lang)
             # Limit to 30000 chars to fit in context window
             system += "\n\nCOMPLETE DATA:\n" + full_context[:30000]
 
