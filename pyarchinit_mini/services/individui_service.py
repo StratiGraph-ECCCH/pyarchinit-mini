@@ -256,7 +256,8 @@ class IndividuiService:
                 )
                 if sigla_struttura:
                     q = q.filter(Individui.sigla_struttura == sigla_struttura)
-                if nr_struttura:
+                if nr_struttura is not None and nr_struttura != '':
+                    # 0 is a parseable value — don't drop it via truthiness.
                     try:
                         nr_struttura_int = int(nr_struttura)
                     except (TypeError, ValueError):
