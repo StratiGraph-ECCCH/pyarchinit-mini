@@ -66,6 +66,9 @@
                         {% for opt in sesso_opts %}
                         <option value="{{ opt }}" {% if individui.sesso == opt %}selected{% endif %}>{{ opt if opt else '—' }}</option>
                         {% endfor %}
+                        {% if individui.sesso and individui.sesso not in sesso_opts %}
+                        <option value="{{ individui.sesso }}" selected>{{ individui.sesso }} ({{ _('valore non in lista') }})</option>
+                        {% endif %}
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -75,6 +78,9 @@
                         {% for opt in eta_opts %}
                         <option value="{{ opt }}" {% if individui.eta_min == opt %}selected{% endif %}>{{ opt if opt else '—' }}</option>
                         {% endfor %}
+                        {% if individui.eta_min and individui.eta_min not in eta_opts %}
+                        <option value="{{ individui.eta_min }}" selected>{{ individui.eta_min }} ({{ _('valore non in lista') }})</option>
+                        {% endif %}
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -83,6 +89,9 @@
                         {% for opt in eta_opts %}
                         <option value="{{ opt }}" {% if individui.eta_max == opt %}selected{% endif %}>{{ opt if opt else '—' }}</option>
                         {% endfor %}
+                        {% if individui.eta_max and individui.eta_max not in eta_opts %}
+                        <option value="{{ individui.eta_max }}" selected>{{ individui.eta_max }} ({{ _('valore non in lista') }})</option>
+                        {% endif %}
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -92,6 +101,9 @@
                         {% for opt in classi_eta_opts %}
                         <option value="{{ opt }}" {% if individui.classi_eta == opt %}selected{% endif %}>{{ opt if opt else '—' }}</option>
                         {% endfor %}
+                        {% if individui.classi_eta and individui.classi_eta not in classi_eta_opts %}
+                        <option value="{{ individui.classi_eta }}" selected>{{ individui.classi_eta }} ({{ _('valore non in lista') }})</option>
+                        {% endif %}
                     </select>
                 </div>
                 <div class="col-md-3">

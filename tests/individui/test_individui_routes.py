@@ -322,6 +322,34 @@ def test_delete_removes_record(logged_in_client, individui_service):
     assert individui_service.get_individui(iid) is None
 
 
+def test_edit_page_preserves_out_of_list_sesso_value(logged_in_client, individui_service):
+    """Production has ~394 legacy rows from the classic plugin's editable
+    (non-fixed) sesso combobox — an out-of-list stored value must render as
+    a selected option, not be silently dropped (and later NULLed on save)."""
+    iid = individui_service.create_individui({
+        "sito": "Volterra", "nr_individuo": 1, "sesso": "Maschio adulto?",
+    })
+    r = logged_in_client.get(f"/individui/{iid}")
+    assert r.status_code == 200
+    html = r.data.decode("utf-8")
+    assert 'value="Maschio adulto?" selected' in html
+
+
+def test_edit_post_roundtrips_out_of_list_sesso_value(logged_in_client, individui_service):
+    """Posting the form back unchanged (as a browser submitting the
+    preserved synthetic option would) must not NULL out the legacy value."""
+    iid = individui_service.create_individui({
+        "sito": "Volterra", "nr_individuo": 1, "sesso": "Maschio adulto?",
+    })
+    r = logged_in_client.post(
+        f"/individui/{iid}",
+        data={"sito": "Volterra", "nr_individuo": "1", "sesso": "Maschio adulto?"},
+        follow_redirects=False,
+    )
+    assert r.status_code in (302, 303)
+    assert individui_service.get_individui(iid)["sesso"] == "Maschio adulto?"
+
+
 def test_no_media_upload_route_exists(flask_app):
     """Individui has no media — confirm the route the URL map would need for
     a media upload endpoint was never registered."""

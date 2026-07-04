@@ -275,3 +275,12 @@ def test_update_tomba_empty_corredo_tipo_becomes_empty_list_string(svc):
     assert svc.update_tomba(tid, {"corredo_tipo": "[]"}) is True
     row = svc.get_tomba(tid)
     assert row["corredo_tipo"] == "[]"
+
+
+def test_create_tomba_without_corredo_tipo_becomes_empty_list_string(svc):
+    """corredo_tipo absent entirely from the payload on CREATE must still
+    be stored as the plugin-compatible '[]', not left NULL — mirrors
+    struttura_service.create_struttura's raw-data handling."""
+    tid = svc.create_tomba({"sito": "S"})
+    row = svc.get_tomba(tid)
+    assert row["corredo_tipo"] == "[]"

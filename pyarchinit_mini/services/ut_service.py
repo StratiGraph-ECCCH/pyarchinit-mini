@@ -102,9 +102,16 @@ class UtService:
                 valid_keys = Ut.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys and v is not None and v != ''}
                 clean = coerce_types(Ut, clean)
+                # Sub-table columns are always normalized to str(list-of-lists)
+                # on CREATE — even a missing/blank value must become the
+                # literal '[]' (not be dropped/left NULL), matching the
+                # classic plugin's format. Mirrors struttura_service's
+                # create_struttura, which reads the raw `data` (not the
+                # value-filtered `clean`) so an absent/empty field is still
+                # normalized.
                 for key in self.SUBTABLE_COLS:
-                    if key in clean:
-                        clean[key] = _normalize_pylist(clean.get(key))
+                    if key in valid_keys:
+                        clean[key] = _normalize_pylist(data.get(key))
                 row = Ut(**clean)
                 session.add(row)
                 session.flush()

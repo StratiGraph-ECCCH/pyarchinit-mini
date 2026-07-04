@@ -253,3 +253,13 @@ def test_create_ut_malformed_subtable_becomes_empty_list_string(svc):
     row = svc.get_ut(uid)
     assert row["documentazione"] == "[]"
     assert row["bibliografia"] == "[]"
+
+
+def test_create_ut_without_subtable_cols_becomes_empty_list_string(svc):
+    """documentazione/bibliografia absent entirely from the payload on
+    CREATE must still be stored as the plugin-compatible '[]', not left
+    NULL — mirrors struttura_service.create_struttura's raw-data handling."""
+    uid = svc.create_ut({"progetto": "P"})
+    row = svc.get_ut(uid)
+    assert row["documentazione"] == "[]"
+    assert row["bibliografia"] == "[]"
