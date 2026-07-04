@@ -1,4 +1,4 @@
-## Unreleased
+## 3.4.0 — 2026-07-04
 
 ### Added — Individui (anthropological individuals) record type
 - **Individui** web module matching the classic PyArchInit `individui_table` — identification, fixed Sesso/Eta selects, and thesaurus-backed skeletal-position/giacitura fields (`/individui`, no media panel). Uniquely constrained per site by `nr_individuo` (`ID_individuo_unico`), matching the classic desktop client.
