@@ -14,6 +14,7 @@ from sqlalchemy import or_
 
 from pyarchinit_mini.models.ut import Ut
 from .coercion import coerce_types
+from .struttura_service import _normalize_pylist
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,16 @@ _THESAURUS_LANG_MAP = {'it': 'IT', 'en': 'en_US'}
 
 class UtService:
     """Service for Ut (survey unit) records."""
+
+    # ut_table columns stored as str(list-of-lists) — the classic plugin's
+    # repeatable sub-table format (UT.py serializes tableWidget_documentazione
+    # and tableWidget_bibliografia with str(table2dict(...))). documentazione
+    # rows have 2 positional cells (Tipo documentazione, Riferimenti);
+    # bibliografia rows have 1 (Riferimenti bibliografici). Shared with the
+    # web routes (ut_create/ut_edit) and the form template's repeatable-row
+    # widgets; see StrutturaService._normalize_pylist / parse_pylist for the
+    # serialization helpers.
+    SUBTABLE_COLS = ['documentazione', 'bibliografia']
 
     def __init__(self, db_manager):
         self.db_manager = db_manager
@@ -91,6 +102,9 @@ class UtService:
                 valid_keys = Ut.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys and v is not None and v != ''}
                 clean = coerce_types(Ut, clean)
+                for key in self.SUBTABLE_COLS:
+                    if key in clean:
+                        clean[key] = _normalize_pylist(clean.get(key))
                 row = Ut(**clean)
                 session.add(row)
                 session.flush()
@@ -111,6 +125,9 @@ class UtService:
                 valid_keys = Ut.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys}
                 clean = coerce_types(Ut, clean)
+                for key in self.SUBTABLE_COLS:
+                    if key in clean:
+                        clean[key] = _normalize_pylist(clean.get(key))
                 for k, v in clean.items():
                     setattr(row, k, v if v != '' else None)
                 session.commit()

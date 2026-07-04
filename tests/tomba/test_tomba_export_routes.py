@@ -7,9 +7,10 @@ app mounting hand-copied route bodies (kept in lockstep with app.py's
 auth_routes login manager so the endpoints are exercised authenticated,
 exactly as in production.
 
-tomba has no JSON/Python-repr sub-table columns, so no flatten helper is
-needed here (unlike struttura/fauna) — the export routes just export the
-service's to_dict() rows as-is.
+tomba's corredo_tipo is a Python-repr list-of-lists sub-table column (the
+classic plugin's str(table2dict()) format), so the export routes flatten it
+to a readable string first — same convention as struttura/fauna
+(_flatten_tomba_row in app.py).
 """
 import os
 
@@ -23,6 +24,7 @@ from pyarchinit_mini.models.base import Base
 from pyarchinit_mini.models.user import UserRole
 from pyarchinit_mini.services.user_service import UserService
 from pyarchinit_mini.services.tomba_service import TombaService
+from pyarchinit_mini.services.struttura_service import parse_pylist as struttura_parse_pylist
 from pyarchinit_mini.services.export_import_service import ExportImportService
 from pyarchinit_mini.pdf_export.pdf_generator import PDFGenerator
 from pyarchinit_mini.web_interface.auth_routes import init_login_manager, User as AuthUser
@@ -94,12 +96,22 @@ def flask_app(db_manager, tomba_service, user_service):
                 except OSError:
                     pass
 
+    def _flatten_tomba_row(d):
+        """Mirrors app.py's _flatten_tomba_row (via _flatten_pylist_cols)."""
+        out = dict(d)
+        for col in tomba_service.SUBTABLE_COLS:
+            parsed = struttura_parse_pylist(out.get(col))
+            out[col] = '; '.join(
+                ' / '.join(str(cell) for cell in row) for row in parsed
+            ) if parsed else ''
+        return out
+
     @app.route('/export/tomba/excel')
     @login_required
     def export_tomba_excel():
         sito = request.args.get('sito', '').strip()
         rows = tomba_service.list_tomba(page=1, size=1_000_000, sito=sito)
-        data = [dict(r) for r in rows]
+        data = [_flatten_tomba_row(r) for r in rows]
         filename = f'tomba_{sito}.xlsx' if sito else 'tomba.xlsx'
         return _export_tmp_send(
             lambda tmp: csv_excel_service.export_to_excel(data, tmp, sheet_name='Tomba'),
@@ -111,7 +123,7 @@ def flask_app(db_manager, tomba_service, user_service):
     def export_tomba_csv():
         sito = request.args.get('sito', '').strip()
         rows = tomba_service.list_tomba(page=1, size=1_000_000, sito=sito)
-        data = [dict(r) for r in rows]
+        data = [_flatten_tomba_row(r) for r in rows]
         filename = f'tomba_{sito}.csv' if sito else 'tomba.csv'
         return _export_tmp_send(
             lambda tmp: csv_excel_service.export_to_csv(data, tmp),
@@ -122,7 +134,7 @@ def flask_app(db_manager, tomba_service, user_service):
     def export_tomba_pdf():
         sito = request.args.get('sito', '').strip()
         rows = tomba_service.list_tomba(page=1, size=1_000_000, sito=sito)
-        data = [dict(r) for r in rows]
+        data = [_flatten_tomba_row(r) for r in rows]
         filename = f'tomba_{sito}.pdf' if sito else 'tomba.pdf'
         return _export_tmp_send(
             lambda tmp: pdf_generator.generate_records_pdf('Tomba', data, tmp),
@@ -177,3 +189,17 @@ def test_export_pdf_returns_200_pdf(logged_in_client, tomba_service):
 def test_export_requires_login(client):
     r = client.get("/export/tomba/csv", follow_redirects=False)
     assert r.status_code in (302, 303)
+
+
+def test_export_csv_flattens_corredo_tipo(logged_in_client, tomba_service):
+    """The stored Python-repr corredo_tipo must be flattened to a readable
+    'cell / cell / ...' string in exports — never dumped raw."""
+    tomba_service.create_tomba({
+        "sito": "Volterra",
+        "corredo_tipo": '[["1","2","Ceramica","interno","presso il cranio"]]',
+    })
+    r = logged_in_client.get("/export/tomba/csv")
+    assert r.status_code == 200
+    body = r.data.decode()
+    assert "1 / 2 / Ceramica / interno / presso il cranio" in body
+    assert "[['1'" not in body

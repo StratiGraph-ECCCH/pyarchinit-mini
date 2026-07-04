@@ -11,7 +11,7 @@
     </a>
 </div>
 
-<form method="POST">
+<form method="POST" id="utForm">
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-anagrafica">{{ _('Anagrafica') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-ubicazione">{{ _('Ubicazione') }}</a></li>
@@ -201,13 +201,39 @@
                     <label class="form-label">{{ _('Reperti Datanti') }}</label>
                     <input type="text" name="rep_datanti" class="form-control" value="{{ ut.rep_datanti or '' }}">
                 </div>
+                <!-- documentazione and bibliografia are repeatable sub-tables
+                     stored as str(list-of-lists) — the classic plugin's
+                     tableWidget_documentazione (2 cells: Tipo documentazione,
+                     Riferimenti) and tableWidget_bibliografia (1 cell) format —
+                     NOT flat text fields (see UtService.SUBTABLE_COLS). -->
                 <div class="col-md-6">
-                    <label class="form-label">{{ _('Bibliografia') }}</label>
-                    <textarea name="bibliografia" class="form-control" rows="2">{{ ut.bibliografia or '' }}</textarea>
+                    <fieldset class="mb-2">
+                        <legend class="h6">{{ _('Documentazione') }}</legend>
+                        <table class="table table-sm table-bordered align-middle" id="documentazione_table">
+                            <thead><tr>
+                                <th>{{ _('Tipo documentazione') }}</th>
+                                <th>{{ _('Riferimenti') }}</th>
+                                <th style="width:2.5rem;"></th>
+                            </tr></thead>
+                            <tbody id="documentazione_tbody"></tbody>
+                        </table>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="documentazione_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                        <input type="hidden" name="documentazione" id="documentazione_hidden">
+                    </fieldset>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label">{{ _('Documentazione') }}</label>
-                    <textarea name="documentazione" class="form-control" rows="2">{{ ut.documentazione or '' }}</textarea>
+                    <fieldset class="mb-2">
+                        <legend class="h6">{{ _('Bibliografia') }}</legend>
+                        <table class="table table-sm table-bordered align-middle" id="bibliografia_table">
+                            <thead><tr>
+                                <th>{{ _('Riferimenti bibliografici') }}</th>
+                                <th style="width:2.5rem;"></th>
+                            </tr></thead>
+                            <tbody id="bibliografia_tbody"></tbody>
+                        </table>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="bibliografia_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                        <input type="hidden" name="bibliografia" id="bibliografia_hidden">
+                    </fieldset>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">{{ _('Enti Tutela / Vincoli') }}</label>
@@ -319,6 +345,9 @@
 </form>
 
 <script>
+window.UT_SUBTABLES_DATA = {{ (subtables or {}) | tojson }};
+</script>
+<script>
 // Populate datalist elements with thesaurus values from PyArchInit
 const UT_THES_FIELDS = ['def_ut','survey_type','gps_method','surface_condition','accessibility','vegetation_coverage','weather_conditions'];
 UT_THES_FIELDS.forEach(function(field) {
@@ -343,6 +372,90 @@ UT_THES_FIELDS.forEach(function(field) {
             }
         })
         .catch(function() { /* silent */ });
+});
+
+// Repeatable-row widgets for the documentazione (2 cells) and bibliografia
+// (1 cell) sub-tables (same pattern as the struttura sub-table widgets).
+// The server hands `subtables` as real JS arrays (pre-parsed from the
+// stored Python-repr values); on submit each widget serializes its rows to
+// JSON in its hidden input, which UtService re-parses and re-serializes
+// with repr() to keep the stored value identical to the classic plugin's
+// str(table2dict()) format.
+function initUtRepeatableTable(opts) {
+    const tbody = document.getElementById(opts.tbodyId);
+    const addBtn = document.getElementById(opts.addBtnId);
+    const hidden = document.getElementById(opts.hiddenInputId);
+    const ncols = opts.ncols;
+
+    function addRow(values) {
+        const vals = values || new Array(ncols).fill('');
+        const tr = document.createElement('tr');
+        for (let i = 0; i < ncols; i++) {
+            const td = document.createElement('td');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control form-control-sm';
+            input.value = vals[i] != null ? vals[i] : '';
+            td.appendChild(input);
+            tr.appendChild(td);
+        }
+        const tdBtn = document.createElement('td');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-sm btn-outline-danger';
+        btn.innerHTML = '<i class="fas fa-times"></i>';
+        btn.addEventListener('click', function() { tr.remove(); serialize(); });
+        tdBtn.appendChild(btn);
+        tr.appendChild(tdBtn);
+        tbody.appendChild(tr);
+    }
+
+    function serialize() {
+        const rows = [];
+        Array.from(tbody.querySelectorAll('tr')).forEach(function(tr) {
+            const cells = tr.querySelectorAll('input');
+            const vals = Array.from(cells).map(function(c) { return c.value.trim(); });
+            const allBlank = vals.every(function(v) { return v === ''; });
+            if (!allBlank) rows.push(vals);
+        });
+        hidden.value = JSON.stringify(rows);
+        return rows;
+    }
+
+    addBtn.addEventListener('click', function() { addRow(); serialize(); });
+    tbody.addEventListener('input', serialize);
+
+    let initial = opts.initialData;
+    if (!Array.isArray(initial)) initial = [];
+    if (initial.length === 0) {
+        addRow();
+    } else {
+        initial.forEach(function(row) { addRow(row); });
+    }
+    serialize();
+
+    return serialize;
+}
+
+const utSubtableSerializers = [
+    initUtRepeatableTable({
+        tbodyId: 'documentazione_tbody',
+        addBtnId: 'documentazione_add',
+        hiddenInputId: 'documentazione_hidden',
+        ncols: 2,
+        initialData: (window.UT_SUBTABLES_DATA || {})['documentazione'] || [],
+    }),
+    initUtRepeatableTable({
+        tbodyId: 'bibliografia_tbody',
+        addBtnId: 'bibliografia_add',
+        hiddenInputId: 'bibliografia_hidden',
+        ncols: 1,
+        initialData: (window.UT_SUBTABLES_DATA || {})['bibliografia'] || [],
+    }),
+];
+
+document.getElementById('utForm').addEventListener('submit', function() {
+    utSubtableSerializers.forEach(function(fn) { fn(); });
 });
 </script>
 {% endblock %}

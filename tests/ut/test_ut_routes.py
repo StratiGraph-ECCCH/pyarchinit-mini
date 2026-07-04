@@ -45,6 +45,7 @@ from pyarchinit_mini.models.user import UserRole
 from pyarchinit_mini.services.user_service import UserService
 from pyarchinit_mini.services.media_service import MediaService
 from pyarchinit_mini.services.ut_service import UtService
+from pyarchinit_mini.services.struttura_service import parse_pylist as struttura_parse_pylist
 from pyarchinit_mini.media_manager.media_handler import MediaHandler
 from pyarchinit_mini.web_interface.auth_routes import (
     init_login_manager, write_permission_required, User as AuthUser,
@@ -199,7 +200,9 @@ def flask_app(db_manager, media_service, ut_service, user_service):
                 flash('UT creata', 'success')
                 return redirect(url_for('ut_edit', ut_id=ut_id))
             flash('Errore creazione UT', 'error')
-        return render_template('ut/form.html', ut={}, media=[])
+        subtables = {col: [] for col in ut_service.SUBTABLE_COLS}
+        return render_template('ut/form.html', ut={}, media=[],
+                               subtables=subtables)
 
     # ---- /ut/<id> (mirrors app.py's ut_edit) ----
     @app.route('/ut/<int:ut_id>', methods=['GET', 'POST'])
@@ -222,7 +225,10 @@ def flask_app(db_manager, media_service, ut_service, user_service):
             media_items = _media_gallery('ut', ut_id)
         except Exception:
             pass
-        return render_template('ut/form.html', ut=ut, media=media_items)
+        subtables = {col: struttura_parse_pylist(ut.get(col))
+                     for col in ut_service.SUBTABLE_COLS}
+        return render_template('ut/form.html', ut=ut, media=media_items,
+                               subtables=subtables)
 
     # ---- /ut/<id>/delete (mirrors app.py's ut_delete) ----
     @app.route('/ut/<int:ut_id>/delete', methods=['POST'])
@@ -395,3 +401,35 @@ def test_media_upload_route_is_registered(flask_app):
     generically by tests/media/test_web_media_routes.py."""
     rules = {r.rule for r in flask_app.url_map.iter_rules()}
     assert '/ut/<int:ut_id>/media/upload' in rules
+
+
+def test_documentazione_bibliografia_widget_roundtrip_via_routes(logged_in_client, ut_service):
+    """End-to-end sub-table flow: the form widgets POST documentazione and
+    bibliografia as JSON lists-of-lists; the service stores them as the
+    classic plugin's str()-repr; the edit page then hands the PARSED rows to
+    the widgets via window.UT_SUBTABLES_DATA (never the raw repr string)."""
+    import ast
+
+    r = logged_in_client.post(
+        "/ut/new",
+        data={
+            "progetto": "P1",
+            "documentazione": '[["Fotografia","DSC001.jpg"]]',
+            "bibliografia": '[["Rossi 1999"]]',
+        },
+        follow_redirects=False,
+    )
+    assert r.status_code in (302, 303)
+
+    items = ut_service.list_ut()
+    assert len(items) == 1
+    uid = items[0]["id_ut"]
+    assert ast.literal_eval(items[0]["documentazione"]) == [["Fotografia", "DSC001.jpg"]]
+    assert ast.literal_eval(items[0]["bibliografia"]) == [["Rossi 1999"]]
+
+    page = logged_in_client.get(f"/ut/{uid}")
+    assert page.status_code == 200
+    body = page.data.decode()
+    assert "UT_SUBTABLES_DATA" in body
+    assert '"documentazione": [["Fotografia", "DSC001.jpg"]]' in body
+    assert '"bibliografia": [["Rossi 1999"]]' in body

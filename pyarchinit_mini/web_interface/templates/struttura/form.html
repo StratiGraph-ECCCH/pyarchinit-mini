@@ -16,7 +16,12 @@
         <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-basic">{{ _('Identification') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-desc">{{ _('Description') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-articolazione">{{ _('Articolazione') }}</a></li>
-        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-subtables">{{ _('Sotto-tabelle') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-rapporti">{{ _('Rapporti') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-elementi-costruttivi">{{ _('Elementi costruttivi') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-misure">{{ _('Misure') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-stato-conservazione">{{ _('Stato conservazione') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-dati-architettura">{{ _('Dati architettura') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-dati-archeologici">{{ _('Dati archeologici') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-crono">{{ _('Chronology') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-media">{{ _('Media') }} ({{ media|length if media else 0 }})</a></li>
     </ul>
@@ -132,10 +137,13 @@
                 </div>
             </div>
         </div>
-        <!-- Sub-tables (10 repeatable list-of-lists columns, str()-repr serialized to
-             match the classic pyarchinit plugin's format exactly — see
-             StrutturaService._normalize_pylist / parse_pylist). -->
-        <div class="tab-pane fade" id="tab-subtables">
+        <!-- Repeatable sub-tables (10 list-of-lists columns, str()-repr
+             serialized to match the classic pyarchinit plugin's format
+             exactly — see StrutturaService._normalize_pylist / parse_pylist).
+             Grouped into the SAME tabs the classic plugin's Struttura form
+             uses: Rapporti / Elementi costruttivi / Misure / Stato
+             conservazione / Dati architettura / Dati archeologici. -->
+        <div class="tab-pane fade" id="tab-elementi-costruttivi">
             <fieldset class="mb-4">
                 <legend class="h6">{{ _('Materiali Impiegati') }}</legend>
                 <table class="table table-sm table-bordered align-middle" id="materiali_impiegati_table">
@@ -157,7 +165,8 @@
                 <input type="hidden" name="elementi_strutturali" id="elementi_strutturali_hidden">
                 <datalist id="thes-elementi_strutturali"></datalist>
             </fieldset>
-
+        </div>
+        <div class="tab-pane fade" id="tab-rapporti">
             <fieldset class="mb-4">
                 <legend class="h6">{{ _('Rapporti Struttura') }}</legend>
                 <table class="table table-sm table-bordered align-middle" id="rapporti_struttura_table">
@@ -168,7 +177,8 @@
                 <input type="hidden" name="rapporti_struttura" id="rapporti_struttura_hidden">
                 <datalist id="thes-rapporti_sigla"></datalist>
             </fieldset>
-
+        </div>
+        <div class="tab-pane fade" id="tab-misure">
             <fieldset class="mb-4">
                 <legend class="h6">{{ _('Misure Struttura') }}</legend>
                 <table class="table table-sm table-bordered align-middle" id="misure_struttura_table">
@@ -181,7 +191,8 @@
                 <datalist id="thes-misure_tipo"></datalist>
                 <datalist id="thes-misure_unita"></datalist>
             </fieldset>
-
+        </div>
+        <div class="tab-pane fade" id="tab-stato-conservazione">
             <fieldset class="mb-4">
                 <legend class="h6">{{ _('Stato di Conservazione') }}</legend>
                 <table class="table table-sm table-bordered align-middle" id="stato_conservazione_table">
@@ -192,7 +203,8 @@
                 <input type="hidden" name="stato_conservazione" id="stato_conservazione_hidden">
                 <datalist id="thes-stato_fattori"></datalist>
             </fieldset>
-
+        </div>
+        <div class="tab-pane fade" id="tab-dati-architettura">
             <fieldset class="mb-4">
                 <legend class="h6">{{ _('Prospetto Ingresso') }}</legend>
                 <table class="table table-sm table-bordered align-middle" id="prospetto_ingresso_table">
@@ -224,7 +236,8 @@
                 <input type="hidden" name="elementi_costitutivi" id="elementi_costitutivi_hidden">
                 <datalist id="thes-elementi_costitutivi"></datalist>
             </fieldset>
-
+        </div>
+        <div class="tab-pane fade" id="tab-dati-archeologici">
             <fieldset class="mb-4">
                 <legend class="h6">{{ _('Manufatti') }}</legend>
                 <table class="table table-sm table-bordered align-middle" id="manufatti_table">

@@ -211,3 +211,45 @@ def test_potential_score_and_risk_score_round_trip_as_float(svc):
     assert row["risk_score"] == 1.50
     assert isinstance(row["risk_score"], float)
     assert not isinstance(row["risk_score"], Decimal)
+
+
+# --------------------------------------------------------------------------
+# documentazione / bibliografia sub-tables — stored as str(list-of-lists),
+# Python repr with single quotes, matching the classic plugin's
+# str(table2dict(...)) format for tableWidget_documentazione (2 cells:
+# Tipo documentazione, Riferimenti) and tableWidget_bibliografia (1 cell:
+# Riferimenti bibliografici). The browser widgets post JSON; the service
+# re-serializes with repr() (StrutturaService._normalize_pylist).
+# --------------------------------------------------------------------------
+
+import ast
+
+
+def test_create_ut_documentazione_and_bibliografia_repr_roundtrip(svc):
+    uid = svc.create_ut({
+        "progetto": "P",
+        "documentazione": '[["Fotografia","DSC001.jpg"], ["","" ]]',
+        "bibliografia": '[["Rossi 1999, pp. 10-12"]]',
+    })
+    row = svc.get_ut(uid)
+    assert ast.literal_eval(row["documentazione"]) == [["Fotografia", "DSC001.jpg"]]
+    assert "'" in row["documentazione"]  # repr single quotes (classic format)
+    assert ast.literal_eval(row["bibliografia"]) == [["Rossi 1999, pp. 10-12"]]
+
+
+def test_update_ut_documentazione_repr_roundtrip(svc):
+    uid = svc.create_ut({"progetto": "P"})
+    assert svc.update_ut(uid, {
+        "documentazione": '[["Rilievo","tav. 3"]]',
+        "bibliografia": '[["Bianchi 2005"]]',
+    }) is True
+    row = svc.get_ut(uid)
+    assert ast.literal_eval(row["documentazione"]) == [["Rilievo", "tav. 3"]]
+    assert ast.literal_eval(row["bibliografia"]) == [["Bianchi 2005"]]
+
+
+def test_create_ut_malformed_subtable_becomes_empty_list_string(svc):
+    uid = svc.create_ut({"progetto": "P", "documentazione": "{broken", "bibliografia": "nope"})
+    row = svc.get_ut(uid)
+    assert row["documentazione"] == "[]"
+    assert row["bibliografia"] == "[]"

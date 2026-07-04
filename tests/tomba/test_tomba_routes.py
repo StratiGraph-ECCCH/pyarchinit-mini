@@ -54,6 +54,7 @@ from pyarchinit_mini.models.user import UserRole
 from pyarchinit_mini.services.user_service import UserService
 from pyarchinit_mini.services.media_service import MediaService
 from pyarchinit_mini.services.tomba_service import TombaService
+from pyarchinit_mini.services.struttura_service import parse_pylist as struttura_parse_pylist
 from pyarchinit_mini.media_manager.media_handler import MediaHandler
 from pyarchinit_mini.web_interface.auth_routes import (
     init_login_manager, write_permission_required, User as AuthUser,
@@ -208,7 +209,9 @@ def flask_app(db_manager, media_service, tomba_service, user_service):
                 flash('Tomba creata', 'success')
                 return redirect(url_for('tomba_edit', tomba_id=tomba_id))
             flash('Errore creazione Tomba', 'error')
-        return render_template('tomba/form.html', tomba={}, media=[])
+        subtables = {col: [] for col in tomba_service.SUBTABLE_COLS}
+        return render_template('tomba/form.html', tomba={}, media=[],
+                               subtables=subtables)
 
     # ---- /tomba/<id> (mirrors app.py's tomba_edit) ----
     @app.route('/tomba/<int:tomba_id>', methods=['GET', 'POST'])
@@ -231,7 +234,10 @@ def flask_app(db_manager, media_service, tomba_service, user_service):
             media_items = _media_gallery('tomba', tomba_id)
         except Exception:
             pass
-        return render_template('tomba/form.html', tomba=tomba, media=media_items)
+        subtables = {col: struttura_parse_pylist(tomba.get(col))
+                     for col in tomba_service.SUBTABLE_COLS}
+        return render_template('tomba/form.html', tomba=tomba, media=media_items,
+                               subtables=subtables)
 
     # ---- /tomba/<id>/delete (mirrors app.py's tomba_delete) ----
     @app.route('/tomba/<int:tomba_id>/delete', methods=['POST'])
@@ -384,3 +390,35 @@ def test_delete_removes_record(logged_in_client, tomba_service):
     r = logged_in_client.post(f"/tomba/{tid}/delete", follow_redirects=False)
     assert r.status_code in (302, 303)
     assert tomba_service.get_tomba(tid) is None
+
+
+def test_corredo_tipo_widget_roundtrip_via_routes(logged_in_client, tomba_service):
+    """End-to-end corredo sub-table flow: the form widget POSTs corredo_tipo
+    as a JSON list-of-lists (5 cells per row); the service stores it as the
+    classic plugin's str()-repr; the edit page then hands the PARSED rows to
+    the widget via window.TOMBA_SUBTABLES_DATA (never the raw repr string)."""
+    import ast
+
+    r = logged_in_client.post(
+        "/tomba/new",
+        data={
+            "sito": "Volterra",
+            "corredo_tipo": '[["1","2","Ceramica","interno","presso il cranio"]]',
+        },
+        follow_redirects=False,
+    )
+    assert r.status_code in (302, 303)
+
+    items = tomba_service.list_tomba()
+    assert len(items) == 1
+    tid = items[0]["id_tomba"]
+    stored = items[0]["corredo_tipo"]
+    assert ast.literal_eval(stored) == [["1", "2", "Ceramica", "interno", "presso il cranio"]]
+    assert "'" in stored  # classic plugin repr format
+
+    page = logged_in_client.get(f"/tomba/{tid}")
+    assert page.status_code == 200
+    body = page.data.decode()
+    assert "TOMBA_SUBTABLES_DATA" in body
+    # parsed list-of-lists JSON handed to the widget, not the repr string
+    assert '"corredo_tipo": [["1", "2", "Ceramica", "interno", "presso il cranio"]]' in body

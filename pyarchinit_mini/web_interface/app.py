@@ -5026,25 +5026,39 @@ def create_app():
             return redirect(url_for('tma_list'))
 
     # ===== SP4 export helpers: tomba/struttura/fauna/ut =====
-    # Flatten the JSON/Python-repr sub-table columns of struttura and fauna
-    # records into readable strings before handing rows to Excel/CSV/PDF
-    # export (a raw to_dict() would otherwise dump e.g. "[['buono','medio']]"
-    # straight into a cell). tomba and ut have no such columns, so no
-    # flatten helper is needed for them — export routes use the record dict
-    # as-is (list_tomba/list_ut already return plain dicts via to_dict()).
+    # Flatten the JSON/Python-repr sub-table columns of struttura, fauna,
+    # tomba and ut records into readable strings before handing rows to
+    # Excel/CSV/PDF export (a raw to_dict() would otherwise dump e.g.
+    # "[['buono','medio']]" straight into a cell). tomba's corredo_tipo and
+    # ut's documentazione/bibliografia use the same Python-repr
+    # str(list-of-lists) format the classic plugin writes (see
+    # TombaService.SUBTABLE_COLS / UtService.SUBTABLE_COLS).
 
-    def _flatten_struttura_row(d):
-        """Return a copy of a struttura record dict with the 10
-        StrutturaService.SUBTABLE_COLS (stored as Python-repr
-        list-of-lists) replaced by a human-readable string, e.g.
-        "buono / medio; scarso / pessimo" for two sub-table rows."""
+    def _flatten_pylist_cols(d, cols):
+        """Return a copy of a record dict with each Python-repr
+        list-of-lists column in `cols` replaced by a human-readable
+        string, e.g. "buono / medio; scarso / pessimo" for two
+        sub-table rows."""
         out = dict(d)
-        for col in StrutturaService.SUBTABLE_COLS:
+        for col in cols:
             parsed = struttura_parse_pylist(out.get(col))
             out[col] = '; '.join(
                 ' / '.join(str(cell) for cell in row) for row in parsed
             ) if parsed else ''
         return out
+
+    def _flatten_struttura_row(d):
+        """Flatten the 10 StrutturaService.SUBTABLE_COLS for export."""
+        return _flatten_pylist_cols(d, StrutturaService.SUBTABLE_COLS)
+
+    def _flatten_tomba_row(d):
+        """Flatten tomba's corredo_tipo sub-table column for export."""
+        return _flatten_pylist_cols(d, tomba_service.SUBTABLE_COLS)
+
+    def _flatten_ut_row(d):
+        """Flatten ut's documentazione/bibliografia sub-table columns
+        for export."""
+        return _flatten_pylist_cols(d, ut_service.SUBTABLE_COLS)
 
     def _flatten_fauna_row(d):
         """Return a copy of a fauna record dict with specie_psi
@@ -5109,7 +5123,7 @@ def create_app():
         try:
             sito = request.args.get('sito', '').strip()
             rows = tomba_service.list_tomba(page=1, size=ALL_RECORDS_SIZE, sito=sito)
-            data = [dict(r) for r in rows]
+            data = [_flatten_tomba_row(r) for r in rows]
             filename = f'tomba_{sito}.xlsx' if sito else 'tomba.xlsx'
             return _export_tmp_send(
                 lambda tmp: csv_excel_service.export_to_excel(data, tmp, sheet_name='Tomba'),
@@ -5125,7 +5139,7 @@ def create_app():
         try:
             sito = request.args.get('sito', '').strip()
             rows = tomba_service.list_tomba(page=1, size=ALL_RECORDS_SIZE, sito=sito)
-            data = [dict(r) for r in rows]
+            data = [_flatten_tomba_row(r) for r in rows]
             filename = f'tomba_{sito}.csv' if sito else 'tomba.csv'
             return _export_tmp_send(
                 lambda tmp: csv_excel_service.export_to_csv(data, tmp),
@@ -5140,7 +5154,7 @@ def create_app():
         try:
             sito = request.args.get('sito', '').strip()
             rows = tomba_service.list_tomba(page=1, size=ALL_RECORDS_SIZE, sito=sito)
-            data = [dict(r) for r in rows]
+            data = [_flatten_tomba_row(r) for r in rows]
             filename = f'tomba_{sito}.pdf' if sito else 'tomba.pdf'
             return _export_tmp_send(
                 lambda tmp: pdf_generator.generate_records_pdf('Tomba', data, tmp),
@@ -5250,7 +5264,7 @@ def create_app():
         try:
             progetto = request.args.get('progetto', '').strip()
             rows = ut_service.list_ut(page=1, size=ALL_RECORDS_SIZE, progetto=progetto)
-            data = [dict(r) for r in rows]
+            data = [_flatten_ut_row(r) for r in rows]
             filename = f'ut_{progetto}.xlsx' if progetto else 'ut.xlsx'
             return _export_tmp_send(
                 lambda tmp: csv_excel_service.export_to_excel(data, tmp, sheet_name='UT'),
@@ -5266,7 +5280,7 @@ def create_app():
         try:
             progetto = request.args.get('progetto', '').strip()
             rows = ut_service.list_ut(page=1, size=ALL_RECORDS_SIZE, progetto=progetto)
-            data = [dict(r) for r in rows]
+            data = [_flatten_ut_row(r) for r in rows]
             filename = f'ut_{progetto}.csv' if progetto else 'ut.csv'
             return _export_tmp_send(
                 lambda tmp: csv_excel_service.export_to_csv(data, tmp),
@@ -5281,7 +5295,7 @@ def create_app():
         try:
             progetto = request.args.get('progetto', '').strip()
             rows = ut_service.list_ut(page=1, size=ALL_RECORDS_SIZE, progetto=progetto)
-            data = [dict(r) for r in rows]
+            data = [_flatten_ut_row(r) for r in rows]
             filename = f'ut_{progetto}.pdf' if progetto else 'ut.pdf'
             return _export_tmp_send(
                 lambda tmp: pdf_generator.generate_records_pdf('UT', data, tmp),
@@ -5323,7 +5337,9 @@ def create_app():
                 flash('Tomba creata', 'success')
                 return redirect(url_for('tomba_edit', tomba_id=tomba_id))
             flash('Errore creazione Tomba', 'error')
-        return render_template('tomba/form.html', tomba={}, media=[])
+        subtables = {col: [] for col in tomba_service.SUBTABLE_COLS}
+        return render_template('tomba/form.html', tomba={}, media=[],
+                               subtables=subtables)
 
     @app.route('/tomba/<int:tomba_id>', methods=['GET', 'POST'])
     @login_required
@@ -5346,7 +5362,10 @@ def create_app():
             media_items = _media_gallery('tomba', tomba_id)
         except Exception:
             pass
-        return render_template('tomba/form.html', tomba=tomba, media=media_items)
+        subtables = {col: struttura_parse_pylist(tomba.get(col))
+                     for col in tomba_service.SUBTABLE_COLS}
+        return render_template('tomba/form.html', tomba=tomba, media=media_items,
+                               subtables=subtables)
 
     @app.route('/tomba/<int:tomba_id>/delete', methods=['POST'])
     @login_required
@@ -5690,7 +5709,9 @@ def create_app():
                 flash('UT creata', 'success')
                 return redirect(url_for('ut_edit', ut_id=ut_id))
             flash('Errore creazione UT', 'error')
-        return render_template('ut/form.html', ut={}, media=[])
+        subtables = {col: [] for col in ut_service.SUBTABLE_COLS}
+        return render_template('ut/form.html', ut={}, media=[],
+                               subtables=subtables)
 
     @app.route('/ut/<int:ut_id>', methods=['GET', 'POST'])
     @login_required
@@ -5713,7 +5734,10 @@ def create_app():
             media_items = _media_gallery('ut', ut_id)
         except Exception:
             pass
-        return render_template('ut/form.html', ut=ut, media=media_items)
+        subtables = {col: struttura_parse_pylist(ut.get(col))
+                     for col in ut_service.SUBTABLE_COLS}
+        return render_template('ut/form.html', ut=ut, media=media_items,
+                               subtables=subtables)
 
     @app.route('/ut/<int:ut_id>/delete', methods=['POST'])
     @login_required

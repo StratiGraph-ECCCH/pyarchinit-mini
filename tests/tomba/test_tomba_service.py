@@ -225,3 +225,53 @@ def test_update_tomba_coerces_integer_string(svc):
     assert svc.update_tomba(tid, {"area": "xyz"}) is True
     row = svc.get_tomba(tid)
     assert row["area"] is None
+
+
+# --------------------------------------------------------------------------
+# corredo_tipo sub-table — stored as str(list-of-lists), Python repr with
+# single quotes, matching the classic plugin's str(table2dict(
+# tableWidget_corredo_tipo)) format exactly. Rows carry 5 positional cells:
+# ID Reperto, ID Individuo, Materiale, Posizione del corredo, Posizione nel
+# corredo. The browser widget posts JSON; the service re-serializes with
+# repr() (StrutturaService._normalize_pylist).
+# --------------------------------------------------------------------------
+
+import ast
+
+
+def test_create_tomba_corredo_tipo_repr_roundtrip(svc):
+    tid = svc.create_tomba({
+        "sito": "S",
+        "corredo_tipo": '[["1","2","Ceramica","interno","presso il cranio"], ["","","","",""]]',
+    })
+    row = svc.get_tomba(tid)
+    stored = row["corredo_tipo"]
+    # blank-only row dropped; repr() single quotes (classic plugin format)
+    assert ast.literal_eval(stored) == [["1", "2", "Ceramica", "interno", "presso il cranio"]]
+    assert "'" in stored
+
+
+def test_update_tomba_corredo_tipo_repr_roundtrip(svc):
+    tid = svc.create_tomba({"sito": "S"})
+    assert svc.update_tomba(tid, {
+        "corredo_tipo": '[["3","1","Bronzo","esterno","ai piedi"]]',
+    }) is True
+    row = svc.get_tomba(tid)
+    assert ast.literal_eval(row["corredo_tipo"]) == [["3", "1", "Bronzo", "esterno", "ai piedi"]]
+
+
+def test_create_tomba_malformed_corredo_tipo_becomes_empty_list_string(svc):
+    tid = svc.create_tomba({"sito": "S", "corredo_tipo": "not-a-list{{{"})
+    row = svc.get_tomba(tid)
+    assert row["corredo_tipo"] == "[]"
+
+
+def test_update_tomba_empty_corredo_tipo_becomes_empty_list_string(svc):
+    tid = svc.create_tomba({
+        "sito": "S",
+        "corredo_tipo": '[["1","2","Ceramica","interno","presso il cranio"]]',
+    })
+    # clearing all widget rows posts '[]'
+    assert svc.update_tomba(tid, {"corredo_tipo": "[]"}) is True
+    row = svc.get_tomba(tid)
+    assert row["corredo_tipo"] == "[]"

@@ -1,9 +1,11 @@
 """Route smoke tests for the SP4 UT export endpoints
 (/export/ut/excel, /export/ut/csv, /export/ut/pdf).
 
-UT has no JSON/Python-repr sub-table columns, so no flatten helper is
-needed (unlike struttura/fauna). UT is project-scoped (filtered by
-?progetto=, not ?sito=), mirroring app.py's ut_list route.
+UT's documentazione and bibliografia are Python-repr list-of-lists
+sub-table columns (the classic plugin's str(table2dict()) format), so the
+export routes flatten them to readable strings first — same convention as
+struttura/fauna/tomba (_flatten_ut_row in app.py). UT is project-scoped
+(filtered by ?progetto=, not ?sito=), mirroring app.py's ut_list route.
 """
 import os
 import tempfile
@@ -18,6 +20,7 @@ from pyarchinit_mini.models.base import Base
 from pyarchinit_mini.models.user import UserRole
 from pyarchinit_mini.services.user_service import UserService
 from pyarchinit_mini.services.ut_service import UtService
+from pyarchinit_mini.services.struttura_service import parse_pylist as struttura_parse_pylist
 from pyarchinit_mini.services.export_import_service import ExportImportService
 from pyarchinit_mini.pdf_export.pdf_generator import PDFGenerator
 from pyarchinit_mini.web_interface.auth_routes import init_login_manager, User as AuthUser
@@ -82,12 +85,22 @@ def flask_app(db_manager, ut_service, user_service):
                 except OSError:
                     pass
 
+    def _flatten_ut_row(d):
+        """Mirrors app.py's _flatten_ut_row (via _flatten_pylist_cols)."""
+        out = dict(d)
+        for col in ut_service.SUBTABLE_COLS:
+            parsed = struttura_parse_pylist(out.get(col))
+            out[col] = '; '.join(
+                ' / '.join(str(cell) for cell in row) for row in parsed
+            ) if parsed else ''
+        return out
+
     @app.route('/export/ut/excel')
     @login_required
     def export_ut_excel():
         progetto = request.args.get('progetto', '').strip()
         rows = ut_service.list_ut(page=1, size=1_000_000, progetto=progetto)
-        data = [dict(r) for r in rows]
+        data = [_flatten_ut_row(r) for r in rows]
         filename = f'ut_{progetto}.xlsx' if progetto else 'ut.xlsx'
         return _export_tmp_send(
             lambda tmp: csv_excel_service.export_to_excel(data, tmp, sheet_name='UT'),
@@ -99,7 +112,7 @@ def flask_app(db_manager, ut_service, user_service):
     def export_ut_csv():
         progetto = request.args.get('progetto', '').strip()
         rows = ut_service.list_ut(page=1, size=1_000_000, progetto=progetto)
-        data = [dict(r) for r in rows]
+        data = [_flatten_ut_row(r) for r in rows]
         filename = f'ut_{progetto}.csv' if progetto else 'ut.csv'
         return _export_tmp_send(
             lambda tmp: csv_excel_service.export_to_csv(data, tmp),
@@ -110,7 +123,7 @@ def flask_app(db_manager, ut_service, user_service):
     def export_ut_pdf():
         progetto = request.args.get('progetto', '').strip()
         rows = ut_service.list_ut(page=1, size=1_000_000, progetto=progetto)
-        data = [dict(r) for r in rows]
+        data = [_flatten_ut_row(r) for r in rows]
         filename = f'ut_{progetto}.pdf' if progetto else 'ut.pdf'
         return _export_tmp_send(
             lambda tmp: pdf_generator.generate_records_pdf('UT', data, tmp),
@@ -160,3 +173,19 @@ def test_export_pdf_returns_200_pdf(logged_in_client, ut_service):
     assert r.status_code == 200
     assert r.content_type == "application/pdf"
     assert r.data.startswith(b"%PDF")
+
+
+def test_export_csv_flattens_documentazione_and_bibliografia(logged_in_client, ut_service):
+    """The stored Python-repr sub-tables must be flattened to readable
+    'cell / cell' strings in exports — never dumped raw."""
+    ut_service.create_ut({
+        "progetto": "P1",
+        "documentazione": '[["Fotografia","DSC001.jpg"]]',
+        "bibliografia": '[["Rossi 1999"]]',
+    })
+    r = logged_in_client.get("/export/ut/csv")
+    assert r.status_code == 200
+    body = r.data.decode()
+    assert "Fotografia / DSC001.jpg" in body
+    assert "Rossi 1999" in body
+    assert "[['Fotografia'" not in body

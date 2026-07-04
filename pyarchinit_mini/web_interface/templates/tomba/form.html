@@ -11,7 +11,7 @@
     </a>
 </div>
 
-<form method="POST">
+<form method="POST" id="tombaForm">
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-basic">{{ _('Identification') }}</a></li>
         <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-rito">{{ _('Rito e Sepoltura') }}</a></li>
@@ -100,16 +100,35 @@
                 </div>
             </div>
         </div>
-        <!-- Corredo -->
+        <!-- Corredo. corredo_tipo is a repeatable sub-table stored as
+             str(list-of-lists) — the classic plugin's tableWidget_corredo_tipo
+             format (5 positional cells per row) — NOT a flat text field. The
+             server pre-parses the stored value (TombaService.SUBTABLE_COLS +
+             struttura parse_pylist) and re-serializes submitted JSON with
+             repr() so the value stays plugin-compatible. -->
         <div class="tab-pane fade" id="tab-corredo">
             <div class="row g-2">
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Corredo Presenza') }}</label>
                     <select name="corredo_presenza" id="sel-corredo_presenza" class="form-select" data-current="{{ tomba.corredo_presenza or '' }}"><option value="{{ tomba.corredo_presenza or '' }}" selected>{{ tomba.corredo_presenza or '—' }}</option></select>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label">{{ _('Corredo Tipo') }}</label>
-                    <input type="text" name="corredo_tipo" class="form-control" value="{{ tomba.corredo_tipo or '' }}">
+                <div class="col-md-12">
+                    <fieldset class="mb-2">
+                        <legend class="h6">{{ _('Corredo tomba') }}</legend>
+                        <table class="table table-sm table-bordered align-middle" id="corredo_tipo_table">
+                            <thead><tr>
+                                <th>{{ _('ID Reperto') }}</th>
+                                <th>{{ _('ID Individuo') }}</th>
+                                <th>{{ _('Materiale') }}</th>
+                                <th>{{ _('Posizione del corredo') }}</th>
+                                <th>{{ _('Posizione nel corredo') }}</th>
+                                <th style="width:2.5rem;"></th>
+                            </tr></thead>
+                            <tbody id="corredo_tipo_tbody"></tbody>
+                        </table>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="corredo_tipo_add"><i class="fas fa-plus"></i> {{ _('Aggiungi riga') }}</button>
+                        <input type="hidden" name="corredo_tipo" id="corredo_tipo_hidden">
+                    </fieldset>
                 </div>
                 <div class="col-md-12">
                     <label class="form-label">{{ _('Corredo Descrizione') }}</label>
@@ -189,6 +208,9 @@
 </form>
 
 <script>
+window.TOMBA_SUBTABLES_DATA = {{ (subtables or {}) | tojson }};
+</script>
+<script>
 // Populate datalist elements with thesaurus values from PyArchInit
 const TOMBA_THES_FIELDS = ['rito','stato_di_conservazione','copertura_tipo','tipo_contenitore_resti','tipo_deposizione','tipo_sepoltura','segnacoli','canale_libatorio_si_no','corredo_presenza'];
 TOMBA_THES_FIELDS.forEach(function(field) {
@@ -213,6 +235,80 @@ TOMBA_THES_FIELDS.forEach(function(field) {
             }
         })
         .catch(function() { /* silent */ });
+});
+
+// Repeatable-row widget for the corredo_tipo sub-table (same pattern as the
+// struttura sub-table widgets). The server hands `subtables.corredo_tipo` as
+// a real JS array (pre-parsed from the stored Python-repr value); on submit
+// the widget serializes its rows to JSON in the hidden corredo_tipo input,
+// which TombaService re-parses and re-serializes with repr() to keep the
+// stored value identical to the classic plugin's str(table2dict()) format.
+function initTombaRepeatableTable(opts) {
+    const tbody = document.getElementById(opts.tbodyId);
+    const addBtn = document.getElementById(opts.addBtnId);
+    const hidden = document.getElementById(opts.hiddenInputId);
+    const ncols = opts.ncols;
+
+    function addRow(values) {
+        const vals = values || new Array(ncols).fill('');
+        const tr = document.createElement('tr');
+        for (let i = 0; i < ncols; i++) {
+            const td = document.createElement('td');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control form-control-sm';
+            input.value = vals[i] != null ? vals[i] : '';
+            td.appendChild(input);
+            tr.appendChild(td);
+        }
+        const tdBtn = document.createElement('td');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn btn-sm btn-outline-danger';
+        btn.innerHTML = '<i class="fas fa-times"></i>';
+        btn.addEventListener('click', function() { tr.remove(); serialize(); });
+        tdBtn.appendChild(btn);
+        tr.appendChild(tdBtn);
+        tbody.appendChild(tr);
+    }
+
+    function serialize() {
+        const rows = [];
+        Array.from(tbody.querySelectorAll('tr')).forEach(function(tr) {
+            const cells = tr.querySelectorAll('input');
+            const vals = Array.from(cells).map(function(c) { return c.value.trim(); });
+            const allBlank = vals.every(function(v) { return v === ''; });
+            if (!allBlank) rows.push(vals);
+        });
+        hidden.value = JSON.stringify(rows);
+        return rows;
+    }
+
+    addBtn.addEventListener('click', function() { addRow(); serialize(); });
+    tbody.addEventListener('input', serialize);
+
+    let initial = opts.initialData;
+    if (!Array.isArray(initial)) initial = [];
+    if (initial.length === 0) {
+        addRow();
+    } else {
+        initial.forEach(function(row) { addRow(row); });
+    }
+    serialize();
+
+    return serialize;
+}
+
+const corredoSerialize = initTombaRepeatableTable({
+    tbodyId: 'corredo_tipo_tbody',
+    addBtnId: 'corredo_tipo_add',
+    hiddenInputId: 'corredo_tipo_hidden',
+    ncols: 5,
+    initialData: (window.TOMBA_SUBTABLES_DATA || {})['corredo_tipo'] || [],
+});
+
+document.getElementById('tombaForm').addEventListener('submit', function() {
+    corredoSerialize();
 });
 </script>
 <script>

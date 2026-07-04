@@ -8,6 +8,7 @@ from sqlalchemy import or_
 
 from pyarchinit_mini.models.tomba import Tomba
 from .coercion import coerce_types
+from .struttura_service import _normalize_pylist
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,16 @@ _THESAURUS_LANG_MAP = {'it': 'IT', 'en': 'en_US'}
 
 class TombaService:
     """Service for Tomba (burial) records."""
+
+    # tomba_table columns stored as str(list-of-lists) — the classic
+    # plugin's repeatable sub-table format (Tomba.py serializes
+    # tableWidget_corredo_tipo with str(table2dict(...))). corredo_tipo
+    # rows have 5 positional cells: ID Reperto, ID Individuo, Materiale,
+    # Posizione del corredo, Posizione nel corredo. Shared with the web
+    # routes (tomba_create/tomba_edit) and the form template's
+    # repeatable-row widget; see StrutturaService._normalize_pylist /
+    # parse_pylist for the serialization helpers.
+    SUBTABLE_COLS = ['corredo_tipo']
 
     def __init__(self, db_manager):
         self.db_manager = db_manager
@@ -81,6 +92,9 @@ class TombaService:
                 valid_keys = Tomba.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys and v is not None and v != ''}
                 clean = coerce_types(Tomba, clean)
+                for key in self.SUBTABLE_COLS:
+                    if key in clean:
+                        clean[key] = _normalize_pylist(clean.get(key))
                 row = Tomba(**clean)
                 session.add(row)
                 session.flush()
@@ -101,6 +115,9 @@ class TombaService:
                 valid_keys = Tomba.writable_columns()
                 clean = {k: v for k, v in data.items() if k in valid_keys}
                 clean = coerce_types(Tomba, clean)
+                for key in self.SUBTABLE_COLS:
+                    if key in clean:
+                        clean[key] = _normalize_pylist(clean.get(key))
                 for k, v in clean.items():
                     setattr(row, k, v if v != '' else None)
                 session.commit()
