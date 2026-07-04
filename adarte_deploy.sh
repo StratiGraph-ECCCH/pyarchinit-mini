@@ -16,7 +16,7 @@ SECRETS_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.adarte_secrets.sh"
 # shellcheck source=/dev/null
 [ -f "$SECRETS_FILE" ] && source "$SECRETS_FILE"
 
-VERSION="${VERSION:-3.3.0}"
+VERSION="${VERSION:-3.3.1}"
 HOST="ganesh@10.0.1.13"
 PASS="${ADARTE_SSH_PASS:?set ADARTE_SSH_PASS (see .adarte_secrets.sh / .example)}"
 VENV="/home/ganesh/pyarchinit_env"

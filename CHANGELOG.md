@@ -1,3 +1,8 @@
+## 3.3.1 — 2026-07-04
+
+### Fixed
+- Thesaurus dropdowns on the new record forms now filter by the UI language and de-duplicate. The shared classic-plugin DB holds the thesaurus in 7 languages (IT + en_US/fr_FR/de_DE/es_ES/ca_ES/ar_LB), so without a `lingua` filter the comboboxes were showing all languages mixed together plus duplicates. `get_thesaurus_values` now maps the UI locale (it→IT, en→en_US), falls back to Italian then to the unfiltered catalog, and dedupes — matching the classic plugin's behaviour.
+
 ## 3.3.0 — 2026-07-03
 
 ### Added — AI awareness of the new record types
