@@ -59,6 +59,37 @@ def test_get_thesaurus_values_reads_plugin_shared_pyarchinit_thesaurus_sigle(svc
     assert {"value": "Sistematica", "code": "SIST"} in values
 
 
+def test_get_thesaurus_values_filters_by_ui_language_dedupes_and_falls_back_to_it(svc):
+    """Shared production DB carries 7 languages for the same sigla (911 IT
+    rows + 34 each of en_US/fr_FR/de_DE/es_ES/ca_ES/ar_LB) — the dropdown
+    must show only the UI's language, deduped, and fall back to the Italian
+    catalog (not an empty or mixed-language list) when the UI language has
+    no rows of its own."""
+    session = svc.db_manager.connection.get_session()
+    session.add_all([
+        ThesaurusSigle(nome_tabella="ut_table", tipologia_sigla="12.1",
+                       sigla="RIC1", sigla_estesa="Ricognizione intensiva", lingua="IT"),
+        ThesaurusSigle(nome_tabella="ut_table", tipologia_sigla="12.1",
+                       sigla="RIC2", sigla_estesa="Ricognizione intensiva", lingua="IT"),
+        ThesaurusSigle(nome_tabella="ut_table", tipologia_sigla="12.1",
+                       sigla="INT", sigla_estesa="Intensive Survey", lingua="en_US"),
+        ThesaurusSigle(nome_tabella="ut_table", tipologia_sigla="12.1",
+                       sigla="PRO", sigla_estesa="Prospection intensive", lingua="fr_FR"),
+    ])
+    session.commit()
+    session.close()
+
+    it_values = [v["value"] for v in svc.get_thesaurus_values("survey_type", lang="it")]
+    assert it_values == ["Ricognizione intensiva"]
+
+    en_values = [v["value"] for v in svc.get_thesaurus_values("survey_type", lang="en")]
+    assert en_values == ["Intensive Survey"]
+
+    # No 'de' rows exist at all -> falls back to the Italian catalog.
+    de_values = [v["value"] for v in svc.get_thesaurus_values("survey_type", lang="de")]
+    assert de_values == ["Ricognizione intensiva"]
+
+
 def test_get_thesaurus_values_falls_back_to_seed_when_db_empty(svc):
     """A THESAURUS_MAP field with no rows in either pyarchinit_thesaurus_sigle
     or thesaurus_field must still return the in-memory THESAURUS_MAPPINGS seed."""

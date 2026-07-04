@@ -53,6 +53,37 @@ def test_get_thesaurus_values_reads_plugin_shared_pyarchinit_thesaurus_sigle(svc
     assert {"value": "Ovis aries", "code": "OVIARI"} in values
 
 
+def test_get_thesaurus_values_filters_by_ui_language_dedupes_and_falls_back_to_it(svc):
+    """Shared production DB carries 7 languages for the same sigla (911 IT
+    rows + 34 each of en_US/fr_FR/de_DE/es_ES/ca_ES/ar_LB) — the dropdown
+    must show only the UI's language, deduped, and fall back to the Italian
+    catalog (not an empty or mixed-language list) when the UI language has
+    no rows of its own."""
+    session = svc.db_manager.connection.get_session()
+    session.add_all([
+        ThesaurusSigle(nome_tabella="fauna_table", tipologia_sigla="13.11",
+                       sigla="BOV1", sigla_estesa="Bovino", lingua="IT"),
+        ThesaurusSigle(nome_tabella="fauna_table", tipologia_sigla="13.11",
+                       sigla="BOV2", sigla_estesa="Bovino", lingua="IT"),
+        ThesaurusSigle(nome_tabella="fauna_table", tipologia_sigla="13.11",
+                       sigla="CATTLE", sigla_estesa="Cattle", lingua="en_US"),
+        ThesaurusSigle(nome_tabella="fauna_table", tipologia_sigla="13.11",
+                       sigla="BOVIN", sigla_estesa="Bovin", lingua="fr_FR"),
+    ])
+    session.commit()
+    session.close()
+
+    it_values = [v["value"] for v in svc.get_thesaurus_values("specie", lang="it")]
+    assert it_values == ["Bovino"]
+
+    en_values = [v["value"] for v in svc.get_thesaurus_values("specie", lang="en")]
+    assert en_values == ["Cattle"]
+
+    # No 'de' rows exist at all -> falls back to the Italian catalog.
+    de_values = [v["value"] for v in svc.get_thesaurus_values("specie", lang="de")]
+    assert de_values == ["Bovino"]
+
+
 def test_get_thesaurus_values_falls_back_to_seed_when_db_empty(svc):
     """A THESAURUS_MAP field with no rows in either pyarchinit_thesaurus_sigle
     or thesaurus_field must still return the in-memory THESAURUS_MAPPINGS seed."""

@@ -5370,7 +5370,12 @@ def create_app():
     def tomba_thesaurus(field):
         """Return thesaurus values for a Tomba field"""
         try:
-            values = tomba_service.get_thesaurus_values(field)
+            from pyarchinit_mini.i18n import get_locale
+            try:
+                lang = get_locale()
+            except Exception:
+                lang = 'it'
+            values = tomba_service.get_thesaurus_values(field, lang=lang)
             return jsonify(values)
         except Exception as e:
             return jsonify({'error': str(e), 'values': []}), 500
@@ -5465,7 +5470,12 @@ def create_app():
     def struttura_thesaurus(field):
         """Return thesaurus values for a Struttura field"""
         try:
-            values = struttura_service.get_thesaurus_values(field)
+            from pyarchinit_mini.i18n import get_locale
+            try:
+                lang = get_locale()
+            except Exception:
+                lang = 'it'
+            values = struttura_service.get_thesaurus_values(field, lang=lang)
             return jsonify(values)
         except Exception as e:
             return jsonify({'error': str(e), 'values': []}), 500
@@ -5537,7 +5547,12 @@ def create_app():
     def fauna_thesaurus(field):
         """Return thesaurus values for a Fauna field"""
         try:
-            values = fauna_service.get_thesaurus_values(field)
+            from pyarchinit_mini.i18n import get_locale
+            try:
+                lang = get_locale()
+            except Exception:
+                lang = 'it'
+            values = fauna_service.get_thesaurus_values(field, lang=lang)
             return jsonify(values)
         except Exception as e:
             return jsonify({'error': str(e), 'values': []}), 500
@@ -5630,7 +5645,12 @@ def create_app():
     def ut_thesaurus(field):
         """Return thesaurus values for a Ut field"""
         try:
-            values = ut_service.get_thesaurus_values(field)
+            from pyarchinit_mini.i18n import get_locale
+            try:
+                lang = get_locale()
+            except Exception:
+                lang = 'it'
+            values = ut_service.get_thesaurus_values(field, lang=lang)
             return jsonify(values)
         except Exception as e:
             return jsonify({'error': str(e), 'values': []}), 500

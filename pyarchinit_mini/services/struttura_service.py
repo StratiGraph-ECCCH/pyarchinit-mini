@@ -12,6 +12,11 @@ from .coercion import coerce_types
 
 logger = logging.getLogger(__name__)
 
+# Maps the UI locale code to the `lingua` value stored in
+# pyarchinit_thesaurus_sigle: Italian is stored uppercase ('IT'), other
+# languages use locale codes ('en_US', 'fr_FR', ...) matched as-is.
+_THESAURUS_LANG_MAP = {'it': 'IT', 'en': 'en_US'}
+
 
 def _normalize_pylist(v) -> str:
     """Parse an incoming struttura sub-table value (the browser sends a
@@ -208,31 +213,55 @@ class StrutturaService:
         'elementi_costitutivi': '6.12', 'manufatti': '6.13', 'fasi_definizione': '6.14',
     }
 
-    def get_thesaurus_values(self, field: str) -> List[Dict[str, str]]:
+    def get_thesaurus_values(self, field: str, lang: str = 'it') -> List[Dict[str, str]]:
         """Return thesaurus values for a Struttura field as [{value, code}, ...].
         Tries PyArchInit's native pyarchinit_thesaurus_sigle table first (the
-        vocab shared with the classic plugin), falls back to Mini's
-        thesaurus_field, then to the in-memory THESAURUS_MAPPINGS seed.
-        Returns [] for unknown fields or on error."""
+        vocab shared with the classic plugin), filtered by the UI language
+        (with fallback to the Italian catalog, then to no language filter at
+        all), falls back to Mini's thesaurus_field, then to the in-memory
+        THESAURUS_MAPPINGS seed. Returns [] for unknown fields or on error."""
         from sqlalchemy import text
+
+        db_lang = _THESAURUS_LANG_MAP.get((lang or 'it').lower(), lang)
 
         results = []
         sigla = self.THESAURUS_MAP.get(field)
         try:
             with self.db_manager.connection.get_session() as session:
                 if sigla:
-                    try:
-                        rows = session.execute(text(
-                            "SELECT sigla, sigla_estesa FROM pyarchinit_thesaurus_sigle "
-                            "WHERE nome_tabella = :t AND tipologia_sigla = :s "
-                            "ORDER BY sigla_estesa"
-                        ), {'t': self.THESAURUS_TABLE, 's': sigla}).fetchall()
-                        for r in rows:
-                            results.append({'value': r.sigla_estesa or r.sigla, 'code': r.sigla})
-                    except Exception:
-                        # Clear any aborted-transaction state (PostgreSQL) so the
-                        # thesaurus_field fallback query below can still run.
-                        session.rollback()
+                    sigle_rows = []
+                    attempts = []
+                    for lv in (db_lang, 'IT', None):
+                        if lv not in attempts:
+                            attempts.append(lv)
+                    for lingua_value in attempts:
+                        params = {'t': self.THESAURUS_TABLE, 's': sigla}
+                        if lingua_value is not None:
+                            params['l'] = lingua_value
+                            lingua_clause = " AND lingua = :l"
+                        else:
+                            lingua_clause = ""
+                        try:
+                            sigle_rows = session.execute(text(
+                                "SELECT sigla, sigla_estesa FROM pyarchinit_thesaurus_sigle "
+                                "WHERE nome_tabella = :t AND tipologia_sigla = :s" + lingua_clause +
+                                " ORDER BY sigla_estesa"
+                            ), params).fetchall()
+                        except Exception:
+                            # Clear any aborted-transaction state (PostgreSQL)
+                            # so the next retry / fallback query can still run.
+                            session.rollback()
+                            sigle_rows = []
+                        if sigle_rows:
+                            break
+
+                    seen = set()
+                    for r in sigle_rows:
+                        value = r.sigla_estesa or r.sigla
+                        if value in seen:
+                            continue
+                        seen.add(value)
+                        results.append({'value': value, 'code': r.sigla})
 
                 if not results:
                     try:
@@ -253,7 +282,15 @@ class StrutturaService:
             for v in THESAURUS_MAPPINGS.get(self.THESAURUS_TABLE, {}).get(field, []):
                 results.append({'value': v, 'code': ''})
 
-        return results
+        # Dedupe the final combined list too, preserving first-seen order.
+        seen_final = set()
+        deduped = []
+        for r in results:
+            if r['value'] in seen_final:
+                continue
+            seen_final.add(r['value'])
+            deduped.append(r)
+        return deduped
 
     def get_distinct_sites(self) -> List[str]:
         try:
