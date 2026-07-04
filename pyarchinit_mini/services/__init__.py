@@ -15,6 +15,7 @@ from .tomba_service import TombaService  # noqa: F401
 from .struttura_service import StrutturaService  # noqa: F401
 from .fauna_service import FaunaService  # noqa: F401
 from .ut_service import UtService  # noqa: F401
+from .individui_service import IndividuiService  # noqa: F401
 
 __all__ = [
     "SiteService",
@@ -29,4 +30,5 @@ __all__ = [
     "StrutturaService",
     "FaunaService",
     "UtService",
+    "IndividuiService",
 ]
