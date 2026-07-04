@@ -37,8 +37,8 @@ class PyArchInitSyncTool(BaseTool):
                     },
                     "data_types": {
                         "type": "array",
-                        "items": {"type": "string", "enum": ["sites", "us", "inventario", "thesaurus", "tomba", "struttura", "fauna", "ut"]},
-                        "description": "Types of data to sync: sites, us, inventario, thesaurus, tomba, struttura, fauna, ut",
+                        "items": {"type": "string", "enum": ["sites", "us", "inventario", "thesaurus", "tomba", "struttura", "fauna", "individui", "ut"]},
+                        "description": "Types of data to sync: sites, us, inventario, thesaurus, tomba, struttura, fauna, individui, ut",
                         "default": ["sites", "us"]
                     },
                     "site_filter": {
@@ -168,6 +168,19 @@ class PyArchInitSyncTool(BaseTool):
                 else:
                     results['errors'].append("Fauna import: not yet supported by ImportExportService")
 
+            # Import individui (anthropological individuals)
+            if 'individui' in data_types:
+                logger.info("Importing individui...")
+                if hasattr(service, 'import_individui'):
+                    individui_result = service.import_individui(sito_filter=site_filter, auto_backup=auto_backup)
+                    results['imported']['individui'] = individui_result.get('imported', 0)
+                    if not results['backup_path'] and individui_result.get('backup_path'):
+                        results['backup_path'] = individui_result['backup_path']
+                    if individui_result.get('errors'):
+                        results['errors'].extend(f"Individui import: {e}" for e in individui_result['errors'])
+                else:
+                    results['errors'].append("Individui import: not yet supported by ImportExportService")
+
             # Import ut (tracciamento units)
             if 'ut' in data_types:
                 logger.info("Importing ut...")
@@ -263,6 +276,17 @@ class PyArchInitSyncTool(BaseTool):
                         results['errors'].extend(f"Fauna export: {e}" for e in fauna_result['errors'])
                 else:
                     results['errors'].append("Fauna export: not yet supported by ImportExportService")
+
+            # Export individui (anthropological individuals)
+            if 'individui' in data_types:
+                logger.info("Exporting individui...")
+                if hasattr(service, 'export_individui'):
+                    individui_result = service.export_individui(target_db_connection=target_db_url, sito_filter=site_filter)
+                    results['exported']['individui'] = individui_result.get('exported', 0)
+                    if individui_result.get('errors'):
+                        results['errors'].extend(f"Individui export: {e}" for e in individui_result['errors'])
+                else:
+                    results['errors'].append("Individui export: not yet supported by ImportExportService")
 
             # Export ut (tracciamento units)
             if 'ut' in data_types:

@@ -85,6 +85,15 @@ class DataImportParserTool(BaseTool):
             "contesto": ["contesto", "context"],
             "numero_minimo_individui": ["numero_minimo_individui", "mni", "minimum_number_individuals", "num_min_individui"],
         },
+        # Individui (anthropological individual / SCHEDAIND) table mappings
+        "individui_table": {
+            "sito": ["sito", "site", "site_name"],
+            "area": ["area", "settore", "sector"],
+            "us": ["us", "su", "stratigraphic_unit", "unit"],
+            "nr_individuo": ["nr_individuo", "individual_number", "individuo_number", "n_individuo"],
+            "sesso": ["sesso", "sex", "gender"],
+            "classi_eta": ["classi_eta", "age_class", "eta_classe", "age_range"],
+        },
         # UT (tracciamento unit / field survey) table mappings
         "ut_table": {
             "progetto": ["progetto", "project", "project_name"],
@@ -113,7 +122,7 @@ class DataImportParserTool(BaseTool):
                 "   1. Detects file format (CSV, Excel, JSON, XML)\n"
                 "   2. Auto-maps column headers to database fields (e.g., 'site' → 'sito', 'description' → 'descrizione')\n"
                 "   3. Validates data before import\n"
-                "   4. Imports records into appropriate table (site_table, us_table, inventario_materiali_table, tomba_table, struttura_table, fauna_table, ut_table)\n"
+                "   4. Imports records into appropriate table (site_table, us_table, inventario_materiali_table, tomba_table, struttura_table, fauna_table, individui_table, ut_table)\n"
                 "   5. Provides detailed statistics and error reports\n\n"
                 "💡 **Supported operations**:\n"
                 "   • 'parse' = Analyze file structure and detect mappings\n"
@@ -150,7 +159,7 @@ class DataImportParserTool(BaseTool):
                     },
                     "target_table": {
                         "type": "string",
-                        "enum": ["site_table", "us_table", "inventario_materiali_table", "tomba_table", "struttura_table", "fauna_table", "ut_table", "auto"],
+                        "enum": ["site_table", "us_table", "inventario_materiali_table", "tomba_table", "struttura_table", "fauna_table", "individui_table", "ut_table", "auto"],
                         "description": "Target database table ('auto' for auto-detection)",
                         "default": "auto"
                     },
@@ -655,6 +664,9 @@ class DataImportParserTool(BaseTool):
                 elif target_table == "fauna_table":
                     if not mapped_row.get("sito"):
                         raise ValueError("sito is required")
+                elif target_table == "individui_table":
+                    if not mapped_row.get("sito"):
+                        raise ValueError("sito is required")
                 elif target_table == "ut_table":
                     if not mapped_row.get("progetto"):
                         raise ValueError("progetto is required")
@@ -713,6 +725,8 @@ class DataImportParserTool(BaseTool):
                     service.create_struttura(mapped_row)
                 elif target_table == "fauna_table":
                     service.create_fauna(mapped_row)
+                elif target_table == "individui_table":
+                    service.create_individui(mapped_row)
                 elif target_table == "ut_table":
                     service.create_ut(mapped_row)
 
@@ -755,6 +769,9 @@ class DataImportParserTool(BaseTool):
         elif table_name == "fauna_table":
             from ...services.fauna_service import FaunaService
             return FaunaService(self.db_manager)
+        elif table_name == "individui_table":
+            from ...services.individui_service import IndividuiService
+            return IndividuiService(self.db_manager)
         elif table_name == "ut_table":
             from ...services.ut_service import UtService
             return UtService(self.db_manager)

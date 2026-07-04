@@ -3328,6 +3328,18 @@ msgstr "Fauna"
 msgid "UT"
 msgstr "UT"
 
+#: pyarchinit_mini/web_interface/templates/base.html:178
+#: pyarchinit_mini/web_interface/templates/dashboard.html:106
+#: pyarchinit_mini/web_interface/templates/individui/form.html:2
+#: pyarchinit_mini/web_interface/templates/individui/list.html:2
+#: pyarchinit_mini/web_interface/templates/individui/list.html:6
+msgid "Individui"
+msgstr "Individui"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html
+msgid "Individuals are loaded from the Individui records of this site/structure."
+msgstr "Gli individui sono caricati dalle schede Individuo di questo sito/struttura."
+
 #: pyarchinit_mini/web_interface/templates/base.html:184
 #: pyarchinit_mini/web_interface/templates/dashboard.html:196
 #: pyarchinit_mini/web_interface/templates/inventario/form.html:340

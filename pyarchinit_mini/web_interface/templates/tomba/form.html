@@ -45,7 +45,9 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">{{ _('Nr. Individuo') }}</label>
-                    <input type="text" name="nr_individuo" class="form-control" value="{{ tomba.nr_individuo or '' }}">
+                    <select multiple id="sel-nr-individuo" class="form-select" size="4"></select>
+                    <input type="hidden" name="nr_individuo" id="nr_individuo_hidden" value="{{ tomba.nr_individuo or '' }}">
+                    <small class="form-text text-muted">{{ _('Individuals are loaded from the Individui records of this site/structure.') }}</small>
                 </div>
             </div>
         </div>
@@ -212,5 +214,85 @@ TOMBA_THES_FIELDS.forEach(function(field) {
         })
         .catch(function() { /* silent */ });
 });
+</script>
+<script>
+// Nr. Individuo multi-select: populated from /api/tomba/individui, filtered
+// by sito + sigla_struttura + nr_struttura (the plugin's tomba<->individui
+// link). Storage stays the plugin-identical comma-joined Text value in the
+// hidden #nr_individuo_hidden input — a stored value not present in the
+// fetched list is never dropped, it is kept as an extra selected option.
+function loadIndividui() {
+    var form = document.querySelector('form');
+    var sel = document.getElementById('sel-nr-individuo');
+    var hidden = document.getElementById('nr_individuo_hidden');
+    if (!form || !sel || !hidden) return;
+
+    function fieldValue(name) {
+        var el = form.querySelector('[name="' + name + '"]');
+        return el ? (el.value || '').trim() : '';
+    }
+
+    var sito = fieldValue('sito');
+    var siglaStruttura = fieldValue('sigla_struttura');
+    var nrStruttura = fieldValue('nr_struttura');
+    var current = (hidden.value || '').split(',')
+        .map(function(v) { return v.trim(); })
+        .filter(function(v) { return v !== ''; });
+
+    function renderOptions(values) {
+        sel.innerHTML = '';
+        var seen = {};
+        (values || []).forEach(function(v) {
+            var sv = String(v);
+            var o = document.createElement('option');
+            o.value = sv; o.textContent = sv;
+            if (current.indexOf(sv) !== -1) { o.selected = true; }
+            seen[sv] = true;
+            sel.appendChild(o);
+        });
+        // Never lose data: a stored value not in the fetched list is still
+        // rendered (and stays selected).
+        current.forEach(function(v) {
+            if (!seen[v]) {
+                var o = document.createElement('option');
+                o.value = v; o.textContent = v; o.selected = true;
+                sel.appendChild(o);
+            }
+        });
+    }
+
+    if (!sito) {
+        // No site yet: skip the fetch, just show the stored values as-is.
+        renderOptions([]);
+        return;
+    }
+
+    var qs = 'sito=' + encodeURIComponent(sito);
+    if (siglaStruttura) qs += '&sigla_struttura=' + encodeURIComponent(siglaStruttura);
+    if (nrStruttura) qs += '&nr_struttura=' + encodeURIComponent(nrStruttura);
+
+    fetch('/api/tomba/individui?' + qs)
+        .then(function(r) { return r.json(); })
+        .then(function(values) {
+            if (!Array.isArray(values)) return;
+            renderOptions(values);
+        })
+        .catch(function() { /* fetch failed: leave the hidden input untouched (data-safe) */ });
+}
+
+(function() {
+    var sel = document.getElementById('sel-nr-individuo');
+    if (sel) {
+        sel.addEventListener('change', function() {
+            var selected = Array.prototype.slice.call(this.selectedOptions).map(function(o) { return o.value; });
+            document.getElementById('nr_individuo_hidden').value = selected.join(', ');
+        });
+    }
+    ['sito', 'sigla_struttura', 'nr_struttura'].forEach(function(name) {
+        var el = document.querySelector('form [name="' + name + '"]');
+        if (el) el.addEventListener('change', loadIndividui);
+    });
+    loadIndividui();
+})();
 </script>
 {% endblock %}

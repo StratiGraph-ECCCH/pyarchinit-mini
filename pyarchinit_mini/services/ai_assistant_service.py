@@ -55,6 +55,8 @@ REGOLE (OBBLIGATORIE):
    Per le strutture usa context['struttura_summary']: aggregazioni by_categoria_struttura, by_tipologia_struttura e un sample fino a 200 record.
    Link alla fauna: <a href="/fauna/ID" class="text-primary">Fauna ID</a>
    Per la fauna usa context['fauna_summary']: aggregazioni by_contesto, by_specie e un sample fino a 200 record.
+   Link agli individui: <a href="/individui/ID" class="text-primary">Individuo ID</a>
+   Per gli individui usa context['individui_summary']: aggregazioni by_sesso, by_classi_eta e un sample fino a 200 record.
    Link alle UT: <a href="/ut/ID" class="text-primary">UT ID</a>
    Per le UT usa context['ut_summary']: aggregazioni by_def_ut, by_survey_type e un sample fino a 200 record (dataset di progetto globale, non filtrato per sito).
 7. MAI tralasciare dati. Se ci sono 700 US, cita e analizza TUTTE le US — raggruppa per tipo, area, periodo, anno, ma includi TUTTI i numeri. Crea tabelle complete.
@@ -84,6 +86,8 @@ RULES (MANDATORY):
    For strutture use context['struttura_summary']: by_categoria_struttura, by_tipologia_struttura aggregations + sample up to 200 records.
    Fauna links: <a href="/fauna/ID" class="text-primary">Fauna ID</a>
    For fauna use context['fauna_summary']: by_contesto, by_specie aggregations + sample up to 200 records.
+   Individui links: <a href="/individui/ID" class="text-primary">Individuo ID</a>
+   For individui use context['individui_summary']: by_sesso, by_classi_eta aggregations + sample up to 200 records.
    UT links: <a href="/ut/ID" class="text-primary">UT ID</a>
    For UT use context['ut_summary']: by_def_ut, by_survey_type aggregations + sample up to 200 records (global project-wide dataset, not filtered by site).
 7. NEVER omit data. If there are 700 US, cite and analyze ALL of them — group by type, area, period, year, but include ALL numbers. Create complete tables.
@@ -118,6 +122,8 @@ def _build_context_block(context: Dict[str, Any], lang: str = 'it') -> str:
         ctx_parts.append("STRUTTURA STATISTICS (COMPLETE):\n" + json.dumps(context['struttura_summary'], indent=1, default=str))
     if context.get('fauna_summary'):
         ctx_parts.append("FAUNA STATISTICS (COMPLETE):\n" + json.dumps(context['fauna_summary'], indent=1, default=str))
+    if context.get('individui_summary'):
+        ctx_parts.append("INDIVIDUI STATISTICS (COMPLETE):\n" + json.dumps(context['individui_summary'], indent=1, default=str))
     if context.get('ut_summary'):
         ctx_parts.append("UT STATISTICS (COMPLETE):\n" + json.dumps(context['ut_summary'], indent=1, default=str))
     # Include ALL US records (truncated per record to save tokens)

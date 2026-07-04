@@ -869,6 +869,10 @@ def create_app():
                 total_ut = ut_service.count_ut()
             except Exception:
                 total_ut = 0
+            try:
+                total_individui = individui_service.count_individui()
+            except Exception:
+                total_individui = 0
 
             stats = {
                 'total_sites': total_sites,
@@ -880,6 +884,7 @@ def create_app():
                 'total_struttura': total_struttura,
                 'total_fauna': total_fauna,
                 'total_ut': total_ut,
+                'total_individui': total_individui,
                 'recent_sites': sites
             }
 
@@ -5383,6 +5388,21 @@ def create_app():
         except Exception as e:
             return jsonify({'error': str(e), 'values': []}), 500
 
+    @app.route('/api/tomba/individui')
+    @login_required
+    def tomba_individui():
+        """Return the nr_individuo values recorded at a site (optionally
+        narrowed to a sigla_struttura/nr_struttura), used to populate the
+        nr_individuo multi-select picker on the tomba form. Requires `sito`;
+        returns an empty list when it is missing rather than scanning the
+        whole individui_table."""
+        sito = request.args.get('sito', '').strip()
+        if not sito:
+            return jsonify([])
+        sigla_struttura = request.args.get('sigla_struttura', '').strip() or None
+        nr_struttura = request.args.get('nr_struttura', '').strip() or None
+        return jsonify(individui_service.get_nr_individui(sito, sigla_struttura, nr_struttura))
+
     # ===== Struttura =====
     @app.route('/struttura')
     @login_required
@@ -5998,6 +6018,32 @@ def create_app():
                                 'by_contesto': fauna_by_contesto,
                                 'by_specie': fauna_by_specie,
                                 'sample': fauna_sample,
+                            }
+                        except Exception:
+                            pass
+
+                        # --- INDIVIDUI context ---
+                        try:
+                            from pyarchinit_mini.models.individui import Individui
+                            all_individui = session.query(Individui).filter(Individui.sito == site_name).all()
+                            individui_dicts = [i.to_dict() for i in all_individui]
+                            individui_by_sesso = {}
+                            individui_by_classi_eta = {}
+                            for i in individui_dicts:
+                                sx = (i.get('sesso') or '-').strip() or '-'
+                                ce = (i.get('classi_eta') or '-').strip() or '-'
+                                individui_by_sesso[sx] = individui_by_sesso.get(sx, 0) + 1
+                                individui_by_classi_eta[ce] = individui_by_classi_eta.get(ce, 0) + 1
+                            context['individui_summary'] = {
+                                'total': len(individui_dicts),
+                                'by_sesso': individui_by_sesso,
+                                'by_classi_eta': individui_by_classi_eta,
+                                'sample': [
+                                    {k: i.get(k) for k in (
+                                        'id_scheda_ind', 'sito', 'us', 'nr_individuo', 'sesso', 'classi_eta'
+                                    ) if i.get(k)}
+                                    for i in individui_dicts[:200]
+                                ],
                             }
                         except Exception:
                             pass
