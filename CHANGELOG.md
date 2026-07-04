@@ -1,3 +1,8 @@
+## 3.5.0 — 2026-07-04
+
+### Added — classic-plugin-style PDF sheets
+- The PDF export for **tomba, struttura, fauna, UT, and individui** now renders styled per-record sheets matching the classic plugin's look — dark logo header, coloured section tables (Dati identificativi, Periodizzazione, Corredo, …), label:value grids, and **real sub-tables** (tomba corredo, fauna specie/PSI and misure ossa, struttura sub-tables, UT documentazione/bibliografia) — instead of the generic field:value table. One parametric engine (`pdf_export/entity_sheet_template.py`) driven by per-scheda section configs (`pdf_export/sheet_configs.py`); every domain column is covered, booleans render as Sì/No, page numbers as "Pag. X di Y".
+
 ## 3.4.0 — 2026-07-04
 
 ### Added — Individui (anthropological individuals) record type
