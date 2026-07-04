@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Logo Settings') }}{% endblock %}
+{% block content %}
+<div class="container mt-3">
+  <h1><i class="fas fa-image"></i> {{ _('Logo Settings') }}</h1>
+  <p class="text-muted">
+    {{ _('This logo appears in the header of every exported PDF sheet (Tomba, Struttura, Fauna, UT, Individui). It is automatically scaled down to fit the header box, so any reasonably square image works best.') }}
+  </p>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ _('Current logo') }}</h5>
+      {% if logo_exists %}
+        <img src="{{ url_for('static', filename='images/logo.png') }}?v={{ logo_mtime }}"
+             alt="{{ _('Current logo') }}"
+             style="max-width: 200px; max-height: 200px; border: 1px solid #dee2e6; padding: 8px; background: #fff;">
+      {% else %}
+        <p class="text-muted">{{ _('No logo file found — PDFs will show the "PYARCHINIT" text fallback.') }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ _('Upload a new logo') }}</h5>
+      <form method="post" action="{{ url_for('settings_branding') }}" enctype="multipart/form-data" class="mb-2">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="upload">
+        <div class="mb-3">
+          <input class="form-control" type="file" name="logo" accept=".png,.jpg,.jpeg" required>
+          <small class="text-muted">{{ _('PNG or JPG.') }}</small>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> {{ _('Upload') }}</button>
+      </form>
+
+      {% if has_default_backup %}
+      <form method="post" action="{{ url_for('settings_branding') }}" class="d-inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="reset">
+        <button type="submit" class="btn btn-outline-secondary">
+          <i class="fas fa-undo"></i> {{ _('Reset to default') }}
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

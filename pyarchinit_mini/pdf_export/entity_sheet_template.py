@@ -194,15 +194,23 @@ def _parse_json_list(raw: Any) -> list:
     return parsed if isinstance(parsed, list) else []
 
 
-def _get_logo_flowable(logo_path: Optional[str], styles: Dict[str, ParagraphStyle]):
-    """Logo Image scaled to ~1.5in, falling back to a bold "PYARCHINIT"
-    Paragraph when no logo is available — matches the fauna/tomba exemplars'
-    ``_get_logo`` (1.2-2.0 inch) with graceful degradation."""
+def _get_logo_flowable(logo_path: Optional[str], styles: Dict[str, ParagraphStyle],
+                        max_width: float = 1.5 * inch, max_height: float = 1.5 * inch):
+    """Logo Image scaled DOWN (never up) to fit within ``(max_width,
+    max_height)`` while preserving aspect ratio, falling back to a bold
+    "PYARCHINIT" Paragraph when no logo is available.
+
+    ``max_width``/``max_height`` must match the actual header logo cell the
+    flowable will be placed in — passing the fauna exemplar's flat 1.5in
+    default regardless of the caller's cell size is what let a square
+    1024x1024 default logo.png render at 108x108pt inside a ~62pt-wide
+    header cell, overflowing into the neighbouring title cell."""
     if logo_path and os.path.exists(logo_path):
         try:
             logo = Image(logo_path)
-            logo.drawHeight = 1.5 * inch * logo.drawHeight / logo.drawWidth
-            logo.drawWidth = 1.5 * inch
+            scale = min(max_width / logo.drawWidth, max_height / logo.drawHeight, 1.0)
+            logo.drawWidth *= scale
+            logo.drawHeight *= scale
             logo.hAlign = 'CENTER'
             return logo
         except Exception:
@@ -214,7 +222,6 @@ def _header_table(record: Dict[str, Any], config: Dict[str, Any],
                    styles: Dict[str, ParagraphStyle], logo_path: Optional[str]) -> Table:
     """Header: logo + title + a right cell with sito/id — mirrors the fauna
     exemplar's header_table (colored HEADER_BG band, logo on white)."""
-    logo_cell = _get_logo_flowable(logo_path, styles)
     title_text = config.get('title', '')
 
     id_col = config.get('id_col')
@@ -231,6 +238,11 @@ def _header_table(record: Dict[str, Any], config: Dict[str, Any],
     logo_width = 2.2 * 28.35  # ~2.2cm in points
     right_width = 4 * 28.35   # ~4cm in points
     title_width = USABLE_WIDTH - logo_width - right_width
+
+    # Shrink the box a bit further than the raw column width so the logo
+    # never touches the cell's edges/border.
+    logo_box = max(logo_width - 8, 8)
+    logo_cell = _get_logo_flowable(logo_path, styles, max_width=logo_box, max_height=logo_box)
 
     header_data = [[
         logo_cell,

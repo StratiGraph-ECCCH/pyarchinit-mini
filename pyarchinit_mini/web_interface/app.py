@@ -7,6 +7,7 @@ import os
 import io
 import json
 import mimetypes
+import shutil
 from pathlib import Path
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_file, abort, current_app
 from flask_wtf import FlaskForm
@@ -7070,6 +7071,70 @@ def create_app():
     # attacker-chosen hosts (blind SSRF). The in-page fetch() in
     # storage.html sends the CSRF token via the X-CSRFToken header, which
     # Flask-WTF accepts for JSON/AJAX-style POSTs.
+
+    # ===== Settings: Branding (PDF export logo) =====
+    # The 5 entity-sheet PDF export routes (tomba/struttura/fauna/ut/individui)
+    # all read the logo from this exact static path, so overwriting it here
+    # is all that's needed for a custom logo to show up in every exported
+    # PDF — no other wiring required.
+    _LOGO_PATH = os.path.join(app.static_folder, 'images', 'logo.png')
+    _LOGO_DEFAULT_BACKUP_PATH = os.path.join(app.static_folder, 'images', 'logo.default.png')
+    _LOGO_ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg'}
+
+    @app.route("/settings/branding", methods=["GET", "POST"])
+    @admin_required
+    def settings_branding():
+        if request.method == "POST":
+            action = request.form.get("action", "upload")
+
+            if action == "reset":
+                if os.path.exists(_LOGO_DEFAULT_BACKUP_PATH):
+                    shutil.copyfile(_LOGO_DEFAULT_BACKUP_PATH, _LOGO_PATH)
+                    flash("Logo ripristinato al valore predefinito.", "success")
+                else:
+                    flash("Nessun logo predefinito salvato da ripristinare.", "error")
+                return redirect(url_for("settings_branding"))
+
+            file = request.files.get("logo")
+            if not file or file.filename == "":
+                flash("Nessun file selezionato.", "error")
+                return redirect(url_for("settings_branding"))
+
+            ext = os.path.splitext(secure_filename(file.filename))[1].lower()
+            if ext not in _LOGO_ALLOWED_EXTENSIONS:
+                flash("Formato non supportato. Usa PNG o JPG.", "error")
+                return redirect(url_for("settings_branding"))
+
+            fd, tmp_path = tempfile.mkstemp(suffix=ext)
+            os.close(fd)
+            try:
+                file.save(tmp_path)
+                try:
+                    from PIL import Image as PILImage
+                    with PILImage.open(tmp_path) as img:
+                        img.verify()
+                except Exception:
+                    flash("Il file caricato non è un'immagine valida.", "error")
+                    return redirect(url_for("settings_branding"))
+
+                # Back up the shipped default the first time it's replaced,
+                # so "Ripristina predefinito" always has something to restore.
+                if os.path.exists(_LOGO_PATH) and not os.path.exists(_LOGO_DEFAULT_BACKUP_PATH):
+                    shutil.copyfile(_LOGO_PATH, _LOGO_DEFAULT_BACKUP_PATH)
+
+                shutil.copyfile(tmp_path, _LOGO_PATH)
+                flash("Logo aggiornato con successo.", "success")
+            finally:
+                if os.path.exists(tmp_path):
+                    os.unlink(tmp_path)
+            return redirect(url_for("settings_branding"))
+
+        return render_template(
+            "settings/branding.html",
+            logo_exists=os.path.exists(_LOGO_PATH),
+            has_default_backup=os.path.exists(_LOGO_DEFAULT_BACKUP_PATH),
+            logo_mtime=int(os.path.getmtime(_LOGO_PATH)) if os.path.exists(_LOGO_PATH) else 0,
+        )
 
     # ===== Admin: Backups =====
     @app.route("/admin/backups", methods=["GET"])
