@@ -1,3 +1,12 @@
+## 3.5.1 — 2026-07-04
+
+### Fixed
+- **PDF export crash on tombs with a long corredo** (`LayoutError: Flowable ... too large on page`): the sheet's flowables were wrapped in one outer table, so a sub-table taller than a page (e.g. 20+ corredo rows) could not split. The story is now flat and sub-tables paginate across pages with repeated headers.
+- The header logo is scaled to fit its cell (no more overflow into the title).
+
+### Added
+- `/settings/branding` (admin): upload a custom PDF logo (PNG/JPG, content-validated) used by all record-sheet exports, with one-click restore of the default.
+
 ## 3.5.0 — 2026-07-04
 
 ### Added — classic-plugin-style PDF sheets
