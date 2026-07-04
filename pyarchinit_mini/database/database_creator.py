@@ -32,6 +32,7 @@ def _import_all_models():
     from ..models.struttura import Struttura  # noqa: F401
     from ..models.fauna import Fauna  # noqa: F401
     from ..models.ut import Ut  # noqa: F401
+    from ..models.individui import Individui  # noqa: F401
 
     return Base
 

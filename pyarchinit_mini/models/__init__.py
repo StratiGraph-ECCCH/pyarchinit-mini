@@ -20,6 +20,7 @@ from .tomba import Tomba
 from .struttura import Struttura
 from .fauna import Fauna
 from .ut import Ut
+from .individui import Individui
 
 __all__ = [
     "BaseModel",
@@ -50,4 +51,5 @@ __all__ = [
     "Struttura",
     "Fauna",
     "Ut",
+    "Individui",
 ]
