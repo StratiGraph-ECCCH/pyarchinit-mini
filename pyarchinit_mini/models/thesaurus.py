@@ -368,4 +368,35 @@ THESAURUS_MAPPINGS = {
             'Alta', 'Media', 'Bassa', 'Non accessibile'
         ]
     },
+    'individui_table': {
+        'posizione_cranio': [
+            'Nord', 'Nord-Est', 'Est', 'Sud-Est', 'Sud', 'Sud-Ovest', 'Ovest', 'Nord-Ovest',
+            'Frontale', 'Laterale destro', 'Laterale sinistro'
+        ],
+        'posizione_scheletro': [
+            'Supino', 'Prono', 'Fianco destro', 'Fianco sinistro', 'Rannicchiato', 'Seduto'
+        ],
+        'orientamento_asse': [
+            'N-S', 'S-N', 'E-O', 'O-E', 'NE-SO', 'SO-NE', 'NO-SE', 'SE-NO'
+        ],
+        'posizione_arti_superiori': [
+            'Distesi lungo i fianchi', 'Incrociati sul bacino', 'Incrociati sul petto',
+            'Piegati sul bacino', 'Piegati sul petto'
+        ],
+        'posizione_arti_inferiori': [
+            'Distesi', 'Flessi', 'Incrociati', 'Rannicchiati'
+        ],
+        'area': [
+            '1', '2', '3'
+        ],
+        'completo_si_no': [
+            'Sì', 'No', 'Parziale'
+        ],
+        'disturbato_si_no': [
+            'Sì', 'No'
+        ],
+        'in_connessione_si_no': [
+            'Sì', 'No', 'Parziale'
+        ]
+    },
 }
