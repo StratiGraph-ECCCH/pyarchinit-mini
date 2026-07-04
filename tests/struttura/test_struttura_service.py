@@ -41,13 +41,44 @@ def test_get_thesaurus_values_reads_plugin_shared_pyarchinit_thesaurus_sigle(svc
     session = svc.db_manager.connection.get_session()
     session.add(ThesaurusSigle(
         nome_tabella="struttura_table", tipologia_sigla="6.2",
-        sigla="MUR", sigla_estesa="Muro", lingua="it",
+        sigla="MUR", sigla_estesa="Muro", lingua="IT",
     ))
     session.commit()
     session.close()
 
     values = svc.get_thesaurus_values("categoria_struttura")
     assert {"value": "Muro", "code": "MUR"} in values
+
+
+def test_get_thesaurus_values_filters_by_ui_language_dedupes_and_falls_back_to_it(svc):
+    """Shared production DB carries 7 languages for the same sigla (911 IT
+    rows + 34 each of en_US/fr_FR/de_DE/es_ES/ca_ES/ar_LB) — the dropdown
+    must show only the UI's language, deduped, and fall back to the Italian
+    catalog (not an empty or mixed-language list) when the UI language has
+    no rows of its own."""
+    session = svc.db_manager.connection.get_session()
+    session.add_all([
+        ThesaurusSigle(nome_tabella="struttura_table", tipologia_sigla="6.2",
+                       sigla="MUR1", sigla_estesa="Muro", lingua="IT"),
+        ThesaurusSigle(nome_tabella="struttura_table", tipologia_sigla="6.2",
+                       sigla="MUR2", sigla_estesa="Muro", lingua="IT"),
+        ThesaurusSigle(nome_tabella="struttura_table", tipologia_sigla="6.2",
+                       sigla="WALL", sigla_estesa="Wall", lingua="en_US"),
+        ThesaurusSigle(nome_tabella="struttura_table", tipologia_sigla="6.2",
+                       sigla="MURX", sigla_estesa="Mur", lingua="fr_FR"),
+    ])
+    session.commit()
+    session.close()
+
+    it_values = [v["value"] for v in svc.get_thesaurus_values("categoria_struttura", lang="it")]
+    assert it_values == ["Muro"]
+
+    en_values = [v["value"] for v in svc.get_thesaurus_values("categoria_struttura", lang="en")]
+    assert en_values == ["Wall"]
+
+    # No 'de' rows exist at all -> falls back to the Italian catalog.
+    de_values = [v["value"] for v in svc.get_thesaurus_values("categoria_struttura", lang="de")]
+    assert de_values == ["Muro"]
 
 
 def test_get_thesaurus_values_falls_back_to_seed_when_db_empty(svc):

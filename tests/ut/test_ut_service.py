@@ -50,7 +50,7 @@ def test_get_thesaurus_values_reads_plugin_shared_pyarchinit_thesaurus_sigle(svc
     session = svc.db_manager.connection.get_session()
     session.add(ThesaurusSigle(
         nome_tabella="ut_table", tipologia_sigla="12.1",
-        sigla="SIST", sigla_estesa="Sistematica", lingua="it",
+        sigla="SIST", sigla_estesa="Sistematica", lingua="IT",
     ))
     session.commit()
     session.close()

@@ -77,11 +77,11 @@ def test_get_thesaurus_values_reads_plugin_shared_pyarchinit_thesaurus_sigle(svc
     session = svc.db_manager.connection.get_session()
     session.add(ThesaurusSigle(
         nome_tabella="tomba_table", tipologia_sigla="7.1",
-        sigla="INU", sigla_estesa="Inumazione", lingua="it",
+        sigla="INU", sigla_estesa="Inumazione", lingua="IT",
     ))
     session.add(ThesaurusSigle(
         nome_tabella="tomba_table", tipologia_sigla="7.1",
-        sigla="CRM", sigla_estesa="Cremazione", lingua="it",
+        sigla="CRM", sigla_estesa="Cremazione", lingua="IT",
     ))
     session.commit()
     session.close()
@@ -89,6 +89,37 @@ def test_get_thesaurus_values_reads_plugin_shared_pyarchinit_thesaurus_sigle(svc
     values = svc.get_thesaurus_values("rito")
     assert {"value": "Inumazione", "code": "INU"} in values
     assert {"value": "Cremazione", "code": "CRM"} in values
+
+
+def test_get_thesaurus_values_filters_by_ui_language_dedupes_and_falls_back_to_it(svc):
+    """Shared production DB carries 7 languages for the same sigla (911 IT
+    rows + 34 each of en_US/fr_FR/de_DE/es_ES/ca_ES/ar_LB) — the dropdown
+    must show only the UI's language, deduped, and fall back to the Italian
+    catalog (not an empty or mixed-language list) when the UI language has
+    no rows of its own."""
+    session = svc.db_manager.connection.get_session()
+    session.add_all([
+        ThesaurusSigle(nome_tabella="tomba_table", tipologia_sigla="7.1",
+                       sigla="INU1", sigla_estesa="Inumazione", lingua="IT"),
+        ThesaurusSigle(nome_tabella="tomba_table", tipologia_sigla="7.1",
+                       sigla="INU2", sigla_estesa="Inumazione", lingua="IT"),
+        ThesaurusSigle(nome_tabella="tomba_table", tipologia_sigla="7.1",
+                       sigla="BURIAL", sigla_estesa="Burial", lingua="en_US"),
+        ThesaurusSigle(nome_tabella="tomba_table", tipologia_sigla="7.1",
+                       sigla="INHUM", sigla_estesa="Inhumation", lingua="fr_FR"),
+    ])
+    session.commit()
+    session.close()
+
+    it_values = [v["value"] for v in svc.get_thesaurus_values("rito", lang="it")]
+    assert it_values == ["Inumazione"]
+
+    en_values = [v["value"] for v in svc.get_thesaurus_values("rito", lang="en")]
+    assert en_values == ["Burial"]
+
+    # No 'de' rows exist at all -> falls back to the Italian catalog.
+    de_values = [v["value"] for v in svc.get_thesaurus_values("rito", lang="de")]
+    assert de_values == ["Inumazione"]
 
 
 def test_get_thesaurus_values_falls_back_to_seed_when_db_empty(svc):

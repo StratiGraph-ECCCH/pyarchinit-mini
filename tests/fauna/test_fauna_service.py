@@ -39,11 +39,11 @@ def test_get_thesaurus_values_reads_plugin_shared_pyarchinit_thesaurus_sigle(svc
     session = svc.db_manager.connection.get_session()
     session.add(ThesaurusSigle(
         nome_tabella="fauna_table", tipologia_sigla="13.11",
-        sigla="BOSTAU", sigla_estesa="Bos taurus", lingua="it",
+        sigla="BOSTAU", sigla_estesa="Bos taurus", lingua="IT",
     ))
     session.add(ThesaurusSigle(
         nome_tabella="fauna_table", tipologia_sigla="13.11",
-        sigla="OVIARI", sigla_estesa="Ovis aries", lingua="it",
+        sigla="OVIARI", sigla_estesa="Ovis aries", lingua="IT",
     ))
     session.commit()
     session.close()
