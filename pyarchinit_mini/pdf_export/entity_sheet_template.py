@@ -133,9 +133,16 @@ def _get_styles() -> Dict[str, ParagraphStyle]:
 
 def _safe(value: Any) -> str:
     """Escape a value for reportlab Paragraph mini-XML — mirrors
-    PDFGenerator._safe_cell_text (pdf_generator.py ~line 1056)."""
+    PDFGenerator._safe_cell_text (pdf_generator.py ~line 1056).
+
+    Real Python booleans render as "Sì"/"No" (Italian, matching the rest of
+    this engine's labels) rather than "True"/"False" — but only actual
+    ``bool`` values; strings like "Si"/"No"/"true" already stored by the
+    services pass through unchanged."""
     if value is None:
         return ''
+    if isinstance(value, bool):
+        value = 'Sì' if value else 'No'
     try:
         text = str(value)
     except Exception:

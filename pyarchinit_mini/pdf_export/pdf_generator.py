@@ -1169,6 +1169,22 @@ class PDFGenerator:
         doc.build(story)
         return output_path
 
+    def generate_entity_records_pdf(self, entity_key: str, rows: List[Dict[str, Any]],
+                                     output_path: str, logo_path: Optional[str] = None) -> str:
+        """Classic-plugin-style styled sheet PDF for the new record types
+        (tomba/struttura/fauna/ut/individui). Unlike generate_records_pdf,
+        this expects RAW record dicts — the entity_sheet_template engine
+        parses sub-table columns (pylist/JSON) itself. Falls back to the
+        generic per-record PDF for unknown entity keys.
+        """
+        from .sheet_configs import SHEET_CONFIGS
+        from .entity_sheet_template import generate_entity_sheets
+
+        config = SHEET_CONFIGS.get(entity_key)
+        if config is None:
+            return self.generate_records_pdf(entity_key.title(), rows, output_path)
+        return generate_entity_sheets(rows, config, output_path, logo_path=logo_path)
+
     # ------------------------------------------------------------------
     # Site Dossier
     # ------------------------------------------------------------------

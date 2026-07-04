@@ -5154,10 +5154,11 @@ def create_app():
         try:
             sito = request.args.get('sito', '').strip()
             rows = tomba_service.list_tomba(page=1, size=ALL_RECORDS_SIZE, sito=sito)
-            data = [_flatten_tomba_row(r) for r in rows]
             filename = f'tomba_{sito}.pdf' if sito else 'tomba.pdf'
+            logo = os.path.join(app.static_folder, 'images', 'logo.png')
             return _export_tmp_send(
-                lambda tmp: pdf_generator.generate_records_pdf('Tomba', data, tmp),
+                lambda tmp: pdf_generator.generate_entity_records_pdf(
+                    'tomba', rows, tmp, logo_path=logo if os.path.exists(logo) else None),
                 '.pdf', filename, 'application/pdf')
         except Exception as e:
             flash(f'Errore export PDF: {str(e)}', 'error')
@@ -5201,10 +5202,11 @@ def create_app():
         try:
             sito = request.args.get('sito', '').strip()
             rows = struttura_service.list_struttura(page=1, size=ALL_RECORDS_SIZE, sito=sito)
-            data = [_flatten_struttura_row(r) for r in rows]
             filename = f'struttura_{sito}.pdf' if sito else 'struttura.pdf'
+            logo = os.path.join(app.static_folder, 'images', 'logo.png')
             return _export_tmp_send(
-                lambda tmp: pdf_generator.generate_records_pdf('Struttura', data, tmp),
+                lambda tmp: pdf_generator.generate_entity_records_pdf(
+                    'struttura', rows, tmp, logo_path=logo if os.path.exists(logo) else None),
                 '.pdf', filename, 'application/pdf')
         except Exception as e:
             flash(f'Errore export PDF: {str(e)}', 'error')
@@ -5248,10 +5250,11 @@ def create_app():
         try:
             sito = request.args.get('sito', '').strip()
             rows = fauna_service.list_fauna(page=1, size=ALL_RECORDS_SIZE, sito=sito)
-            data = [_flatten_fauna_row(r) for r in rows]
             filename = f'fauna_{sito}.pdf' if sito else 'fauna.pdf'
+            logo = os.path.join(app.static_folder, 'images', 'logo.png')
             return _export_tmp_send(
-                lambda tmp: pdf_generator.generate_records_pdf('Fauna', data, tmp),
+                lambda tmp: pdf_generator.generate_entity_records_pdf(
+                    'fauna', rows, tmp, logo_path=logo if os.path.exists(logo) else None),
                 '.pdf', filename, 'application/pdf')
         except Exception as e:
             flash(f'Errore export PDF: {str(e)}', 'error')
@@ -5295,10 +5298,11 @@ def create_app():
         try:
             progetto = request.args.get('progetto', '').strip()
             rows = ut_service.list_ut(page=1, size=ALL_RECORDS_SIZE, progetto=progetto)
-            data = [_flatten_ut_row(r) for r in rows]
             filename = f'ut_{progetto}.pdf' if progetto else 'ut.pdf'
+            logo = os.path.join(app.static_folder, 'images', 'logo.png')
             return _export_tmp_send(
-                lambda tmp: pdf_generator.generate_records_pdf('UT', data, tmp),
+                lambda tmp: pdf_generator.generate_entity_records_pdf(
+                    'ut', rows, tmp, logo_path=logo if os.path.exists(logo) else None),
                 '.pdf', filename, 'application/pdf')
         except Exception as e:
             flash(f'Errore export PDF: {str(e)}', 'error')
@@ -5342,10 +5346,11 @@ def create_app():
         try:
             sito = request.args.get('sito', '').strip()
             rows = individui_service.list_individui(page=1, size=ALL_RECORDS_SIZE, sito=sito)
-            data = [r for r in rows]
             filename = f'individui_{sito}.pdf' if sito else 'individui.pdf'
+            logo = os.path.join(app.static_folder, 'images', 'logo.png')
             return _export_tmp_send(
-                lambda tmp: pdf_generator.generate_records_pdf('Individui', data, tmp),
+                lambda tmp: pdf_generator.generate_entity_records_pdf(
+                    'individui', rows, tmp, logo_path=logo if os.path.exists(logo) else None),
                 '.pdf', filename, 'application/pdf')
         except Exception as e:
             flash(f'Errore export PDF: {str(e)}', 'error')

@@ -3,10 +3,13 @@
 
 fauna's specie_psi ([[specie, psi], ...]) and misure_ossa
 ([[elemento, specie, GL, GB, Bd, Bp], ...]) columns are stored as JSON.
-The export routes must flatten them to a readable string via
+The excel/csv routes must flatten them to a readable string via
 _flatten_fauna_row (hand-copied here from app.py's "SP4 export helpers"
 block, kept in lockstep) — so the exported CSV must show the species name
-in plain text, not the raw JSON list.
+in plain text, not the raw JSON list. The PDF route instead passes RAW
+record dicts straight to the classic-style sheet engine
+(PDFGenerator.generate_entity_records_pdf), which parses the JSON
+sub-tables itself.
 """
 import os
 import tempfile
@@ -147,10 +150,11 @@ def flask_app(db_manager, fauna_service, user_service):
     def export_fauna_pdf():
         sito = request.args.get('sito', '').strip()
         rows = fauna_service.list_fauna(page=1, size=1_000_000, sito=sito)
-        data = [_flatten_fauna_row(r) for r in rows]
         filename = f'fauna_{sito}.pdf' if sito else 'fauna.pdf'
+        logo = os.path.join(app.static_folder or '', 'images', 'logo.png')
         return _export_tmp_send(
-            lambda tmp: pdf_generator.generate_records_pdf('Fauna', data, tmp),
+            lambda tmp: pdf_generator.generate_entity_records_pdf(
+                'fauna', rows, tmp, logo_path=logo if os.path.exists(logo) else None),
             '.pdf', filename, 'application/pdf')
 
     return app

@@ -155,6 +155,22 @@ def test_fauna_specie_psi_subtable_renders(tmp_path):
     _assert_valid_pdf(output_path)
 
 
+def test_fauna_boolean_field_renders_as_si_no(tmp_path):
+    """Real Python bools (e.g. combustione_altri_materiali_us=True) must
+    render as 'Sì'/'No' without raising — never as literal 'True'/'False'
+    leaking through, and never crashing the PDF build."""
+    record_true = dict(FAUNA_RECORD, combustione_altri_materiali_us=True)
+    output_path = str(tmp_path / 'fauna_bool_true.pdf')
+    result = generate_entity_sheets([record_true], FAUNA_SHEET, output_path)
+    assert result == output_path
+    _assert_valid_pdf(output_path)
+
+    record_false = dict(FAUNA_RECORD, combustione_altri_materiali_us=False)
+    output_path_false = str(tmp_path / 'fauna_bool_false.pdf')
+    generate_entity_sheets([record_false], FAUNA_SHEET, output_path_false)
+    _assert_valid_pdf(output_path_false)
+
+
 def test_empty_rows_list_produces_valid_pdf(tmp_path):
     for name, config, _ in ALL_CONFIGS:
         output_path = str(tmp_path / f'{name}_empty.pdf')

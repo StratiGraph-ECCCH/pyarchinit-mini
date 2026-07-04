@@ -8,9 +8,10 @@ auth_routes login manager so the endpoints are exercised authenticated,
 exactly as in production.
 
 tomba's corredo_tipo is a Python-repr list-of-lists sub-table column (the
-classic plugin's str(table2dict()) format), so the export routes flatten it
-to a readable string first — same convention as struttura/fauna
-(_flatten_tomba_row in app.py).
+classic plugin's str(table2dict()) format). The excel/csv routes flatten it
+to a readable string first (_flatten_tomba_row in app.py); the PDF route
+instead passes RAW record dicts straight to the classic-style sheet engine
+(PDFGenerator.generate_entity_records_pdf), which parses corredo_tipo itself.
 """
 import os
 
@@ -134,10 +135,11 @@ def flask_app(db_manager, tomba_service, user_service):
     def export_tomba_pdf():
         sito = request.args.get('sito', '').strip()
         rows = tomba_service.list_tomba(page=1, size=1_000_000, sito=sito)
-        data = [_flatten_tomba_row(r) for r in rows]
         filename = f'tomba_{sito}.pdf' if sito else 'tomba.pdf'
+        logo = os.path.join(app.static_folder or '', 'images', 'logo.png')
         return _export_tmp_send(
-            lambda tmp: pdf_generator.generate_records_pdf('Tomba', data, tmp),
+            lambda tmp: pdf_generator.generate_entity_records_pdf(
+                'tomba', rows, tmp, logo_path=logo if os.path.exists(logo) else None),
             '.pdf', filename, 'application/pdf')
 
     return app
@@ -203,3 +205,24 @@ def test_export_csv_flattens_corredo_tipo(logged_in_client, tomba_service):
     body = r.data.decode()
     assert "1 / 2 / Ceramica / interno / presso il cranio" in body
     assert "[['1'" not in body
+
+
+def test_export_pdf_renders_corredo_subtable(logged_in_client, tomba_service):
+    """The PDF route passes RAW rows to the classic-style sheet engine,
+    which renders corredo_tipo as a real sub-table — so a record carrying a
+    corredo_tipo pylist should produce a strictly larger PDF than a bare
+    record with no corredo (extra section + sub-table rows)."""
+    tomba_service.create_tomba({
+        "sito": "Volterra",
+        "corredo_tipo": '[["1","2","Ceramica","interno","presso il cranio"]]',
+    })
+    r_with = logged_in_client.get("/export/tomba/pdf")
+    assert r_with.status_code == 200
+    assert r_with.data.startswith(b"%PDF")
+
+    tomba_service.create_tomba({"sito": "Bareville"})
+    r_bare_only = logged_in_client.get("/export/tomba/pdf?sito=Bareville")
+    assert r_bare_only.status_code == 200
+    assert r_bare_only.data.startswith(b"%PDF")
+
+    assert len(r_with.data) > len(r_bare_only.data)

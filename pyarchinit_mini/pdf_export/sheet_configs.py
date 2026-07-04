@@ -485,3 +485,15 @@ INDIVIDUI_SHEET = {
         },
     ],
 }
+
+# ---------------------------------------------------------------------------
+# Registry consumed by PDFGenerator.generate_entity_records_pdf — maps the
+# entity_key used by the export routes (app.py) to its sheet config.
+# ---------------------------------------------------------------------------
+SHEET_CONFIGS = {
+    "tomba": TOMBA_SHEET,
+    "struttura": STRUTTURA_SHEET,
+    "fauna": FAUNA_SHEET,
+    "ut": UT_SHEET,
+    "individui": INDIVIDUI_SHEET,
+}

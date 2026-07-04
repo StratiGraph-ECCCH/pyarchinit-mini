@@ -4,7 +4,9 @@
 Mirrors tests/fauna/test_fauna_export_routes.py. Unlike fauna, individui has
 NO JSON/repr sub-table columns — every column is scalar — so no per-row
 flattening helper is needed here; ``list_individui()`` already returns
-plain dicts ready for csv_excel_service / pdf_generator.
+plain dicts ready for csv_excel_service / pdf_generator (the PDF route
+passes these raw dicts straight to
+PDFGenerator.generate_entity_records_pdf, the classic-style sheet engine).
 """
 import os
 import tempfile
@@ -113,10 +115,11 @@ def flask_app(db_manager, individui_service, user_service):
     def export_individui_pdf():
         sito = request.args.get('sito', '').strip()
         rows = individui_service.list_individui(page=1, size=ALL_RECORDS_SIZE, sito=sito)
-        data = [r for r in rows]
         filename = f'individui_{sito}.pdf' if sito else 'individui.pdf'
+        logo = os.path.join(app.static_folder or '', 'images', 'logo.png')
         return _export_tmp_send(
-            lambda tmp: pdf_generator.generate_records_pdf('Individui', data, tmp),
+            lambda tmp: pdf_generator.generate_entity_records_pdf(
+                'individui', rows, tmp, logo_path=logo if os.path.exists(logo) else None),
             '.pdf', filename, 'application/pdf')
 
     return app

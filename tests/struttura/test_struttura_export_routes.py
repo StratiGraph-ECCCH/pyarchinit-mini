@@ -2,11 +2,14 @@
 (/export/struttura/excel, /export/struttura/csv, /export/struttura/pdf).
 
 struttura's 10 SUBTABLE_COLS are stored as Python-repr strings (e.g.
-"[['buono', 'medio']]"). The export routes must flatten them to a readable
+"[['buono', 'medio']]"). The excel/csv routes must flatten them to a readable
 string via _flatten_struttura_row (hand-copied here from app.py's "SP4
 export helpers" block, kept in lockstep) before handing rows to
-Excel/CSV/PDF export — so a raw to_dict() dump like "[[" must NEVER appear
-in the exported CSV bytes.
+Excel/CSV export — so a raw to_dict() dump like "[[" must NEVER appear
+in the exported CSV bytes. The PDF route instead passes RAW record dicts
+straight to the classic-style sheet engine
+(PDFGenerator.generate_entity_records_pdf), which parses the pylist
+sub-tables itself.
 """
 import os
 import tempfile
@@ -124,10 +127,11 @@ def flask_app(db_manager, struttura_service, user_service):
     def export_struttura_pdf():
         sito = request.args.get('sito', '').strip()
         rows = struttura_service.list_struttura(page=1, size=1_000_000, sito=sito)
-        data = [_flatten_struttura_row(r) for r in rows]
         filename = f'struttura_{sito}.pdf' if sito else 'struttura.pdf'
+        logo = os.path.join(app.static_folder or '', 'images', 'logo.png')
         return _export_tmp_send(
-            lambda tmp: pdf_generator.generate_records_pdf('Struttura', data, tmp),
+            lambda tmp: pdf_generator.generate_entity_records_pdf(
+                'struttura', rows, tmp, logo_path=logo if os.path.exists(logo) else None),
             '.pdf', filename, 'application/pdf')
 
     return app

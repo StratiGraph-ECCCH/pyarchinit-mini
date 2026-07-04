@@ -2,10 +2,13 @@
 (/export/ut/excel, /export/ut/csv, /export/ut/pdf).
 
 UT's documentazione and bibliografia are Python-repr list-of-lists
-sub-table columns (the classic plugin's str(table2dict()) format), so the
-export routes flatten them to readable strings first — same convention as
-struttura/fauna/tomba (_flatten_ut_row in app.py). UT is project-scoped
-(filtered by ?progetto=, not ?sito=), mirroring app.py's ut_list route.
+sub-table columns (the classic plugin's str(table2dict()) format). The
+excel/csv routes flatten them to readable strings first — same convention
+as struttura/fauna/tomba (_flatten_ut_row in app.py). The PDF route instead
+passes RAW record dicts straight to the classic-style sheet engine
+(PDFGenerator.generate_entity_records_pdf), which parses the pylist
+sub-tables itself. UT is project-scoped (filtered by ?progetto=, not
+?sito=), mirroring app.py's ut_list route.
 """
 import os
 import tempfile
@@ -123,10 +126,11 @@ def flask_app(db_manager, ut_service, user_service):
     def export_ut_pdf():
         progetto = request.args.get('progetto', '').strip()
         rows = ut_service.list_ut(page=1, size=1_000_000, progetto=progetto)
-        data = [_flatten_ut_row(r) for r in rows]
         filename = f'ut_{progetto}.pdf' if progetto else 'ut.pdf'
+        logo = os.path.join(app.static_folder or '', 'images', 'logo.png')
         return _export_tmp_send(
-            lambda tmp: pdf_generator.generate_records_pdf('UT', data, tmp),
+            lambda tmp: pdf_generator.generate_entity_records_pdf(
+                'ut', rows, tmp, logo_path=logo if os.path.exists(logo) else None),
             '.pdf', filename, 'application/pdf')
 
     return app
