@@ -360,7 +360,12 @@ def _subtable_flowables(field_cfg: Dict[str, Any], record: Dict[str, Any],
         ])
 
     col_width = USABLE_WIDTH / max(ncols, 1)
-    data_table = Table(table_data, colWidths=[col_width] * ncols)
+    # repeatRows=1 makes the column-header row repeat on every page this
+    # sub-table splits across, and — critically — leaving splitting at its
+    # default (enabled) is what lets a tall sub-table (e.g. 80 corredo_tipo
+    # rows) paginate at all now that it's a top-level story flowable rather
+    # than nested inside another Table's cell (see EntitySheet.create_sheet).
+    data_table = Table(table_data, colWidths=[col_width] * ncols, repeatRows=1)
     data_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), SUBSECTION_BG),
         ('TEXTCOLOR', (0, 0), (-1, 0), HEADER_BG),
@@ -414,9 +419,19 @@ def _section_flowables(section: Dict[str, Any], record: Dict[str, Any],
 
 
 class EntitySheet:
-    """Builds one classic-style PDF sheet (a single reportlab Table
-    flowable, wrapped like the fauna exemplar's ``_create_professional_sheet``
-    main_table) for one record, driven entirely by `config`."""
+    """Builds one classic-style PDF sheet — a FLAT list of top-level
+    flowables (header table, then each section's header/field-grid/
+    sub-tables in turn) for one record, driven entirely by `config`.
+
+    IMPORTANT: this must stay a flat list, never re-wrapped in one outer
+    Table (the fauna exemplar's ``main_table = Table([[e] for e in
+    elements])`` pattern). A reportlab Table cannot split across pages when
+    it sits inside another Table's cell, so any section/sub-table taller
+    than one page (e.g. a corredo_tipo sub-table with dozens of rows) would
+    blow up doc.build() with a LayoutError ("... too large on page N in
+    frame ..."). Keeping every flowable at the top level of the story lets
+    reportlab paginate each one independently.
+    """
 
     def __init__(self, record: Dict[str, Any], config: Dict[str, Any],
                  logo_path: Optional[str] = None):
@@ -432,17 +447,7 @@ class EntitySheet:
         ]
         for section in self.config.get('sections', []):
             elements.extend(_section_flowables(section, self.record, self.styles))
-
-        main_data = [[e] for e in elements]
-        main_table = Table(main_data, colWidths=[USABLE_WIDTH])
-        main_table.setStyle(TableStyle([
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('LEFTPADDING', (0, 0), (-1, -1), 0),
-            ('RIGHTPADDING', (0, 0), (-1, -1), 0),
-            ('TOPPADDING', (0, 0), (-1, -1), 0),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
-        ]))
-        return [main_table]
+        return elements
 
 
 def generate_entity_sheets(rows: List[Dict[str, Any]], config: Dict[str, Any],

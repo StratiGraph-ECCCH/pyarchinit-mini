@@ -5,7 +5,9 @@ in sheet_configs.py.
 No pdfminer / PDF-parsing deps — assertions are size + magic-bytes only,
 matching the repo's existing PDF test style (tests/test_pdf_generator_records.py).
 """
+import json
 import os
+import re
 
 import pytest
 
@@ -222,3 +224,59 @@ def test_multi_record_pagebreak(tmp_path):
     result = generate_entity_sheets(records, TOMBA_SHEET, output_path)
     assert result == output_path
     _assert_valid_pdf(output_path)
+
+
+def _count_pdf_pages(path):
+    """Approximate page count via raw-bytes regex — no pdfminer/pypdf dep,
+    matching this module's size+magic-bytes-only testing style. Reportlab
+    writes classic (uncompressed) object dictionaries, so every page object
+    dict contains a literal ``/Type /Page`` not immediately followed by the
+    's' of ``/Type /Pages``."""
+    data = open(path, 'rb').read()
+    return len(re.findall(rb'/Type\s*/Page(?!s)\b', data))
+
+
+def _corredo_rows(n):
+    return str([[str(i), '2', 'Bronzo', 'Interno', 'Sopra'] for i in range(n)])
+
+
+def test_tall_subtable_paginates(tmp_path):
+    """Regression for the production LayoutError: a corredo_tipo sub-table
+    with ~20+ rows used to crash reportlab because the whole sheet was
+    wrapped in one outer 'main_table', and a nested Table cannot split
+    across pages when it sits inside another Table's cell. 80 rows is
+    comfortably taller than one A4 frame (515x751pt) and must now build
+    successfully, splitting the sub-table across multiple pages."""
+    record = dict(TOMBA_RECORD, corredo_tipo=_corredo_rows(80))
+    output_path = str(tmp_path / 'tomba_tall_subtable.pdf')
+    result = generate_entity_sheets([record], TOMBA_SHEET, output_path)
+    assert result == output_path
+    _assert_valid_pdf(output_path)
+    assert _count_pdf_pages(output_path) > 1
+
+
+def test_many_records_with_tall_subtables(tmp_path):
+    """5 records, each with a 40-row corredo_tipo sub-table (each alone
+    taller than one page) — the whole multi-record doc must still build,
+    each record's sheet paginating independently."""
+    records = [
+        dict(TOMBA_RECORD, id_tomba=i, corredo_tipo=_corredo_rows(40))
+        for i in range(5)
+    ]
+    output_path = str(tmp_path / 'tomba_many_tall.pdf')
+    result = generate_entity_sheets(records, TOMBA_SHEET, output_path)
+    assert result == output_path
+    _assert_valid_pdf(output_path)
+    assert _count_pdf_pages(output_path) > 5
+
+
+def test_fauna_tall_subtable_paginates(tmp_path):
+    """Same LayoutError risk on the fauna sheet's JSON-parsed specie_psi
+    sub-table (60 rows)."""
+    specie_psi = json.dumps([["Bos taurus", f"femore {i}"] for i in range(60)])
+    record = dict(FAUNA_RECORD, specie_psi=specie_psi)
+    output_path = str(tmp_path / 'fauna_tall_subtable.pdf')
+    result = generate_entity_sheets([record], FAUNA_SHEET, output_path)
+    assert result == output_path
+    _assert_valid_pdf(output_path)
+    assert _count_pdf_pages(output_path) > 1
