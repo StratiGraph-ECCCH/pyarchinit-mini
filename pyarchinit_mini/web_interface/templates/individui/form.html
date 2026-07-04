@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Individui') }} {{ individui.id_scheda_ind if individui and individui.id_scheda_ind else _('New') }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="fas fa-bone"></i>
+        {% if individui and individui.id_scheda_ind %}{{ _('Edit Individuo') }} #{{ individui.id_scheda_ind }}{% else %}{{ _('New Individuo') }}{% endif %}
+    </h2>
+    <a href="{{ url_for('individui_list') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left"></i> {{ _('Back') }}
+    </a>
+</div>
+
+<form method="POST" id="individuiForm">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#tab-basic">{{ _('Identificazione') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-antropologia">{{ _('Antropologia') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-giacitura">{{ _('Giacitura') }}</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#tab-notes">{{ _('Osservazioni') }}</a></li>
+    </ul>
+    <div class="tab-content border border-top-0 p-3">
+        <!-- Identificazione -->
+        <div class="tab-pane fade show active" id="tab-basic">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Site') }} *</label>
+                    <input type="text" name="sito" class="form-control" value="{{ individui.sito or '' }}" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Area') }}</label>
+                    <select name="area" id="sel-area" class="form-select" data-current="{{ individui.area or '' }}"><option value="{{ individui.area or '' }}" selected>{{ individui.area or '—' }}</option></select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('US') }}</label>
+                    <input type="text" name="us" class="form-control" value="{{ individui.us or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('N. Individuo') }}</label>
+                    <input type="number" name="nr_individuo" class="form-control" value="{{ individui.nr_individuo if individui.nr_individuo is not none else '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Data Schedatura') }}</label>
+                    <input type="text" name="data_schedatura" class="form-control" value="{{ individui.data_schedatura or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Schedatore') }}</label>
+                    <input type="text" name="schedatore" class="form-control" value="{{ individui.schedatore or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Sigla Struttura') }}</label>
+                    <input type="text" name="sigla_struttura" class="form-control" value="{{ individui.sigla_struttura or '' }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('N. Struttura') }}</label>
+                    <input type="number" name="nr_struttura" class="form-control" value="{{ individui.nr_struttura if individui.nr_struttura is not none else '' }}">
+                </div>
+            </div>
+        </div>
+        <!-- Antropologia -->
+        <div class="tab-pane fade" id="tab-antropologia">
+            <div class="row g-2">
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Sesso') }}</label>
+                    <select name="sesso" class="form-select">
+                        {% set sesso_opts = ["", "Non identificabile", "Maschio", "Femmina", "Indeterminato"] %}
+                        {% for opt in sesso_opts %}
+                        <option value="{{ opt }}" {% if individui.sesso == opt %}selected{% endif %}>{{ opt if opt else '—' }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Eta Min') }}</label>
+                    <select name="eta_min" class="form-select">
+                        {% set eta_opts = ["", "0","1","2","3","4","5","6","7","8","9","10","20","30","40","50"] %}
+                        {% for opt in eta_opts %}
+                        <option value="{{ opt }}" {% if individui.eta_min == opt %}selected{% endif %}>{{ opt if opt else '—' }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Eta Max') }}</label>
+                    <select name="eta_max" class="form-select">
+                        {% for opt in eta_opts %}
+                        <option value="{{ opt }}" {% if individui.eta_max == opt %}selected{% endif %}>{{ opt if opt else '—' }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Classi Eta') }}</label>
+                    <select name="classi_eta" class="form-select">
+                        {% set classi_eta_opts = ["", "Adulto giovane (20-29)", "Adulto maturo (30-50)", "Adulto di eta' avanzata (>50)"] %}
+                        {% for opt in classi_eta_opts %}
+                        <option value="{{ opt }}" {% if individui.classi_eta == opt %}selected{% endif %}>{{ opt if opt else '—' }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">{{ _('Lunghezza Scheletro') }}</label>
+                    <input type="number" step="any" name="lunghezza_scheletro" class="form-control" value="{{ individui.lunghezza_scheletro if individui.lunghezza_scheletro is not none else '' }}">
+                </div>
+            </div>
+        </div>
+        <!-- Giacitura -->
+        <div class="tab-pane fade" id="tab-giacitura">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Completo') }}</label>
+                    <select name="completo_si_no" id="sel-completo_si_no" class="form-select" data-current="{{ individui.completo_si_no or '' }}"><option value="{{ individui.completo_si_no or '' }}" selected>{{ individui.completo_si_no or '—' }}</option></select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('Disturbato') }}</label>
+                    <select name="disturbato_si_no" id="sel-disturbato_si_no" class="form-select" data-current="{{ individui.disturbato_si_no or '' }}"><option value="{{ individui.disturbato_si_no or '' }}" selected>{{ individui.disturbato_si_no or '—' }}</option></select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">{{ _('In Connessione') }}</label>
+                    <select name="in_connessione_si_no" id="sel-in_connessione_si_no" class="form-select" data-current="{{ individui.in_connessione_si_no or '' }}"><option value="{{ individui.in_connessione_si_no or '' }}" selected>{{ individui.in_connessione_si_no or '—' }}</option></select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Posizione Scheletro') }}</label>
+                    <select name="posizione_scheletro" id="sel-posizione_scheletro" class="form-select" data-current="{{ individui.posizione_scheletro or '' }}"><option value="{{ individui.posizione_scheletro or '' }}" selected>{{ individui.posizione_scheletro or '—' }}</option></select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Posizione Cranio') }}</label>
+                    <select name="posizione_cranio" id="sel-posizione_cranio" class="form-select" data-current="{{ individui.posizione_cranio or '' }}"><option value="{{ individui.posizione_cranio or '' }}" selected>{{ individui.posizione_cranio or '—' }}</option></select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Posizione Arti Superiori') }}</label>
+                    <select name="posizione_arti_superiori" id="sel-posizione_arti_superiori" class="form-select" data-current="{{ individui.posizione_arti_superiori or '' }}"><option value="{{ individui.posizione_arti_superiori or '' }}" selected>{{ individui.posizione_arti_superiori or '—' }}</option></select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Posizione Arti Inferiori') }}</label>
+                    <select name="posizione_arti_inferiori" id="sel-posizione_arti_inferiori" class="form-select" data-current="{{ individui.posizione_arti_inferiori or '' }}"><option value="{{ individui.posizione_arti_inferiori or '' }}" selected>{{ individui.posizione_arti_inferiori or '—' }}</option></select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Orientamento Asse') }}</label>
+                    <select name="orientamento_asse" id="sel-orientamento_asse" class="form-select" data-current="{{ individui.orientamento_asse or '' }}"><option value="{{ individui.orientamento_asse or '' }}" selected>{{ individui.orientamento_asse or '—' }}</option></select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">{{ _('Orientamento Azimut') }}</label>
+                    <input type="text" name="orientamento_azimut" class="form-control" value="{{ individui.orientamento_azimut or '' }}">
+                </div>
+            </div>
+        </div>
+        <!-- Osservazioni -->
+        <div class="tab-pane fade" id="tab-notes">
+            <div class="row g-2">
+                <div class="col-md-12">
+                    <label class="form-label">{{ _('Osservazioni') }}</label>
+                    <textarea name="osservazioni" class="form-control" rows="4">{{ individui.osservazioni or '' }}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> {{ _('Save') }}
+        </button>
+    </div>
+</form>
+
+<script>
+// Populate thesaurus-backed <select> elements with values from PyArchInit,
+// preserving the record's current stored value the same way fauna/form.html
+// does (data-current + a fallback synthetic option if the stored value isn't
+// in the fetched vocab).
+const THES_FIELDS = ['area', 'completo_si_no', 'disturbato_si_no', 'in_connessione_si_no', 'posizione_scheletro', 'posizione_cranio', 'posizione_arti_superiori', 'posizione_arti_inferiori', 'orientamento_asse'];
+THES_FIELDS.forEach(function(field) {
+    fetch('/api/individui/thesaurus/' + field)
+        .then(function(r) { return r.json(); })
+        .then(function(values) {
+            if (!Array.isArray(values)) return;
+            const sel = document.getElementById('sel-' + field);
+            if (!sel) return;
+            const current = sel.getAttribute('data-current') || '';
+            sel.innerHTML = '<option value="">—</option>';
+            let found = false;
+            (values || []).forEach(function(v){
+                const o = document.createElement('option');
+                o.value = v.value; o.textContent = v.value;
+                if (v.value === current) { o.selected = true; found = true; }
+                sel.appendChild(o);
+            });
+            if (current && !found) {   // preserve a stored value not in the current vocab
+                const o = document.createElement('option');
+                o.value = current; o.textContent = current; o.selected = true; sel.appendChild(o);
+            }
+        })
+        .catch(function() { /* silent */ });
+});
+</script>
+{% endblock %}

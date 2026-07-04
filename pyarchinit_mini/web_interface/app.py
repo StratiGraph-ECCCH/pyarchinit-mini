@@ -684,6 +684,8 @@ def create_app():
     struttura_service = StrutturaService(db_manager)
     from pyarchinit_mini.services.fauna_service import FaunaService
     fauna_service = FaunaService(db_manager)
+    from pyarchinit_mini.services.individui_service import IndividuiService
+    individui_service = IndividuiService(db_manager)
     from pyarchinit_mini.services.ut_service import UtService
     ut_service = UtService(db_manager)
     # matrix_visualizer and graphviz_visualizer are declared at module level
@@ -740,6 +742,7 @@ def create_app():
     app.tomba_service = tomba_service
     app.struttura_service = struttura_service
     app.fauna_service = fauna_service
+    app.individui_service = individui_service
     app.ut_service = ut_service
 
     # Initialize Flask-Login
@@ -5553,6 +5556,83 @@ def create_app():
             except Exception:
                 lang = 'it'
             values = fauna_service.get_thesaurus_values(field, lang=lang)
+            return jsonify(values)
+        except Exception as e:
+            return jsonify({'error': str(e), 'values': []}), 500
+
+    # ===== Individui (human skeletal remains) =====
+    @app.route('/individui')
+    @login_required
+    def individui_list():
+        page = request.args.get('page', 1, type=int)
+        per_page = 50
+        search = request.args.get('search', '').strip()
+        sito_filter = request.args.get('sito', '').strip()
+        try:
+            individui_list_data = individui_service.list_individui(page=page, size=per_page,
+                                                                     search=search, sito=sito_filter)
+            total = individui_service.count_individui(search=search, sito=sito_filter)
+            sites = individui_service.get_distinct_sites()
+            import math
+            total_pages = max(math.ceil(total / per_page), 1)
+            return render_template('individui/list.html', individui_list=individui_list_data,
+                                   total=total, page=page, total_pages=total_pages,
+                                   search=search, sito_filter=sito_filter, sites=sites)
+        except Exception as e:
+            flash(f'Errore Individui: {str(e)}', 'error')
+            return redirect(url_for('index'))
+
+    @app.route('/individui/new', methods=['GET', 'POST'])
+    @login_required
+    @write_permission_required
+    def individui_create():
+        if request.method == 'POST':
+            data = {k: v for k, v in request.form.items()}
+            individui_id = individui_service.create_individui(data)
+            if individui_id:
+                flash('Individuo creato', 'success')
+                return redirect(url_for('individui_edit', individui_id=individui_id))
+            flash('Errore creazione Individuo', 'error')
+        return render_template('individui/form.html', individui={})
+
+    @app.route('/individui/<int:individui_id>', methods=['GET', 'POST'])
+    @login_required
+    @write_permission_required
+    def individui_edit(individui_id):
+        individui = individui_service.get_individui(individui_id)
+        if not individui:
+            flash('Individuo non trovato', 'error')
+            return redirect(url_for('individui_list'))
+        if request.method == 'POST':
+            data = {k: v for k, v in request.form.items()}
+            if individui_service.update_individui(individui_id, data):
+                flash('Individuo aggiornato', 'success')
+            else:
+                flash('Errore aggiornamento', 'error')
+            return redirect(url_for('individui_edit', individui_id=individui_id))
+        return render_template('individui/form.html', individui=individui)
+
+    @app.route('/individui/<int:individui_id>/delete', methods=['POST'])
+    @login_required
+    @write_permission_required
+    def individui_delete(individui_id):
+        if individui_service.delete_individui(individui_id):
+            flash('Individuo eliminato', 'success')
+        else:
+            flash('Errore eliminazione', 'error')
+        return redirect(url_for('individui_list'))
+
+    @app.route('/api/individui/thesaurus/<field>')
+    @login_required
+    def individui_thesaurus(field):
+        """Return thesaurus values for an Individui field"""
+        try:
+            from pyarchinit_mini.i18n import get_locale
+            try:
+                lang = get_locale()
+            except Exception:
+                lang = 'it'
+            values = individui_service.get_thesaurus_values(field, lang=lang)
             return jsonify(values)
         except Exception as e:
             return jsonify({'error': str(e), 'values': []}), 500
