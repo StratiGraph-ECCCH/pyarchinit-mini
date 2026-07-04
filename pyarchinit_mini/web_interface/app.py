@@ -5304,6 +5304,53 @@ def create_app():
             flash(f'Errore export PDF: {str(e)}', 'error')
             return redirect(url_for('ut_list'))
 
+    # ----- Individui export -----
+    @app.route('/export/individui/excel')
+    @login_required
+    def export_individui_excel():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = individui_service.list_individui(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [r for r in rows]
+            filename = f'individui_{sito}.xlsx' if sito else 'individui.xlsx'
+            return _export_tmp_send(
+                lambda tmp: csv_excel_service.export_to_excel(data, tmp, sheet_name='Individui'),
+                '.xlsx', filename,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        except Exception as e:
+            flash(f'Errore export Excel: {str(e)}', 'error')
+            return redirect(url_for('individui_list'))
+
+    @app.route('/export/individui/csv')
+    @login_required
+    def export_individui_csv():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = individui_service.list_individui(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [r for r in rows]
+            filename = f'individui_{sito}.csv' if sito else 'individui.csv'
+            return _export_tmp_send(
+                lambda tmp: csv_excel_service.export_to_csv(data, tmp),
+                '.csv', filename, 'text/csv')
+        except Exception as e:
+            flash(f'Errore export CSV: {str(e)}', 'error')
+            return redirect(url_for('individui_list'))
+
+    @app.route('/export/individui/pdf')
+    @login_required
+    def export_individui_pdf():
+        try:
+            sito = request.args.get('sito', '').strip()
+            rows = individui_service.list_individui(page=1, size=ALL_RECORDS_SIZE, sito=sito)
+            data = [r for r in rows]
+            filename = f'individui_{sito}.pdf' if sito else 'individui.pdf'
+            return _export_tmp_send(
+                lambda tmp: pdf_generator.generate_records_pdf('Individui', data, tmp),
+                '.pdf', filename, 'application/pdf')
+        except Exception as e:
+            flash(f'Errore export PDF: {str(e)}', 'error')
+            return redirect(url_for('individui_list'))
+
     # ===== Tomba - Sepolture =====
     @app.route('/tomba')
     @login_required

@@ -796,6 +796,73 @@ Each of these renders as a text input backed by an HTML ``<datalist>`` of sugges
 .. tip::
    Because Fauna records are linked to a stratigraphic unit, fill in the US, ID US, and Datazione US fields on the Identification tab to keep the faunal remains tied to their originating context — there is no separate relationship editor for this link.
 
+Schede Individuo (Anthropological Individual Records)
+=======================================================
+
+The Individui module manages anthropological individual records (mirroring the classic PyArchInit ``individui_table``), covering identification, sex/age assessment, and skeletal position/taphonomy at time of recovery. An Individui record has **no media attachment panel** and is uniquely identified within a site by its individual number: the ``sito`` + ``nr_individuo`` pair is enforced as a database-level unique constraint (``ID_individuo_unico``), matching the classic desktop client.
+
+Individui List
+--------------
+
+Navigate to **Individui** in the top menu (``/individui``) to see the paginated list of anthropological individual records.
+
+Features:
+
+* Paginated list (50 records per page)
+* Filter by site (Sito) and free-text search (matches Sito, Area, US, Sigla Struttura, Sesso, Classi Eta, Schedatore)
+* Create new Individuo button
+* Export Excel / CSV / PDF buttons, carrying the current site filter
+* Direct links to each record's edit form
+
+Creating/Editing an Individuo Record
+--------------------------------------
+
+The Individui form is organized into four tabs: Identificazione, Antropologia, Giacitura, and Osservazioni.
+
+**Required Fields:**
+
+* Site (Sito) - free-text entry
+
+**Identificazione:**
+
+* Sito, Area, US, N. Individuo, Data Schedatura, Schedatore, Sigla Struttura, N. Struttura
+
+**Antropologia:**
+
+* Sesso, Eta Min, Eta Max, Classi Eta, Lunghezza Scheletro
+
+**Giacitura:**
+
+* Completo, Disturbato, In Connessione, Posizione Scheletro, Posizione Cranio, Posizione Arti Superiori, Posizione Arti Inferiori, Orientamento Asse, Orientamento Azimut
+
+**Osservazioni:**
+
+* Osservazioni
+
+.. note::
+   ``Lunghezza Scheletro`` renders as an HTML number input (decimal-capable). ``N. Individuo`` and ``N. Struttura`` render as HTML number inputs.
+
+Fixed-Choice Dropdowns
+------------------------
+
+Four fields use a fixed, hard-coded list of options (matching the classic PyArchInit desktop GUI's combobox choices) rather than the live thesaurus:
+
+* **Sesso**: Non identificabile, Maschio, Femmina, Indeterminato
+* **Eta Min** / **Eta Max**: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50
+* **Classi Eta**: Adulto giovane (20-29), Adulto maturo (30-50), Adulto di eta' avanzata (>50)
+
+Thesaurus Dropdowns
+--------------------
+
+Nine fields use ICCD-style controlled vocabulary, populated live from the thesaurus via ``GET /api/individui/thesaurus/<field>``:
+
+* Area, Completo, Disturbato, In Connessione, Posizione Scheletro, Posizione Cranio, Posizione Arti Superiori, Posizione Arti Inferiori, Orientamento Asse
+
+Each of these renders as a ``<select>`` dropdown populated from the shared ``pyarchinit_thesaurus_sigle`` vocabulary (current stored value preserved even if it falls outside the fetched vocab), matching the classic plugin's comboboxes.
+
+.. tip::
+   A Tomba record's **N. Individuo** field is a multi-select populated from ``GET /api/tomba/individui``, which returns the distinct ``nr_individuo`` values recorded in Individui for the tomba's site (optionally narrowed by Sigla Struttura / N. Struttura). This lets you link one or more anthropological individuals to a burial without leaving the Tomba form — create the Individuo record(s) here first, then pick them on the Tomba form.
+
 Schede UT (Topographic Unit / Survey Unit Records)
 =====================================================
 
@@ -1387,6 +1454,7 @@ You now know how to:
 * Manage Tomba (burial) records with thesaurus-backed ritual/structure fields
 * Manage Struttura (architectural structure) records with thesaurus-backed identification/articolazione fields
 * Manage Fauna (faunal remains) records linked to their stratigraphic unit, with thesaurus-backed species/context fields
+* Manage Individui (anthropological individual) records, with fixed sex/age selects and thesaurus-backed skeletal-position fields, linkable to a Tomba record by individual number
 * Upload and manage media files
 * Create and visualize Harris Matrix diagrams
 * Export diagrams to GraphML and Extended Matrix formats

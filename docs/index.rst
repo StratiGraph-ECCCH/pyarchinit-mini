@@ -177,6 +177,8 @@ Data Management
    struttura_service
    fauna
    fauna_service
+   individui
+   individui_service
    ut
    ut_service
    features/stratigraphic_relationships

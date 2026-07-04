@@ -1,3 +1,18 @@
+## Unreleased
+
+### Added — Individui (anthropological individuals) record type
+- **Individui** web module matching the classic PyArchInit `individui_table` — identification, fixed Sesso/Eta selects, and thesaurus-backed skeletal-position/giacitura fields (`/individui`, no media panel). Uniquely constrained per site by `nr_individuo` (`ID_individuo_unico`), matching the classic desktop client.
+- Tomba's **N. Individuo** field is now a multi-select populated live from the individuals recorded at the tomba's site/structure (`GET /api/tomba/individui`), linking one or more Individui records to a burial without leaving the Tomba form.
+- **PDF / Excel / CSV export** for Individui (`/export/individui/{pdf,excel,csv}`), with buttons on the list page, mirroring the other record types.
+- Individui is included in the dashboard summary, the web AI assistant's per-entity context, and the MCP tooling, alongside tomba/struttura/fauna/UT.
+- Docs: `docs/individui.rst` / `docs/individui_service.rst` + toctree entries, and a new "Schede Individuo" tutorial section.
+
+### Changed — sub-table widgets matching the classic plugin (commit 591a673)
+- **Tomba**: `corredo_tipo` (grave goods) is now edited with a repeatable-row table widget (ID Reperto, ID Individuo, Materiale, Posizione del corredo, Posizione nel corredo) instead of a raw text input, normalized server-side to the classic plugin's `repr()` list-of-lists format.
+- **UT**: `documentazione` (Tipo documentazione / Riferimenti) and `bibliografia` (Riferimenti bibliografici) get the same repeatable-row widgets and server-side normalization, replacing free-text textareas.
+- **Struttura**: the sub-tables tab is split into the classic plugin's real tab names (Rapporti, Elementi costruttivi, Misure, Stato conservazione, Dati architettura, Dati archeologici), each widget placed in the same tab as in the classic form.
+- Tomba and UT Excel/CSV/PDF exports now flatten these repr sub-table columns to readable strings, matching Struttura and Fauna's existing export flattening.
+
 ## 3.3.1 — 2026-07-04
 
 ### Fixed

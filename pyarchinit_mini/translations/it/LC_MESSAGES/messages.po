@@ -8214,6 +8214,170 @@ msgstr "Datazione"
 msgid "Import another file"
 msgstr "Importa un altro file"
 
+#: pyarchinit_mini/web_interface/templates/individui/form.html:17
+msgid "Antropologia"
+msgstr "Antropologia"
+
+#: pyarchinit_mini/web_interface/templates/individui/list.html:47
+#: pyarchinit_mini/web_interface/templates/individui/form.html:89
+msgid "Classi Eta"
+msgstr "Classi Eta"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:107
+msgid "Completo"
+msgstr "Completo"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:42
+msgid "Data Schedatura"
+msgstr "Data Schedatura"
+
+#: pyarchinit_mini/web_interface/templates/individui/list.html:66
+msgid "Delete this Individuo record?"
+msgstr "Eliminare questo record Individuo?"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:111
+msgid "Disturbato"
+msgstr "Disturbato"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:7
+msgid "Edit Individuo"
+msgstr "Modifica Individuo"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:81
+msgid "Eta Max"
+msgstr "Eta Max"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:72
+msgid "Eta Min"
+msgstr "Eta Min"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:18
+msgid "Giacitura"
+msgstr "Giacitura"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:16
+msgid "Identificazione"
+msgstr "Identificazione"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:115
+msgid "In Connessione"
+msgstr "In Connessione"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:98
+msgid "Lunghezza Scheletro"
+msgstr "Lunghezza Scheletro"
+
+#: pyarchinit_mini/web_interface/templates/individui/list.html:45
+#: pyarchinit_mini/web_interface/templates/individui/form.html:38
+msgid "N. Individuo"
+msgstr "N. Individuo"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:54
+msgid "N. Struttura"
+msgstr "N. Struttura"
+
+#: pyarchinit_mini/web_interface/templates/individui/list.html:9
+#: pyarchinit_mini/web_interface/templates/individui/form.html:7
+msgid "New Individuo"
+msgstr "Nuovo Individuo"
+
+#: pyarchinit_mini/web_interface/templates/individui/list.html:99
+msgid "No Individui records found."
+msgstr "Nessun record Individui trovato."
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:135
+msgid "Orientamento Asse"
+msgstr "Orientamento Asse"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:139
+msgid "Orientamento Azimut"
+msgstr "Orientamento Azimut"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:131
+msgid "Posizione Arti Inferiori"
+msgstr "Posizione Arti Inferiori"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:127
+msgid "Posizione Arti Superiori"
+msgstr "Posizione Arti Superiori"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:123
+msgid "Posizione Cranio"
+msgstr "Posizione Cranio"
+
+#: pyarchinit_mini/web_interface/templates/individui/form.html:119
+msgid "Posizione Scheletro"
+msgstr "Posizione Scheletro"
+
+#: pyarchinit_mini/web_interface/templates/individui/list.html:18
+msgid "Search by site, area, us, sigla struttura, sesso, classi eta, schedatore..."
+msgstr "Cerca per sito, area, us, sigla struttura, sesso, classi eta, schedatore..."
+
+#: pyarchinit_mini/web_interface/templates/individui/list.html:46
+#: pyarchinit_mini/web_interface/templates/individui/form.html:63
+msgid "Sesso"
+msgstr "Sesso"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:117
+msgid "Corredo tomba"
+msgstr "Corredo tomba"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:120
+msgid "ID Reperto"
+msgstr "ID Reperto"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:121
+msgid "ID Individuo"
+msgstr "ID Individuo"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:122
+msgid "Materiale"
+msgstr "Materiale"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:123
+msgid "Posizione del corredo"
+msgstr "Posizione del corredo"
+
+#: pyarchinit_mini/web_interface/templates/tomba/form.html:124
+msgid "Posizione nel corredo"
+msgstr "Posizione nel corredo"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:214
+msgid "Tipo documentazione"
+msgstr "Tipo documentazione"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:215
+msgid "Riferimenti"
+msgstr "Riferimenti"
+
+#: pyarchinit_mini/web_interface/templates/ut/form.html:229
+msgid "Riferimenti bibliografici"
+msgstr "Riferimenti bibliografici"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:19
+msgid "Rapporti"
+msgstr "Rapporti"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:20
+msgid "Elementi costruttivi"
+msgstr "Elementi costruttivi"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:21
+msgid "Misure"
+msgstr "Misure"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:22
+msgid "Stato conservazione"
+msgstr "Stato conservazione"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:23
+msgid "Dati architettura"
+msgstr "Dati architettura"
+
+#: pyarchinit_mini/web_interface/templates/struttura/form.html:24
+msgid "Dati archeologici"
+msgstr "Dati archeologici"
+
 #~ msgid "OK"
 #~ msgstr "OK"
 

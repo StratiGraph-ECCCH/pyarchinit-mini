@@ -27,6 +27,7 @@ PyArchInit-Mini is a standalone, modular version of PyArchInit focused on core a
 - **Tomba Records** (NEW): Burial/grave records matching the classic PyArchInit `tomba_table` — ritual, structure, grave goods, and dating fields with thesaurus-backed dropdowns and media attachments
 - **Struttura Records** (NEW): Architectural structure records matching the classic PyArchInit `struttura_table` — identification, description, room articolazione, and dating fields with thesaurus-backed dropdowns and media attachments
 - **Fauna Records** (NEW): Faunal remains records matching the classic PyArchInit `fauna_table` — US-linked identification, recovery context, species/skeletal data, and combustion/taphonomy fields with thesaurus-backed dropdowns
+- **Individui Records** (NEW): Anthropological individuals (human skeletal remains) records matching the classic PyArchInit `individui_table` — identification, fixed sex/age selects, and thesaurus-backed skeletal-position fields, linkable to a Tomba record by individual number
 - **UT (Topographic Unit) Records** (NEW): Survey unit records matching the classic PyArchInit `ut_table` — project-scoped identification, location, field-survey observations, and potential/risk scoring with thesaurus-backed dropdowns and media attachments
 - **Multi-Database**: SQLite and PostgreSQL with upload/connect capabilities
 - **Internationalization**: Full support for Italian and English languages

@@ -112,6 +112,25 @@ def flask_app(db_manager, individui_service, user_service):
         login_user(AuthUser(user_dict))
         return ""
 
+    # Stub export endpoints (app.py "Individui export" block) — only needed
+    # here so individui/list.html's export button url_for() calls resolve;
+    # the export behavior itself is covered by
+    # tests/individui/test_individui_export_routes.py.
+    @app.route('/export/individui/excel')
+    @login_required
+    def export_individui_excel():
+        return ""
+
+    @app.route('/export/individui/csv')
+    @login_required
+    def export_individui_csv():
+        return ""
+
+    @app.route('/export/individui/pdf')
+    @login_required
+    def export_individui_pdf():
+        return ""
+
     # ---- /individui (mirrors app.py's individui_list) ----
     @app.route('/individui')
     @login_required
