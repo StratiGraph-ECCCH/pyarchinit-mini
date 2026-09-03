@@ -547,7 +547,23 @@ def create_app():
         raise RuntimeError(_oidc_problem)
 
     app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'your-secret-key-here'
+    # THE KEY THAT SIGNS EVERY SESSION, and it used to be the literal
+    # `'your-secret-key-here'` on this line — a string committed to a public
+    # repository, which the environment could not override. Flask signs the
+    # session cookie with it and that signature is the only thing deciding which
+    # user a request belongs to, so a published key is a forgeable login for
+    # every reachable installation; Flask-WTF's CSRF tokens derive from the same
+    # value.
+    #
+    # `session_key.configure` resolves it — the environment, else a private key
+    # kept in $PYARCHINIT_HOME — and RAISES rather than improvise one. See that
+    # module for why there is no third fallback and why this does not reuse
+    # PYARCHINIT_SECRET_KEY.
+    #
+    # It returns a line naming the source and a FINGERPRINT of the key, never
+    # the key: a secret in a log is a secret in a log aggregator.
+    from pyarchinit_mini.web_interface import session_key
+    print(f"[FLASK] {session_key.configure(app)}")
     app.config.setdefault("MAX_CONTENT_LENGTH", 16 * 1024 * 1024)  # 16MB cap on uploads
     # Use centralized ~/.pyarchinit_mini directory
     pyarchinit_home = Path.home() / '.pyarchinit_mini'

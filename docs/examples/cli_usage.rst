@@ -310,7 +310,8 @@ Configure via environment variables:
     export UPLOAD_FOLDER="/data/uploads"
 
     # Secret key
-    export SECRET_KEY="your-secret-key-here"
+    # generate one: python -c 'import secrets; print(secrets.token_urlsafe(48))'
+    export PYARCHINIT_SESSION_KEY="<48 random bytes, url-safe>"
 
     # Debug mode
     export DEBUG=1

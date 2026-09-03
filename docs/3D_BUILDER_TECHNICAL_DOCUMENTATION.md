@@ -621,7 +621,9 @@ eventSource.onerror = (error) => {
 
 ```bash
 DATABASE_URL="postgresql://user:pass@localhost/pyarchinit"
-FLASK_SECRET_KEY="your-secret-key-here"
+# generate one: python -c 'import secrets; print(secrets.token_urlsafe(48))'
+# leave it unset and a private key is created in $PYARCHINIT_HOME/session.key
+FLASK_SECRET_KEY="<48 random bytes, url-safe>"
 BLENDER_HOST="localhost"
 BLENDER_PORT=9876
 EVENT_STREAM_TIMEOUT=30
