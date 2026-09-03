@@ -1,0 +1,108 @@
+# What the image is NOT built from.
+#
+# MEASURED, not guessed: `docker build` streams the WHOLE directory to the daemon
+# before it reads the first instruction. Here that was
+#
+#     Sending build context to Docker daemon  400.8MB
+#
+# of which `.git` is 260M and `docs/` is 110M — neither of which the image ever
+# opens. Every build paid for both.
+#
+# THE RULE for editing this file: open the Dockerfile and read the `COPY` lines
+# first. Everything they name must stay reachable; everything else is weight.
+# What this image copies:
+#     requirements.txt · wsgi.py · pyarchinit_mini/
+#
+# The templates, the static files and the compiled translations
+# (`pyarchinit_mini/translations/*/LC_MESSAGES/*.mo`) are all INSIDE the package,
+# so copying the package brings them. Measured, because the alternative — a
+# static root at the repository root — would have made this file wrong: the app
+# is `Flask(__name__)` with no `static_folder`/`template_folder` argument
+# (`web_interface/app.py:536`), so both default to the package directory.
+#
+# This repository already knows most of its own weight: `.railwayignore` lists
+# `.git`, `docs/`, `logo/`, `tests/`, `*.db`. That file is Railway's and only
+# Railway reads it; this one is Docker's. The overlap is not duplication of a
+# decision, it is two build systems each needing to be told.
+
+# ── the big two ──────────────────────────────────────────────────────────────
+.git/
+.gitignore
+.github/
+docs/
+
+# ── the root logo, which nothing serves ──────────────────────────────────────
+# MEASURED: `logo/logo_pyarchinit-mini.png` (1.0M) is referenced by no template,
+# no stylesheet and no Python file. What the application actually serves is
+# `app.static_folder/images/logo.png` (`web_interface/app.py:5159` and three
+# more), i.e. `pyarchinit_mini/web_interface/static/images/logo.png`, which the
+# package COPY brings in. Two files with one job, and only one of them is used.
+logo/
+
+# ── sample databases, and any other ──────────────────────────────────────────
+# `data/` holds `pyarchinit_mini_sample.db` and `pyarchinit_tutorial.db` (316K).
+# The container makes its own database at boot inside the volume; a sample one
+# baked into the image would be a database somebody could mistake for theirs.
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# ── virtual environments ─────────────────────────────────────────────────────
+# Host wheels compiled for macOS are useless inside Linux even if copied, and
+# the image installs into its own environment from `requirements.txt`.
+.venv/
+venv/
+env/
+
+# ── build and test leavings ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+build/
+dist/
+node_modules/
+output/
+
+# ── the OTHER deliverables in this repository ────────────────────────────────
+# This image is the Flask web interface. The Blender add-ons and the MCP server
+# ship by their own routes and would only be weight here.
+blender_addon/
+blender_addons/
+
+# ── tests, tooling and working notes ─────────────────────────────────────────
+# The root is full of `test_*.py` scripts beside the `tests/` package; neither
+# goes into a runtime image.
+tests/
+test_*.py
+.pre-commit-config.yaml
+.readthedocs.yaml
+babel.cfg
+MANIFEST.in
+.claude/
+# …and every Markdown file, README included. `stratigraph-server` copies its
+# README because `pip install .` reads it through `pyproject.toml`; this image
+# installs from `requirements.txt` and copies no README, so keeping one would be
+# the rule I quoted above broken in the file that states it.
+*.md
+
+# ── deployment descriptors for OTHER targets ─────────────────────────────────
+# Kept OUT deliberately, and it is worth saying why rather than leaving it to
+# look like an oversight: this image mirrors `railway.toml`'s command (see the
+# Dockerfile), but it does not need the file to do so — the command is written
+# in the Dockerfile, where the image's own reader will look for it. Shipping
+# both would put two start commands in one container again.
+Procfile
+railway.toml
+.railwayignore
+adarte_deploy.sh
+.adarte_secrets.sh.example
+.env.development
+
+# ── the local database and secrets, if anyone ever runs the app in the tree ──
+.pyarchinit_mini/
+.DS_Store
