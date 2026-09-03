@@ -564,6 +564,24 @@ def create_app():
     # the key: a secret in a log is a secret in a log aggregator.
     from pyarchinit_mini.web_interface import session_key
     print(f"[FLASK] {session_key.configure(app)}")
+
+    # LIVING BEHIND A REVERSE PROXY, and only when one is declared.
+    #
+    # `PYARCHINIT_BEHIND_PROXY` unset means this line does nothing at all — not
+    # even a log entry — because pyarchinit-mini is exposed directly by most of
+    # the people who run it, and `ProxyFix` tells Werkzeug to believe headers
+    # that arrive WITH the request. With a proxy in front the proxy writes them;
+    # without one the caller does, and a caller that can declare its own host
+    # and prefix can steer the links this application builds.
+    #
+    # Set, it turns `X-Forwarded-Prefix` into `SCRIPT_NAME`, and from there
+    # `url_for` emits `/pyarchinit/...` on its own — no template changes. It
+    # must come BEFORE any blueprint is registered or any request is served,
+    # which is why it sits here beside the session key.
+    from pyarchinit_mini.web_interface import proxy
+    _behind_proxy = proxy.configure(app)
+    if _behind_proxy:
+        print(f"[FLASK] {_behind_proxy}")
     app.config.setdefault("MAX_CONTENT_LENGTH", 16 * 1024 * 1024)  # 16MB cap on uploads
     # Use centralized ~/.pyarchinit_mini directory
     pyarchinit_home = Path.home() / '.pyarchinit_mini'

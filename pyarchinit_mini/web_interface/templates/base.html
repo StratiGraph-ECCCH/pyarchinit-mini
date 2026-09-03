@@ -112,7 +112,18 @@
             </a>
             {% endif %}
 
-            <a href="/docs" class="nav-icon-btn" title="{{ _('Tutorial & Help') }}">
+            {# `url_for` and not the literal `/docs` it used to be. The route is
+               real (`app.py:944`) and the link worked when the application owned
+               the origin's root — but behind the node's front door, where Caddy
+               serves this app under `/pyarchinit/`, an absolute path leaves the
+               prefix behind and lands on the proxy's 404.
+               Measured on the served HTML: 64 of the 65 links on this page
+               already carried the prefix, because `url_for` gets it from
+               `SCRIPT_NAME`. This was the one that bypassed `url_for`, and it is
+               in the shared layout, so it was the one broken link on EVERY
+               page. It is also the only hand-written absolute path in the whole
+               template tree — measured, not assumed. #}
+            <a href="{{ url_for('docs') }}" class="nav-icon-btn" title="{{ _('Tutorial & Help') }}">
                 <i class="fas fa-book-open"></i>
             </a>
 
