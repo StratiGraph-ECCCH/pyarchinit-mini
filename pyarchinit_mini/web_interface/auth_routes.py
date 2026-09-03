@@ -26,6 +26,10 @@ class User(UserMixin):
         self.role = user_dict["role"]
         self.is_active_user = user_dict["is_active"]
         self.is_superuser = user_dict["is_superuser"]
+        # ORCID iD, when this person has one — the identity the StratiGraph
+        # ecosystem indexes people by. `.get`, not `[...]`, because every other
+        # caller of this constructor predates the column.
+        self.orcid = user_dict.get("orcid")
         # PyArchInit granular permissions (loaded at login from pyarchinit_roles/permissions)
         self._pa_role_perms = None   # {'can_insert': bool, 'can_update': bool, ...}
         self._pa_table_perms = None  # {table_name: {'can_insert': bool, ...}}
@@ -334,3 +338,15 @@ def delete_user(user_id):
         flash(f'Errore durante l\'eliminazione: {str(e)}', 'error')
 
     return redirect(url_for('auth.users_list'))
+
+
+# ── the ORCID door, if this server has one ───────────────────────────────────
+# ONE import, at the bottom, and the position is the point: by here `auth_bp`
+# and `User` exist, so `oidc_routes` can attach `/auth/oidc/login` and
+# `/auth/oidc/callback` to this blueprint without a second blueprint and
+# without a line of the flow living in this file. A fork keeps its merge
+# surface small by adding files, not by editing them.
+#
+# The routes exist but the door does not open unless the OIDC_* variables are
+# set: see `oidc_routes.configuration_error()`. No variables, no door.
+from . import oidc_routes  # noqa: E402,F401  (imported for its side effect)

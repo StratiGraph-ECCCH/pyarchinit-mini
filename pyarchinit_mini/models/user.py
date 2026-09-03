@@ -34,6 +34,18 @@ class User(BaseModel):
     # Contact info for messaging (deferred to avoid errors when columns don't exist yet)
     telegram_username = deferred(Column(String(100), nullable=True))
     phone = deferred(Column(String(30), nullable=True))
+    # ORCID iD — the identity the StratiGraph ecosystem indexes people by (a
+    # room's ACL is keyed on it: PUT /rooms/{room}/members/{orcid}). Same
+    # `deferred(...)` treatment as the two above, for the reason their comment
+    # gives: a database that predates the column must keep opening.
+    #
+    # nullable: the great majority of pyarchinit-mini's users will never have
+    # one, and requiring it would make an ecosystem's convention into a local
+    # obligation. unique: two local accounts cannot be the same person.
+    # String(64) for a 19-character iD: the bare form is what gets stored (see
+    # `normalize_orcid` in web_interface/auth_routes.py), and the margin costs
+    # nothing on either backend.
+    orcid = deferred(Column(String(64), unique=True, nullable=True, index=True))
 
     # Audit fields
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

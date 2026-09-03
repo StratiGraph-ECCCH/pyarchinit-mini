@@ -851,6 +851,11 @@ class DatabaseMigrations:
             f"{pkg}._2026_05_node_uuid_backfill",
             f"{pkg}._2026_05_vocab_alignment",
             f"{pkg}._2026_05_period_table_schema",
+            # The ORCID column on `users` — the identity the StratiGraph
+            # ecosystem indexes people by. Same shape as the four above and safe
+            # on every startup, which is why it joins this list rather than
+            # getting a mechanism of its own.
+            f"{pkg}._2026_09_users_orcid",
         ]
         # SQLAlchemy 2.x str(URL) redacts the password as '***', which would
         # cause the migration scripts to fail authentication when they call

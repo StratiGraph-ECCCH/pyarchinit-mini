@@ -36,6 +36,29 @@
                         </button>
                     </div>
                 </form>
+
+                {# The ORCID door, and ONLY where there is one. `oidc_available`
+                   comes from `oidc_routes._oidc_in_templates` and is False
+                   unless every OIDC_* variable is set, so an installation
+                   without Keycloak — Railway, or anybody's laptop — renders
+                   nothing here and sees the page it has always seen. #}
+                {% if oidc_available %}
+                <div class="d-flex align-items-center my-3 text-muted">
+                    <hr class="flex-grow-1 my-0"><small class="px-2">oppure</small><hr class="flex-grow-1 my-0">
+                </div>
+                <div class="d-grid">
+                    <a href="{{ url_for('auth.oidc_login') }}" class="btn btn-outline-success">
+                        <i class="fab fa-orcid"></i> Entra con ORCID
+                    </a>
+                </div>
+                <div class="mt-2 text-center">
+                    <small class="text-muted">
+                        Entrando per la prima volta si ottiene un account di
+                        sola lettura: i permessi restano una decisione di questo
+                        server.
+                    </small>
+                </div>
+                {% endif %}
             </div>
             <div class="card-footer text-center text-muted">
                 <small>PyArchInit-Mini v{{ version }}</small>

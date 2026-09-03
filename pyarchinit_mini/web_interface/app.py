@@ -533,6 +533,19 @@ def create_app():
     global user_service, analytics_service, relationship_sync_service, datazione_service
     global matrix_generator, export_import_service, csv_excel_service, media_service
 
+    # ── OIDC: all of it, or none of it ──────────────────────────────────────
+    # FIRST, before a database is opened or a service built, because a server
+    # whose authentication is half configured must not get as far as serving a
+    # page. `configuration_error()` returns None when no OIDC_* variable is
+    # set at all — which is the ordinary case, and the case Railway runs in:
+    # no variables, no OIDC, and pyarchinit-mini behaves exactly as it always
+    # has. It returns a sentence only when somebody asked for the ORCID door
+    # and left a piece out, and the sentence names the piece.
+    from pyarchinit_mini.web_interface.oidc_routes import configuration_error
+    _oidc_problem = configuration_error()
+    if _oidc_problem:
+        raise RuntimeError(_oidc_problem)
+
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'your-secret-key-here'
     app.config.setdefault("MAX_CONTENT_LENGTH", 16 * 1024 * 1024)  # 16MB cap on uploads

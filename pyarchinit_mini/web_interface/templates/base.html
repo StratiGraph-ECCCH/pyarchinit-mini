@@ -130,6 +130,21 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><span class="dropdown-header">{{ current_user.username }}</span></li>
+                    {# The ORCID iD, when this person has one: the name this
+                       installation can be recognised by outside itself. Shown
+                       plainly, with NO tick and no «verified» badge — a mark
+                       beside a signature is a claim, and this line only knows
+                       what is written in the `users` table, not who put it
+                       there. #}
+                    {% if current_user.orcid %}
+                    <li>
+                        <a class="dropdown-item small text-muted"
+                           href="https://orcid.org/{{ current_user.orcid }}"
+                           target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-orcid"></i> {{ current_user.orcid }}
+                        </a>
+                    </li>
+                    {% endif %}
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}"><i class="fas fa-sign-out-alt"></i> {{ _('Logout') }}</a></li>
                 </ul>

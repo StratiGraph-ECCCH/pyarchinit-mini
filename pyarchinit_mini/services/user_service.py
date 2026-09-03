@@ -286,6 +286,12 @@ class UserService:
             "role": user.role.value if isinstance(user.role, UserRole) else user.role,
             "is_active": user.is_active,
             "is_superuser": user.is_superuser,
+            # ORCID iD, when there is one. `getattr` with a default rather than
+            # `user.orcid`, because this method also runs against a database
+            # that predates the column: the model declares it `deferred(...)`
+            # for exactly that reason, and this reader must not be the one line
+            # that raises on an older schema.
+            "orcid": getattr(user, "orcid", None),
             "hashed_password": user.hashed_password,
             "created_at": user.created_at.isoformat() if user.created_at else None,
             "updated_at": user.updated_at.isoformat() if user.updated_at else None,
