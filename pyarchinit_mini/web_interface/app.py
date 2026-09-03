@@ -7211,7 +7211,19 @@ def create_app():
 
     # ===== 3D Model Viewer Routes (s3Dgraphy Integration) =====
     try:
-        from s3d_routes import init_s3d_routes
+        # The import is PACKAGE-QUALIFIED. Bare `from s3d_routes import …` only
+        # resolves if `web_interface/` happens to be on sys.path, which is true
+        # when somebody runs `python app.py` from inside that directory and
+        # false for every real entry point — `wsgi.py`, gunicorn, the container.
+        # So the `except ImportError` below swallowed it and the log said, at
+        # every boot:
+        #
+        #   [FLASK] Warning: s3Dgraphy routes not available: No module named 's3d_routes'
+        #
+        # which is the ONLY explicit bridge to s3Dgraphy in this application,
+        # off. Eight routes under `/3d` come back with this line, including the
+        # em.json export and the GraphML import.
+        from pyarchinit_mini.web_interface.s3d_routes import init_s3d_routes
         init_s3d_routes(app, db_manager, media_handler)
         print("[FLASK] s3Dgraphy routes initialized")
     except ImportError as e:

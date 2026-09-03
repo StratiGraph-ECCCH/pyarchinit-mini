@@ -58,7 +58,11 @@ dependencies = [
     "reportlab>=4.0.0",
     "pillow>=10.0.0",
     "qrcode[pil]>=7.4.0",
-    "s3dgraphy>=0.1.42",
+    # Aligned with `requirements.txt`, which asks for `>=1.5.0`. Two different
+    # floors for one library in one package is a statement that is only harmless
+    # while both happen to resolve to the same wheel — and `0.1.42` predates the
+    # graph datamodel this application actually reads.
+    "s3dgraphy>=1.5.0",
     "uuid7>=0.1.0",
     # CLI interface dependencies
     "click>=8.1.0",
@@ -85,9 +89,6 @@ dependencies = [
     "mcp>=0.1.0",
     # PDF export with advanced features
     "weasyprint>=60.0.0",
-    # Media processing
-    "python-magic>=0.4.0",
-    "moviepy>=1.0.0",
     # Excel/CSV/DOCX export and import
     "pandas>=2.0.0",
     "openpyxl>=3.1.0",

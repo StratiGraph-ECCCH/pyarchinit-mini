@@ -4,11 +4,38 @@ sqlalchemy>=2.0.0
 psycopg2-binary>=2.9.0
 pydantic>=2.0.0
 pydantic-settings>=2.0.0
+# `pydantic[email]`'s half, and it was MISSING here while `pyproject.toml`
+# declared it. `api/auth.py:10` does `from pydantic import BaseModel, EmailStr`,
+# and pydantic raises at import time when the validator is absent:
+#
+#   ImportError: email-validator is not installed, run `pip install 'pydantic[email]'`
+#
+# Measured in the image: 7 tests red without it — `test_sync_api` (6) and
+# `test_optimistic_locking::test_if_match_header_import` — all of them by way of
+# `pyarchinit_mini/api/schemas.py`. Harmless to the Flask application, which is
+# the deployed one; not harmless as a statement, because it is the fifth place
+# where `requirements.txt` alone does not install a working package.
+email-validator>=2.0.0
 python-multipart>=0.0.6
-pytest>=7.0.0
-pytest-asyncio>=0.21.0
-httpx>=0.25.0
 alembic>=1.12.0
+
+# The test dependencies used to be here — `pytest`, `pytest-asyncio`, `httpx`.
+# They are NOT gone: they live in `pyproject.toml`'s `dev` extra, which already
+# declared all three (alongside pytest-cov, freezegun and the linters), so this
+# file was the second declaration and the one that put them into every runtime
+# install:
+#
+#     pip install -e '.[dev]'      # to run the tests
+#     pip install -r requirements.txt   # to run the application
+#
+# Moving them rather than deleting them, because a project must still be
+# testable — what it must not do is ship a test runner into production.
+#
+# MEASURED in the image, before and after (site-packages, `du -sm`): 513 MB →
+# 507 MB. What left: pytest, _pytest, pytest_asyncio, httpx, httpcore, sniffio.
+# What STAYED, and it is worth knowing which: `h11` (1 MB) and `anyio` (2 MB),
+# because uvicorn and starlette need them — so removing httpx does not take its
+# whole chain with it.
 
 # Web Interface
 flask>=3.0.0
@@ -42,8 +69,6 @@ qrcode[pil]>=7.4.0
 
 # Media Processing
 pillow>=10.0.0
-python-magic>=0.4.0
-moviepy>=1.0.0
 
 # File utilities
 pathlib

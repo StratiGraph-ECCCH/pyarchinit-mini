@@ -102,13 +102,16 @@ WORKDIR /srv/pyarchinit-mini
 #   libpq-dev, build-essential — NOT needed. `psycopg2-binary` is a wheel, and
 #     `requirements.txt:4` asks for exactly that. A compiler in a runtime image
 #     is a compiler an attacker can use.
-#   libmagic1, ffmpeg — NOT needed. `python-magic` and `moviepy` are declared in
-#     both `requirements.txt:45-46` and `pyproject.toml`, and are imported by
-#     NOTHING: a grep for `import magic`, `from magic`, `moviepy` across the
-#     whole `pyarchinit_mini/` package returns zero. They are installed as wheels
-#     because the requirement files ask for them; their native halves are not,
-#     because no code path reaches them. If a future import appears, this comment
-#     is where to come back to.
+#   libmagic1, ffmpeg — NOT needed, and as of 2026-09-13 neither is the Python
+#     half. `python-magic` and `moviepy` USED to be declared in both
+#     `requirements.txt` and `pyproject.toml` while being imported by nothing —
+#     a grep for `import magic`, `from magic` and `moviepy` across the whole
+#     repository (not only the package this image copies) returns zero. So the
+#     two declarations went, and with them 57 MB of wheels: moviepy 2 MB,
+#     imageio 3 MB, imageio-ffmpeg 49 MB, proglog 1 MB, tqdm 1 MB, magic 1 MB.
+#     Kept here because this is where somebody will come looking the day an
+#     `import magic` appears: it will need `libmagic1` in the apt list above AND
+#     the requirement back.
 #   pygraphviz's build deps — NOT needed, because pygraphviz is not installed:
 #     `requirements.txt:36` has it COMMENTED OUT (`#pygraphviz>=1.11.0`) while
 #     `harris_matrix/enhanced_visualizer.py:89` imports it and raises an explicit
