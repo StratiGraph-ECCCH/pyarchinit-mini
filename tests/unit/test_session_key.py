@@ -115,38 +115,26 @@ def test_no_literal_is_assigned_to_SECRET_KEY_anywhere_in_the_package():
         if found:
             offenders[str(path.relative_to(PACKAGE))] = found
 
-    # THE ONE THAT IS KNOWN AND NOT REPAIRED HERE, pinned rather than excused.
+    # NO ALLOWANCE, and there used to be one.
     #
-    # `utils/auth.py:23` signs the FastAPI application's JWTs and falls back to
-    # a literal when `JWT_SECRET_KEY` is unset. It is the SAME defect as the one
-    # this module fixes — a signing key in a public source — and it is left
-    # alone for a measured reason: those two functions are called only from
-    # `pyarchinit_mini/api/auth.py`, the FastAPI surface that is not deployed
-    # and that the roadmap says must not be promoted. No Flask route mints or
-    # accepts one of those tokens.
+    # When this detector was first made to work it found a SECOND instance of
+    # the same defect — `utils/auth.py`, whose JWT signing key fell back to a
+    # literal — and that statement was pinned here, because repairing it meant
+    # changing when `create_access_token` refuses and that was a different
+    # patch's decision to make.
     #
-    # So it is not reachable today, and it becomes reachable on the day somebody
-    # serves that API — which is exactly the day nobody thinks to look. Repairing
-    # it means changing when `create_access_token` refuses, which is a change to
-    # somebody else's authentication and not this patch's to make.
-    #
-    # Pinned as an EXACT statement, so that editing that line — including
-    # fixing it — fails this test and forces whoever does it to come here.
-    KNOWN_AND_UNREPAIRED = {
-        "utils/auth.py": [
-            ' SECRET_KEY = os . getenv ( "JWT_SECRET_KEY" , '
-            '"your-secret-key-change-in-production" )'],
-    }
-
-    assert offenders == KNOWN_AND_UNREPAIRED, (
-        f"a literal is assigned to a signing key somewhere new.\n"
-        f"  found:    {offenders}\n"
-        f"  expected: {KNOWN_AND_UNREPAIRED}\n"
+    # That patch happened. `utils.auth.jwt_secret()` now raises when
+    # `JWT_SECRET_KEY` is absent, the module keeps no key of its own, and the
+    # allowance is gone with it — so this assertion is stricter than it was,
+    # which is the direction a guard should move in.
+    assert not offenders, (
+        f"a literal is assigned to a signing key: {offenders}.\n"
         f"Flask signs the session cookie with `SECRET_KEY` and the signature is "
         f"the only thing deciding which user a request belongs to, so a key in "
         f"the source is a forgeable login for every installation. Use "
-        f"`session_key.configure(app)`. If you have just REPAIRED "
-        f"`utils/auth.py`, remove its entry from KNOWN_AND_UNREPAIRED above.")
+        f"`session_key.configure(app)` for the session, and "
+        f"`utils.auth.jwt_secret()` — which refuses rather than defaulting — "
+        f"for a token.")
 
 
 def test_the_flask_session_key_specifically_has_no_literal_left():
@@ -187,15 +175,35 @@ def test_this_files_own_detector_actually_detects():
     finally:
         written.unlink()
 
-    # …and it does not fire on the shape this repository now uses
+    # …AND on the shape the JWT patch removed, which is the other way this
+    # defect gets written: a real environment read with a literal behind it. It
+    # reads as careful code, which is why it survived longest.
     with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as handle:
-        handle.write("def make(app):\n"
-                     "    app.config['SECRET_KEY'] = resolve()\n")
-        clean = pathlib.Path(handle.name)
+        handle.write('import os\n'
+                     'SECRET_KEY = os.getenv("JWT_SECRET_KEY", "a-literal")\n')
+        lazy = pathlib.Path(handle.name)
     try:
-        assert _literal_secret_key_assignments(clean) == []
+        found = _literal_secret_key_assignments(lazy)
+        assert len(found) == 1, (
+            f"the detector misses `os.getenv(NAME, literal)`, which is how the "
+            f"second instance of this defect was written: {found}")
     finally:
-        clean.unlink()
+        lazy.unlink()
+
+    # …and it does not fire on the shapes this repository now uses
+    for innocent in ("def make(app):\n"
+                     "    app.config['SECRET_KEY'] = resolve()\n",
+                     'JWT_KEY_VARIABLE = "JWT_SECRET_KEY"\n',
+                     'def jwt_secret():\n'
+                     '    return os.getenv(JWT_KEY_VARIABLE)\n'):
+        with tempfile.NamedTemporaryFile("w", suffix=".py",
+                                         delete=False) as handle:
+            handle.write(innocent)
+            clean = pathlib.Path(handle.name)
+        try:
+            assert _literal_secret_key_assignments(clean) == [], innocent
+        finally:
+            clean.unlink()
 
 
 def test_the_old_literal_survives_only_as_something_this_module_refuses():
