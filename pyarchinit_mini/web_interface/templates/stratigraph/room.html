@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}{{ _('StratiGraph Room') }} — PyArchInit-Mini{% endblock %}
+
+{#
+  This page renders ONLY when a room is configured, because the blueprint that
+  serves it is registered only then (`create_app`). So there is no «not
+  configured» state to draw here: the honest empty state is the absence of the
+  page, not a page saying there is nothing.
+
+  Every path is `url_for`, with no exception — behind the node's front door
+  `SCRIPT_NAME` carries `/pyarchinit`, and a hand-written `/stratigraph/deliver`
+  would post to the proxy's 404. `test_behind_proxy` refuses the whole class for
+  the entire template tree, and this file is inside it.
+#}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+  <h1 class="h3 mb-1"><i class="fas fa-network-wired"></i> {{ _('StratiGraph Room') }}</h1>
+  <p class="text-muted">
+    {{ _('Deliver a site\'s stratigraphy into a shared room. One site, one delivery, no queue.') }}
+  </p>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 text-uppercase text-muted">{{ _('The room') }}</h2>
+          <dl class="row mb-0 small">
+            <dt class="col-sm-4">{{ _('Room') }}</dt>
+            <dd class="col-sm-8"><code>{{ room.room_id }}</code></dd>
+            <dt class="col-sm-4">{{ _('Server') }}</dt>
+            <dd class="col-sm-8"><code>{{ room.server_url }}</code></dd>
+            <dt class="col-sm-4">{{ _('Batch limit') }}</dt>
+            <dd class="col-sm-8">{{ batch_max }} {{ _('operations per delivery') }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <h2 class="h6 text-uppercase text-muted">{{ _('Who is writing') }}</h2>
+          {% if orcid %}
+            <p class="mb-2">
+              <i class="fab fa-orcid text-success"></i>
+              <code>{{ orcid }}</code>
+            </p>
+            {# The bearer is described, never shown. `oidc_tokens.status()`
+               returns durations and a sha256 prefix and has no way to return
+               the token itself. #}
+            {% if bearer.held %}
+              <p class="small text-muted mb-0">
+                {{ _('Token') }} <code>{{ bearer.fingerprint }}</code> ·
+                {{ _('valid for') }} {{ bearer.expires_in }}s ·
+                {% if bearer.renewable %}
+                  {{ _('renewable') }}{% if bearer.refresh_expires_in %} ({{ bearer.refresh_expires_in }}s){% endif %}
+                {% else %}
+                  {{ _('not renewable — you will be asked to sign in again') }}
+                {% endif %}
+              </p>
+            {% else %}
+              <p class="small text-warning mb-0">
+                {{ _('This session holds no token for the room server: you signed in locally, or the server restarted. Sign in with ORCID to deliver.') }}
+              </p>
+            {% endif %}
+          {% else %}
+            <p class="text-danger mb-1"><i class="fas fa-ban"></i> {{ no_author }}</p>
+            <p class="small text-muted mb-0">
+              {{ _('This account carries no ORCID. Sign in through the ORCID door, or ask an administrator to link one.') }}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h2 class="h6 text-uppercase text-muted mb-3">{{ _('Sites in this database') }}</h2>
+      {% if sites %}
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th>{{ _('Site') }}</th>
+              <th class="text-end">{{ _('Units') }}</th>
+              <th class="text-end">{{ _('Relationships') }}</th>
+              <th class="text-end"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for site in sites %}
+            <tr>
+              <td>{{ site.sito }}</td>
+              <td class="text-end">{{ site.units }}</td>
+              <td class="text-end">{{ site.relationships }}</td>
+              <td class="text-end">
+                <form method="POST" action="{{ url_for('stratigraph_room.deliver') }}"
+                      class="d-inline">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                  <input type="hidden" name="sito" value="{{ site.sito }}"/>
+                  <button type="submit" class="btn btn-sm btn-primary"
+                          {% if not orcid %}disabled title="{{ no_author }}"{% endif %}>
+                    <i class="fas fa-paper-plane"></i> {{ _('Deliver') }}
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <p class="text-muted mb-0">{{ _('No stratigraphic units in this database yet.') }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <p class="small text-muted mt-3 mb-0">
+    {#
+      This sentence used to say «returns EVERY operation refused», which is what
+      the chapter's prompt expected and what a first draft of `Outcome` tested
+      for. Measured, delivering one site three times:
+
+          1ª : 112 inviate → 112 applicate,  0 rifiutate
+          2ª : 112 inviate →  41 applicate, 71 rifiutate (idempotent)
+
+      The nodes are not refused, they MERGE — `add_node` is idempotent by
+      merging — and only the edges refuse. So the sentence was wrong, and a
+      wrong explanation on the page is worse than none: somebody reading «every
+      operation refused» beside «41 applicate» concludes the software is broken.
+    #}
+    {{ _('A refusal is not an error. Deliver the same site twice and the edges come back refused as already present, while the units are re-applied as merges — the room already has them, and the shape of the graph does not change. Nothing is retried automatically.') }}
+  </p>
+
+</div>
+{% endblock %}

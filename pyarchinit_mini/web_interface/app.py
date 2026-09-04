@@ -546,6 +546,18 @@ def create_app():
     if _oidc_problem:
         raise RuntimeError(_oidc_problem)
 
+    # ── the StratiGraph room: both variables, or neither ────────────────────
+    # The same three states, for the third feature that has them: no variable
+    # means the room client does not exist (its blueprint is not even
+    # registered, so its URLs are a 404 and no menu entry renders); both means
+    # a site can be delivered; one of the two is a refusal naming the other,
+    # because guessing an address or a room id would send an excavation
+    # somewhere nobody chose.
+    from pyarchinit_mini.web_interface import room_client
+    _room_problem = room_client.configuration_error()
+    if _room_problem:
+        raise RuntimeError(_room_problem)
+
     app = Flask(__name__)
     # THE KEY THAT SIGNS EVERY SESSION, and it used to be the literal
     # `'your-secret-key-here'` on this line — a string committed to a public
@@ -837,6 +849,31 @@ def create_app():
     from pyarchinit_mini.web_interface.matrix_tools_routes import matrix_tools_bp
     app.register_blueprint(matrix_tools_bp)
     csrf.exempt(matrix_tools_bp)
+
+    # ── the StratiGraph room client, registered ONLY when there is a room ───
+    # Not «registered and disabled». With no variables these two URLs are a 404
+    # and `stratigraph_room` is False in every template, so the menu entry does
+    # not render — which is what «absent means the application Enzo's users
+    # have always run» has to mean to be true.
+    #
+    # `oidc_tokens.configure` attaches the two Flask-Login signals that drop the
+    # bearer when a session ends. It is called HERE and not beside the session
+    # key, because a bearer only exists when there is somewhere to carry it.
+    if room_client.settings().enforcing:
+        from pyarchinit_mini.web_interface import oidc_tokens
+        from pyarchinit_mini.web_interface.room_routes import room_bp
+
+        oidc_tokens.configure(app)
+        app.register_blueprint(room_bp)
+
+        @app.context_processor
+        def _stratigraph_room_in_templates():
+            """One flag, so `base.html` has one condition and no import."""
+            return {"stratigraph_room": room_client.settings().room_id}
+
+        print(f"[FLASK] [room] delivering to room "
+              f"{room_client.settings().room_id!r} at "
+              f"{room_client.settings().server_url!r}")
 
     # Exempt PyArchInit API endpoints from CSRF protection (JSON APIs)
     csrf.exempt(pyarchinit_import_export_bp)

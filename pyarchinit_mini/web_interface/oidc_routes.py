@@ -68,6 +68,7 @@ from typing import Any, Dict, Optional
 from flask import current_app, flash, redirect, request, session, url_for
 from flask_login import login_user
 
+from . import oidc_tokens
 from .auth_routes import User, auth_bp
 
 log = logging.getLogger(__name__)
@@ -386,15 +387,27 @@ def oidc_login():
 
 @auth_bp.route("/oidc/callback")
 def oidc_callback():
-    """Come back from the realm, and find out who this is.
+    """Come back from the realm, and find out who this is — and keep the bearer.
 
-    THE TOKEN IS NOT KEPT. It is needed twice inside this one function — once
-    to learn who this is, once to ask the realm for the claim the id_token does
-    not carry — and then it goes out of scope. From there the Flask-Login
-    session is in charge, exactly as after the local login. pyarchinit-mini
-    calls no service on the user's behalf yet, so it has no reason to hold a
-    bearer, and a token in a session is a token that outlives the reason it was
-    issued.
+    ## THE TOKEN IS NOW KEPT, AND STEP 02 SAID THE OPPOSITE
+
+    What used to be written here, and it was right when it was written:
+
+        THE TOKEN IS NOT KEPT. […] pyarchinit-mini calls no service on the
+        user's behalf yet, so it has no reason to hold a bearer, and a token in
+        a session is a token that outlives the reason it was issued.
+
+    The clause that carried it was «calls no service on the user's behalf YET».
+    It now does: `room_client` delivers a site's stratigraphy into a StratiGraph
+    room, and the room asks who is writing. A token that outlives its reason is
+    a risk with no return; this one has a reason that outlives the round trip.
+
+    **Nothing else about the reasoning changed**, and in particular the token is
+    still not READ here. The access token is addressed to `em-server`; we hand
+    it to `em-server`. Its expiry is taken from `expires_in`, a number the token
+    endpoint gave to us — see `oidc_tokens`, which also carries the measurement
+    proving that «the Flask session» in this application is the browser's
+    cookie, and therefore why the cookie gets a handle and not a bearer.
     """
     it = settings()
     if not it.enforcing:
@@ -458,9 +471,9 @@ def oidc_callback():
         log.warning("[OIDC] the id_token did not verify: %s", exc)
         flash(f"Il token non è valido: {exc}", "error")
         return redirect(url_for("auth.login"))
-    # …and here the token goes out of scope. `answer` (with its access_token and
-    # refresh_token) and `id_token` are locals of this function; nothing is
-    # written into `session`, and `claims` below is read for three fields.
+    # …and here the token USED to go out of scope. It is kept now — see this
+    # function's docstring for why the decision reversed, and `oidc_tokens` for
+    # where it is kept, which is deliberately not `session`.
 
     # THE ORCID IS NOT IN THE ID_TOKEN, and that too was learnt from a live
     # round trip rather than assumed. See `_identity_claims`.
@@ -505,6 +518,27 @@ def oidc_callback():
 
     user = User(user_dict)
     login_user(user)
+
+    # THE BEARER, kept for the room and for nothing else.
+    #
+    # AFTER `login_user`, deliberately: `login_user` writes `_user_id` into the
+    # session and, with `session_protection`, can regenerate it — a handle
+    # stored before that could be dropped on the way, and the delivery would
+    # refuse with «sign in again» right after a successful sign-in.
+    #
+    # It is stored under the ORCID that was just verified, so the handle is only
+    # redeemable by this identity. Failing to keep it is NOT a failed login: the
+    # person is signed in and everything except the room works, so it is logged
+    # and the flow continues.
+    try:
+        session[oidc_tokens.HANDLE_KEY] = oidc_tokens.remember(answer, orcid)
+        log.info("[OIDC] bearer kept for orcid=%s: %s",
+                 orcid, oidc_tokens.durations(answer))
+    except Exception as exc:                                     # noqa: BLE001
+        session.pop(oidc_tokens.HANDLE_KEY, None)
+        log.warning("[OIDC] signed in, but no bearer kept for orcid=%s: %s",
+                    orcid, exc)
+
     log.info("[OIDC] %s entered as %s (orcid=%s)", label, user.username, orcid)
     flash(f"Benvenuto, {user.username} · ORCID {orcid}", "success")
     return redirect(url_for("index"))
